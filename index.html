@@ -1,0 +1,2767 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#F4F0E6">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Quaderno d'Inglese</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=Caveat:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F4F0E6;
+    --paper-line: #E4DCC8;
+    --ink: #1F2A37;
+    --ink-soft: #5C6B7A;
+    --red: #B93C32;
+    --red-soft: #D4756A;
+    --teal: #2F6B5A;
+    --teal-soft: #E8F0EC;
+    --gold: #B08A2E;
+    --gold-soft: #F3EAD0;
+    --surface: #FFFFFF;
+    --shadow-sm: 0 1px 2px rgba(31,42,55,0.05);
+    --shadow-md: 0 8px 24px rgba(31,42,55,0.08);
+    --shadow-lg: 0 16px 40px rgba(31,42,55,0.10);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: #E8E2D4;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 15% -10%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(31,42,55,0.04), transparent);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px 72px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page{ width: 100%; max-width: 780px; }
+
+  /* ---- Header ---- */
+  header.masthead{
+    display:flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 18px;
+    margin-bottom: 8px;
+    border-bottom: 1.5px solid var(--ink);
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(26px, 5vw, 34px);
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+  .scoreboard{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align:right;
+    line-height: 1.55;
+  }
+  .scoreboard b{ color: var(--ink); font-weight: 500; }
+
+  /* ---- Tabs ---- */
+  .tabs{
+    display:flex;
+    gap: 2px;
+    margin: 20px 0 18px;
+    background: rgba(255,255,255,0.45);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--paper-line);
+  }
+  .tab-btn{
+    flex: 1;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    padding: 11px 8px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-radius: 7px;
+    transition: all 0.18s ease;
+  }
+  .tab-btn:hover{ color: var(--ink); background: rgba(255,255,255,0.5); }
+  .tab-btn.active{
+    color: var(--ink);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    font-weight: 500;
+    border-bottom: 2.5px solid transparent;
+  }
+  .tab-btn[data-tab="conv"].active{ border-bottom-color: var(--red); }
+  .tab-btn[data-tab="rt"].active{ border-bottom-color: var(--gold); }
+  .tab-btn[data-tab="vocab"].active{ border-bottom-color: var(--teal); }
+  .view{ display:none; }
+  .view.active{ display:block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none} }
+
+  /* ---- Setup ---- */
+  .setup{
+    background: var(--surface);
+    border: 1px solid var(--paper-line);
+    border-radius: var(--radius);
+    padding: 18px 18px 14px;
+    margin: 0 0 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field.full{ grid-column: 1 / -1; }
+  label{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+  input[type=text], input[type=password], select, textarea{
+    font-family:'Inter', sans-serif;
+    font-size: 14px;
+    padding: 10px 12px;
+    border: 1.5px solid var(--paper-line);
+    border-radius: var(--radius-sm);
+    background: #FAFAF7;
+    color: var(--ink);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline: none;
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(31,42,55,0.08);
+    background: #fff;
+  }
+  .setup-note{
+    grid-column: 1/-1;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .toggle-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  label.chk, .toggle-row label.chk{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+  }
+  label.chk input[type=checkbox],
+  .toggle-row input[type=checkbox]{
+    width: 16px;
+    height: 16px;
+    accent-color: var(--teal);
+    cursor: pointer;
+  }
+  .rate-control{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .rate-control input[type=range]{
+    width: 100px;
+    accent-color: var(--teal);
+  }
+  .rate-control #rateVal{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    min-width: 2.5em;
+  }
+
+  /* ---- Shared notebook card ---- */
+  .notebook, .rt-notebook, .vocab-notebook{
+    position: relative;
+    background: var(--paper);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+
+  /* ---- Conversazione ---- */
+  .notebook{
+    padding: 28px 24px 20px;
+    background-image: repeating-linear-gradient(
+      to bottom, transparent 0px, transparent 39px, var(--paper-line) 40px
+    );
+    min-height: 360px;
+  }
+  .notebook::before{
+    content:''; position:absolute; top:0; bottom:0; left: 48px;
+    width: 1.5px; background: var(--red-soft); opacity: 0.35;
+  }
+  .thread{ margin-left: 22px; display:flex; flex-direction:column; gap: 6px; }
+  .empty-state{
+    margin-left:22px; color: var(--ink-soft); font-style: italic;
+    font-size: 14.5px; padding: 28px 8px 12px; line-height: 1.5;
+  }
+
+  .msg-row{ display:flex; margin: 8px 0; }
+  .msg-row.user{ justify-content:flex-end; }
+  .bubble{
+    max-width: 78%; padding: 11px 15px; border-radius: 14px;
+    font-size: 14.5px; line-height: 1.55;
+  }
+  .bubble.user{
+    background: var(--ink); color: #F4F0E6;
+    border-bottom-right-radius: 4px;
+  }
+  .bubble.teacher{
+    background: var(--teal-soft); border: 1px solid #d0e0d8;
+    border-bottom-left-radius: 4px; color: var(--ink);
+  }
+  .speak-btn{
+    border:none; background:none; cursor:pointer;
+    color: var(--teal); padding: 2px 4px; margin-left: 4px;
+    vertical-align: middle; opacity: 0.7; transition: opacity 0.15s;
+    display: inline-flex; align-items: center;
+  }
+  .speak-btn:hover{ opacity: 1; }
+  .speak-btn svg{ width: 16px; height: 16px; }
+
+  .correction{ margin: 6px 0 12px 6px; font-size: 14px; }
+  .correction .original{
+    color: var(--ink-soft);
+    text-decoration: line-through;
+    text-decoration-color: var(--red);
+    text-decoration-thickness: 1.5px;
+  }
+  .correction .fixed{
+    font-family: 'Caveat', cursive; font-weight: 700;
+    color: var(--red); font-size: 21px; margin-left: 8px;
+  }
+  .correction .why{
+    font-family: 'Caveat', cursive; font-size: 17px;
+    color: var(--red-soft); margin-top: 0;
+  }
+  .all-correct{
+    font-family:'Caveat', cursive; color: var(--teal);
+    font-size: 20px; margin: 4px 0 10px 6px;
+  }
+
+  .composer{
+    display:flex; gap: 10px; margin-top: 18px; align-items:flex-end;
+  }
+  .composer textarea{
+    flex:1; resize: none; height: 48px; min-height: 48px;
+    border-radius: var(--radius-sm); font-size: 14.5px;
+  }
+  .icon-btn, .send-btn, .ghost-btn, .next-btn, .reveal-btn, .rate-btn, .manual-add button{
+    display:inline-flex; align-items:center; justify-content:center;
+    gap: 6px; cursor: pointer; transition: all 0.15s ease;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .icon-btn{
+    width: 48px; height: 48px; border-radius: var(--radius-sm);
+    border: 1.5px solid var(--ink); background: var(--surface);
+    flex-shrink:0;
+  }
+  .icon-btn:hover{ background: var(--ink); color: #F4F0E6; }
+  .icon-btn.mic.recording{
+    background: var(--red); color: #fff; border-color: var(--red);
+    box-shadow: 0 0 0 4px rgba(185,60,50,0.18);
+  }
+  .icon-btn svg{ width: 20px; height: 20px; }
+  .send-btn{
+    background: var(--ink); color: #F4F0E6; border: none;
+    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 0 18px; height: 48px; border-radius: var(--radius-sm);
+    flex-shrink:0; font-weight: 500;
+  }
+  .send-btn:hover{ background: #2c3a4d; }
+  .send-btn:disabled{ opacity: 0.35; cursor:not-allowed; }
+
+  /* ---- Ripeti e Traduci ---- */
+  .rt-difficulty{
+    font-family:'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--gold); margin-bottom: 10px; letter-spacing: 0.04em;
+  }
+  .rt-notebook{
+    padding: 36px 28px 28px;
+    min-height: 320px;
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center; gap: 8px;
+  }
+  .sentence-label{
+    font-family:'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-soft);
+  }
+  .sentence{
+    font-family:'Fraunces', serif; font-style: italic;
+    font-size: clamp(22px, 4.5vw, 27px); color: var(--ink);
+    margin: 8px 0 12px; line-height: 1.4; max-width: 95%;
+  }
+  .listen-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center; }
+  .ghost-btn{
+    background: rgba(31,42,55,0.06); border: 1.5px solid var(--ink); color: var(--ink);
+    font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 9px 14px; border-radius: var(--radius-sm);
+    font-weight: 500;
+  }
+  .ghost-btn:hover{ background: var(--ink); color: #F4F0E6; }
+  .ghost-btn svg{ width: 15px; height: 15px; }
+
+  .mic-big{
+    width: 80px; height: 80px; border-radius: 50%;
+    border: 2.5px solid var(--red); background: var(--surface);
+    color: var(--red); cursor: pointer;
+    display:flex; align-items:center; justify-content:center;
+    margin: 22px 0 10px; transition: all 0.18s ease;
+  }
+  .mic-big:hover{ transform: scale(1.04); }
+  .mic-big.recording{
+    background: var(--red); color: #fff;
+    box-shadow: 0 0 0 10px rgba(185,60,50,0.12);
+  }
+  .mic-big svg{ width: 30px; height: 30px; }
+  .mic-hint{
+    font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft);
+  }
+
+  .result{
+    width: 100%; text-align: left; margin-top: 22px;
+    border-top: 1px dashed var(--paper-line); padding-top: 18px;
+  }
+  .result-row{ margin-bottom: 12px; }
+  .result-row .k{
+    font-family:'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ink-soft); display:block; margin-bottom: 3px;
+  }
+  .said{ font-size: 14.5px; }
+  .translation{ font-family:'Fraunces', serif; font-size: 18px; color: var(--teal); }
+  .verdict-ok{ font-family:'Caveat', cursive; font-size: 23px; color: var(--teal); }
+
+  .next-row{ margin-top: 20px; display:flex; justify-content:center; }
+  .next-btn{
+    background: var(--ink); color: #F4F0E6; border: none;
+    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 12px 22px; border-radius: var(--radius-sm); font-weight: 500;
+  }
+  .next-btn:hover{ background: #2c3a4d; }
+  .next-btn:disabled{ opacity:.35; cursor:not-allowed; }
+
+  /* ---- Vocabolario ---- */
+  .vocab-mode-tabs{
+    display:flex;
+    gap: 2px;
+    margin: 0 0 14px;
+    background: rgba(255,255,255,0.45);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--paper-line);
+  }
+  .vocab-mode-btn{
+    flex: 1;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    padding: 10px 8px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .vocab-mode-btn.active{
+    background: #fff;
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+    font-weight: 500;
+  }
+  .vocab-mode-btn:hover:not(.active){ color: var(--ink); }
+  .vocab-mode-hint{
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin: 0 0 12px;
+    line-height: 1.45;
+  }
+  .speak-practice-row{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .speak-practice-row .mic-big{
+    margin: 0;
+  }
+  .speak-practice-result{
+    font-size: 14px;
+    text-align: center;
+    min-height: 1.4em;
+    color: var(--ink-soft);
+  }
+  .speak-practice-result.ok{ color: var(--teal); font-weight: 500; }
+  .speak-practice-result.bad{ color: var(--red); font-weight: 500; }
+
+  .vocab-stats{
+    display:flex; gap: 24px; margin-bottom: 18px;
+    font-family:'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft);
+  }
+  .vocab-stats b{ color: var(--ink); font-size: 16px; font-weight: 500; }
+  .vocab-notebook{
+    padding: 36px 28px 28px; min-height: 240px;
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center; gap: 10px;
+  }
+  .card-label{
+    font-family:'JetBrains Mono', monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-soft);
+  }
+  .card-front{
+    font-family:'Fraunces', serif; font-size: clamp(22px, 4.5vw, 28px);
+    color: var(--ink); margin: 8px 0;
+  }
+  .card-note{ font-family:'Caveat', cursive; font-size: 17px; color: var(--red-soft); max-width: 90%; }
+  .card-back{ display:none; margin-top: 8px; }
+  .card-back.shown{ display:block; animation: fadeIn 0.2s ease; }
+  .card-translation{ font-family:'Fraunces', serif; font-style: italic; font-size: 21px; color: var(--teal); }
+  .card-source{ font-family:'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-soft); margin-top: 4px; }
+  .reveal-btn{
+    background: var(--ink); color: #F4F0E6; border: none;
+    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 12px 22px; border-radius: var(--radius-sm); margin-top: 12px; font-weight: 500;
+  }
+  .reveal-btn:hover{ background: #2c3a4d; }
+  .rating-row{ display:flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; justify-content: center; }
+  .rate-btn{
+    border: 1.5px solid var(--ink); background: var(--surface); color: var(--ink);
+    font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 9px 14px; border-radius: var(--radius-sm);
+  }
+  .rate-btn.again{ border-color: var(--red); color: var(--red); }
+  .rate-btn.again:hover{ background: var(--red); color: #fff; }
+  .rate-btn.hard{ border-color: var(--gold); color: var(--gold); }
+  .rate-btn.hard:hover{ background: var(--gold); color: #fff; }
+  .rate-btn.good:hover{ background: var(--teal); border-color: var(--teal); color: #fff; }
+  .rate-btn.easy:hover{ background: var(--ink); color: #F4F0E6; }
+  .vocab-empty{ color: var(--ink-soft); font-style: italic; font-size: 14.5px; padding: 36px 12px; line-height: 1.5; }
+
+  .manual-add{
+    display:flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;
+  }
+  .manual-add input{
+    flex: 1; min-width: 140px;
+  }
+  .manual-add button{
+    background: var(--ink); color: #F4F0E6; border: none;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 0 16px; height: 42px; border-radius: var(--radius-sm); font-weight: 500;
+  }
+  .manual-add button:hover{ background: #2c3a4d; }
+
+  .vocab-list{ margin-top: 28px; }
+  .vocab-list h2{
+    font-family:'Fraunces', serif; font-size: 17px; font-weight: 600;
+    border-bottom: 1.5px solid var(--ink); padding-bottom: 8px; margin: 0;
+  }
+  .vocab-list table{ width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; }
+  .vocab-list td{ padding: 9px 6px; border-bottom: 1px solid var(--paper-line); vertical-align: top; }
+  .vocab-list td.due-today{ color: var(--red); font-family:'JetBrains Mono', monospace; font-size: 11px; white-space: nowrap; }
+  .vocab-list td.due-future{ color: var(--ink-soft); font-family:'JetBrains Mono', monospace; font-size: 11px; white-space: nowrap; }
+
+  /* ---- Error book ---- */
+  .errbook{ margin-top: 36px; }
+  .errbook h2{
+    font-family:'Fraunces', serif; font-size: 18px; font-weight: 600;
+    border-bottom: 1.5px solid var(--ink); padding-bottom: 8px;
+    display:flex; justify-content:space-between; align-items:baseline; margin: 0;
+  }
+  .errbook h2 .count{
+    font-family:'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-soft);
+  }
+  .errbook ul{
+    list-style:none; padding:0; margin: 14px 0 0;
+    display:flex; flex-wrap:wrap; gap: 8px;
+  }
+  .errbook li{
+    background: var(--surface); border: 1px solid var(--paper-line);
+    border-radius: var(--radius-sm); padding: 8px 12px; font-size: 13.5px;
+    box-shadow: var(--shadow-sm);
+  }
+  .errbook li .w{ color: var(--red); font-weight:600; }
+  .errbook li .src{
+    color: var(--ink-soft); font-family:'JetBrains Mono', monospace;
+    font-size: 10px; margin-left: 6px;
+  }
+  .errbook .empty{ color: var(--ink-soft); font-style:italic; font-size: 13.5px; margin-top: 12px; }
+
+  /* ---- Status ---- */
+  .status-line{
+    font-family:'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--ink-soft); margin-top: 10px; min-height: 16px;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .spinner{
+    display:inline-block; width: 11px; height: 11px;
+    border: 2px solid var(--paper-line); border-top-color: var(--ink-soft);
+    border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink:0;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .status-line.error{ color: var(--red); }
+
+  #globalErrorBanner{
+    display:none; position:fixed; top:0; left:0; right:0; z-index:9999;
+    background: #B93C32; color:#fff; font-family:'JetBrains Mono', monospace;
+    font-size: 12px; padding: 10px 14px; line-height:1.5;
+  }
+
+
+  /* ---- Progressi ---- */
+  .progress-hero{
+    background:var(--surface); border:1px solid var(--paper-line);
+    border-radius:var(--radius); padding:22px; margin-bottom:16px;
+    box-shadow:var(--shadow-sm); display:flex; justify-content:space-between;
+    gap:20px; align-items:center;
+  }
+  .progress-hero h2{font-family:'Fraunces',serif;margin:3px 0 5px;font-size:24px;}
+  .progress-hero p{margin:0;color:var(--ink-soft);font-size:13px;line-height:1.5;}
+  .daily-goal{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;min-width:110px;}
+  .daily-goal b{color:var(--ink);font-size:15px;}
+  .goal-ring{
+    width:82px;height:82px;border-radius:50%;margin:0 auto 7px;
+    display:grid;place-items:center;background:conic-gradient(var(--teal) 0deg,var(--teal) 0deg,var(--paper-line) 0deg);
+    position:relative;font-weight:600;
+  }
+  .goal-ring::after{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--surface);}
+  .goal-ring span{position:relative;z-index:1;color:var(--ink);}
+  .progress-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+  .progress-card{background:var(--paper);border:1px solid var(--paper-line);border-radius:var(--radius-sm);padding:15px;min-height:110px;}
+  .progress-card span,.progress-card small{display:block;color:var(--ink-soft);font-size:11px;}
+  .progress-card b{display:block;font-family:'Fraunces',serif;font-size:29px;margin:7px 0 2px;}
+  .progress-section{background:var(--surface);border:1px solid var(--paper-line);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
+  .progress-section h2{font-family:'Fraunces',serif;font-size:18px;margin:0 0 12px;}
+  .goal-controls{display:flex;align-items:center;gap:10px;}
+  .goal-controls input{flex:1;accent-color:var(--teal);}
+  .progress-note{font-size:12px;color:var(--ink-soft);line-height:1.5;margin:12px 0 0;}
+  .next-step{background:var(--teal-soft);border:1px solid #d0e0d8;padding:13px;border-radius:var(--radius-sm);font-size:14px;line-height:1.5;margin-bottom:12px;}
+  @media (max-width: 560px){
+    .progress-grid{grid-template-columns:1fr 1fr;}
+    .progress-hero{align-items:flex-start;}
+    .daily-goal{min-width:90px;}
+    .goal-controls{flex-wrap:wrap;}
+    .goal-controls input{order:3;flex-basis:100%;}
+  }
+
+  @media (max-width: 560px){
+    .setup{ grid-template-columns: 1fr; }
+    .tabs{ flex-direction: column; }
+    .tab-btn{ text-align: center; }
+    .composer{ flex-wrap: wrap; }
+    .send-btn{ flex: 1; }
+  }
+
+  .course-hero{display:flex;justify-content:space-between;gap:18px;align-items:center;background:var(--surface);border:1px solid var(--paper-line);border-radius:var(--radius);padding:22px;margin-bottom:14px;}
+  .course-hero h2{font-family:'Fraunces',serif;font-size:25px;margin:3px 0 5px}.course-hero p{margin:0;color:var(--ink-soft);font-size:13px}.course-progress{width:86px;height:86px;border:1px solid var(--paper-line);border-radius:50%;display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--paper)}.course-progress b{font-family:'Fraunces',serif;font-size:22px}.course-progress span{font-size:9px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em}.lesson-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.lesson-card{background:var(--paper);border:1px solid var(--paper-line);border-radius:var(--radius-sm);padding:15px;cursor:pointer;transition:.15s}.lesson-card:hover{transform:translateY(-1px);border-color:var(--ink-soft)}.lesson-card.done{opacity:.72}.lesson-card .day{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}.lesson-card h3{font-family:'Fraunces',serif;font-size:19px;margin:6px 0}.lesson-card p{font-size:12px;color:var(--ink-soft);margin:0 0 10px}.lesson-card .state{font-size:11px}.lesson-panel{background:var(--surface);border:1px solid var(--paper-line);border-radius:var(--radius);padding:20px;margin-top:14px}.lesson-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.lesson-head h2{font-family:'Fraunces',serif;margin:3px 0 0}.lesson-goal{color:var(--ink-soft);font-size:13px}.lesson-box{border-top:1px solid var(--paper-line);padding-top:14px;margin-top:14px}.lesson-box h3{font-size:13px;margin:0 0 10px}.lesson-words{display:flex;flex-wrap:wrap;gap:7px}.lesson-word{padding:7px 9px;border:1px solid var(--paper-line);border-radius:999px;font-size:12px;background:var(--paper)}.lesson-phrase{padding:10px 0;border-bottom:1px dashed var(--paper-line);font-size:14px}.lesson-phrase small{display:block;color:var(--ink-soft);margin-top:3px}.quiz-option{display:block;width:100%;text-align:left;padding:10px;margin:7px 0;border:1px solid var(--paper-line);background:var(--paper);border-radius:8px;cursor:pointer}.quiz-option:hover{border-color:var(--ink)}.quiz-feedback{min-height:20px;font-size:12px;margin-top:8px}.quiz-feedback.ok{color:var(--green,#28745b)}.quiz-feedback.bad{color:var(--red,#b64a4a)}.lesson-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.lesson-actions .next-btn{width:auto}.tab-btn[data-tab="course"].active{border-bottom-color:var(--teal)}
+  @media(max-width:560px){.lesson-grid{grid-template-columns:1fr}.course-hero{align-items:flex-start}.course-progress{width:72px;height:72px;flex:none}}
+.backend-status{padding:9px 10px;border:1px solid var(--paper-line);border-radius:8px;background:var(--paper);font-size:12px}.backend-status.ok{color:var(--teal)}.backend-status.warn{color:var(--red)}.field-help{display:block;color:var(--ink-soft);font-size:11px;margin-top:6px}
+
+  .api-row{display:flex;gap:8px;align-items:center}
+  .api-row input{flex:1;min-width:0}
+  .mobile-api-field{background:#fffdf5;padding:10px;border-radius:10px;border:1px dashed var(--gold)}
+  .install-btn{position:fixed;right:14px;bottom:14px;z-index:50;border:1px solid var(--ink);background:var(--ink);color:#fff;padding:12px 15px;border-radius:999px;font-weight:600;box-shadow:var(--shadow-lg);display:none}
+  @media(max-width:600px){
+    body{padding:14px 10px calc(76px + env(safe-area-inset-bottom));}
+    .page{max-width:none}
+    header.masthead{align-items:flex-start;padding-bottom:12px}
+    .scoreboard{font-size:10px}
+    .tabs{overflow-x:auto;justify-content:flex-start;scrollbar-width:none;position:sticky;top:0;z-index:20;backdrop-filter:blur(8px)}
+    .tab-btn{min-width:118px;flex:0 0 auto;padding:12px 9px;font-size:10px}
+    .setup{grid-template-columns:1fr;padding:13px;gap:11px}
+    .field.full{grid-column:auto}
+    .api-row{flex-wrap:wrap}
+    .api-row input{flex-basis:100%}
+    .api-row button{flex:1}
+    button,.tab-btn,input,select,textarea{font-size:16px!important}
+    .lesson-grid{grid-template-columns:1fr!important}
+  }
+
+  /* ===== V5.1 UX refresh ===== */
+  :root{
+    --accent: #2F6B5A;
+    --accent-2: #B08A2E;
+    --focus: rgba(47,107,90,.16);
+  }
+  button{font-family:inherit;-webkit-tap-highlight-color:transparent;}
+  button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--focus);outline-offset:2px;}
+  .masthead{background:rgba(255,255,255,.45);border:1px solid rgba(228,220,200,.9);border-radius:18px;padding:18px 20px!important;box-shadow:var(--shadow-sm);}
+  .tabs{box-shadow:0 4px 18px rgba(31,42,55,.05);}
+  .tab-btn{min-height:44px;font-weight:600;}
+  .setup{box-shadow:var(--shadow-md);}
+  .setup-note{background:var(--teal-soft);border-radius:10px;padding:10px 12px;}
+  .notebook,.rt-notebook,.vocab-card,.progress-section,.progress-hero,.course-hero,.lesson-panel{box-shadow:var(--shadow-md);}
+  .notebook{border-radius:18px;overflow:hidden;}
+  .composer{position:sticky;bottom:10px;z-index:15;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border:1px solid var(--paper-line);border-radius:16px;padding:8px;box-shadow:var(--shadow-lg);}
+  .composer textarea{min-height:48px;border:0;background:transparent;box-shadow:none;resize:none;}
+  .composer textarea:focus{box-shadow:none;}
+  .send-btn,.next-btn{min-height:46px;border-radius:12px;font-weight:700;}
+  .icon-btn,.mic-big{min-width:46px;min-height:46px;}
+  .mic-big{box-shadow:0 8px 20px rgba(47,107,90,.18);transition:transform .15s,box-shadow .15s;}
+  .mic-big:active{transform:scale(.96);}
+  .starter-chips{display:flex;gap:8px;flex-wrap:wrap;padding:12px 0 4px;justify-content:center;}
+  .starter-chips button{border:1px solid var(--paper-line);background:var(--surface);color:var(--ink);border-radius:999px;padding:10px 12px;cursor:pointer;box-shadow:var(--shadow-sm);font-size:12px;}
+  .starter-chips button:hover{border-color:var(--teal);transform:translateY(-1px);}
+  .lesson-card,.quiz-option,.ghost-btn{min-height:44px;}
+  .lesson-card{box-shadow:var(--shadow-sm);}
+  .lesson-card:active,.quiz-option:active,.ghost-btn:active{transform:scale(.99);}
+  .install-btn{font-size:14px;}
+  @media(max-width:600px){
+    body{padding:8px 8px calc(86px + env(safe-area-inset-bottom));}
+    .masthead{padding:14px 15px!important;border-radius:15px;margin-bottom:8px;}
+    h1{font-size:25px;}
+    .eyebrow{font-size:9px;}
+    .scoreboard{display:none;}
+    .tabs{position:sticky;top:6px;margin:8px 0 12px;border-radius:13px;padding:3px;z-index:30;}
+    .tab-btn{min-width:110px;min-height:46px;padding:9px 10px;font-size:10px;}
+    .setup{margin-bottom:12px;border-radius:15px;padding:12px;}
+    .setup .field:not(.mobile-api-field){display:block;}
+    .api-row{gap:6px;}
+    .api-row button{min-height:44px;}
+    .starter-chips{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding-bottom:7px;scrollbar-width:none;}
+    .starter-chips button{white-space:nowrap;flex:none;min-height:42px;}
+    .notebook{min-height:52vh;border-radius:15px;}
+    .composer{bottom:calc(8px + env(safe-area-inset-bottom));padding:6px;border-radius:14px;}
+    .composer textarea{font-size:16px!important;min-height:46px;padding:11px 8px;}
+    .send-btn{min-width:74px;}
+    .progress-hero,.course-hero{padding:16px;border-radius:15px;}
+    .progress-hero h2,.course-hero h2{font-size:22px;}
+    .progress-card{min-height:96px;padding:12px;}
+    .progress-card b{font-size:25px;}
+    .lesson-panel{padding:15px;border-radius:15px;}
+    .lesson-actions{display:grid;grid-template-columns:1fr 1fr;}
+    .lesson-actions button{width:100%!important;}
+  }
+  @media(min-width:601px){.page{max-width:860px;}.starter-chips{max-width:680px;margin:auto;}}
+
+/* ===== V6 ANDROID UX ===== */
+:root{
+  --v6-accent:#2F6B5A;
+  --v6-accent-dark:#245343;
+}
+body{padding:18px 12px 92px; background:#f3efe6;}
+.page{max-width:860px;}
+.masthead{position:relative;}
+.home-view{display:none;}
+.view.active.home-view{display:block;}
+.home-hero{
+  background:linear-gradient(135deg,#2f6b5a,#3f806d);
+  color:white;border-radius:20px;padding:22px 20px;margin:12px 0 16px;
+  box-shadow:0 12px 28px rgba(47,107,90,.20);
+}
+.home-hero .eyebrow{color:rgba(255,255,255,.75);margin-bottom:8px}
+.home-hero h2{font-family:Fraunces,serif;font-size:28px;margin:0 0 6px}
+.home-hero p{margin:0;opacity:.9;line-height:1.45}
+.home-progress{margin-top:18px}
+.home-progress .bar{height:9px;background:rgba(255,255,255,.25);border-radius:99px;overflow:hidden}
+.home-progress .fill{height:100%;width:0;background:#fff;border-radius:99px;transition:width .3s}
+.home-progress-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px;opacity:.9}
+.today-card{
+ background:#fff;border:1px solid var(--paper-line);border-radius:18px;padding:18px;
+ box-shadow:var(--shadow-sm);margin-bottom:14px;
+}
+.today-card .tag{font:10px JetBrains Mono,monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--red)}
+.today-card h3{margin:6px 0 4px;font-size:21px}
+.today-card p{margin:0;color:var(--ink-soft);font-size:13px}
+.big-start{
+ width:100%;margin-top:14px;border:0;border-radius:13px;padding:14px 18px;
+ background:var(--ink);color:#fff;font-weight:700;font-size:15px;cursor:pointer;
+}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.home-action{
+ background:#fff;border:1px solid var(--paper-line);border-radius:17px;padding:17px 14px;
+ min-height:108px;text-align:left;cursor:pointer;box-shadow:var(--shadow-sm);
+ transition:transform .15s,box-shadow .15s;
+}
+.home-action:active{transform:scale(.98)}
+.home-action .ico{font-size:25px;display:block;margin-bottom:9px}
+.home-action strong{display:block;font-size:14px}.home-action span{font-size:12px;color:var(--ink-soft)}
+.home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.home-stat{background:rgba(255,255,255,.75);border:1px solid var(--paper-line);border-radius:14px;padding:12px;text-align:center}
+.home-stat b{display:block;font-size:20px}.home-stat span{font-size:10px;color:var(--ink-soft)}
+.bottom-nav{
+ position:fixed;z-index:50;left:50%;transform:translateX(-50%);bottom:10px;
+ width:min(680px,calc(100% - 20px));display:flex;gap:3px;padding:7px;
+ background:rgba(255,255,255,.94);backdrop-filter:blur(14px);
+ border:1px solid var(--paper-line);border-radius:18px;box-shadow:0 10px 35px rgba(31,42,55,.16);
+}
+.bottom-nav button{flex:1;border:0;background:transparent;color:var(--ink-soft);padding:8px 3px 7px;border-radius:12px;font-size:10px;cursor:pointer}
+.bottom-nav button .navico{display:block;font-size:19px;line-height:20px;margin-bottom:2px}
+.bottom-nav button.active{background:var(--teal-soft);color:var(--teal);font-weight:700}
+.setup.v6-hidden{display:none}
+@media(max-width:600px){
+  header.masthead{padding-bottom:12px;margin-bottom:8px}
+  .scoreboard{font-size:10px}
+  .tabs{display:none}
+  .setup{grid-template-columns:1fr;padding:14px;margin-bottom:14px}
+  .setup .field.full{grid-column:auto}
+  .api-row{flex-wrap:wrap}.api-row input{min-width:0;flex:1 1 100%}
+  .notebook,.rt-notebook,.vocab-notebook{border-radius:17px}
+  .notebook{padding:22px 13px 18px}.notebook::before{left:27px}
+  .thread,.empty-state{margin-left:12px}
+  .bubble{max-width:88%;font-size:14px}
+  .home-hero{padding:20px 17px}.home-hero h2{font-size:26px}
+  .home-stats{gap:7px}.home-stat{padding:10px 5px}
+  .install-btn{top:8px!important;right:8px!important}
+}
+@media(min-width:601px){
+ .bottom-nav{display:none}
+}
+
+
+/* ===== V7 MOBILE UX / CARD REDESIGN ===== */
+:root{
+  --bg:#f5f7f5;--surface:#fff;--surface-2:#f8faf9;--line:#e4e9e6;
+  --text:#18221e;--muted:#68756f;--accent:#2f6b5a;--accent-2:#e8f2ee;
+  --danger:#b84d46;--danger-soft:#fff0ee;--gold:#b5892e;--gold-soft:#fff7df;
+  --radius-xl:24px;--radius-lg:20px;--radius-md:16px;
+  --shadow-card:0 5px 18px rgba(24,34,30,.06);
+}
+body{background:linear-gradient(180deg,#f6f8f7 0%,#eef2ef 100%);padding:16px 12px 104px;color:var(--text)}
+.page{max-width:900px}
+.masthead{background:rgba(255,255,255,.82);border:1px solid var(--line)!important;border-radius:20px;padding:14px 15px!important;margin-bottom:12px!important;box-shadow:var(--shadow-card);position:sticky;top:8px;z-index:25;backdrop-filter:blur(16px)}
+.masthead h1{font-size:25px}.masthead .eyebrow{color:var(--accent);font-size:9px}.scoreboard{font-size:9px}
+.tabs{background:#edf2ef;border:1px solid #dfe7e2;border-radius:16px;padding:4px;margin:10px 0 14px}.tab-btn{min-height:44px;border-radius:12px;font-size:10px}.tab-btn.active{background:#fff;border-bottom:0!important;color:var(--accent);box-shadow:0 2px 8px rgba(24,34,30,.08)}
+.setup{border-radius:20px;box-shadow:var(--shadow-card);border-color:var(--line)}
+.view{min-height:0}.view.active{animation:fadeIn .18s ease}
+/* universal cards */
+.home-hero,.today-card,.home-action,.home-stat,.notebook,.rt-notebook,.vocab-notebook,.course-hero,.lesson-panel,.progress-hero,.progress-section,.progress-card,.errbook,.vocab-list,.manual-add,.vocab-stats,.vocab-mode-tabs,.lesson-card{border-color:var(--line)!important;box-shadow:var(--shadow-card)!important}
+.home-hero{background:linear-gradient(145deg,#285e4f,#3f816c);border:0!important;border-radius:var(--radius-xl);padding:24px 20px;box-shadow:0 12px 30px rgba(47,107,90,.18)!important}.home-hero h2{font-size:30px}.home-hero p{font-size:14px}
+.today-card{border-radius:var(--radius-lg);padding:19px}.today-card .tag{color:var(--accent);font-size:9px}.today-card h3{font-size:23px}.big-start{min-height:52px;border-radius:15px;background:var(--accent);box-shadow:0 7px 15px rgba(47,107,90,.18)}
+.home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.home-action{min-height:118px;border-radius:18px;padding:16px;display:flex;flex-direction:column;justify-content:center}.home-action .ico{font-size:28px}.home-action strong{font-size:16px;margin-bottom:3px}.home-action span{font-size:11px;line-height:1.35}.home-action:active{transform:translateY(1px);box-shadow:none!important}
+.home-stat{border-radius:16px;background:rgba(255,255,255,.9);padding:13px}.home-stat b{font-size:22px}
+/* conversation */
+.notebook{border-radius:var(--radius-xl);background:#fff;padding:20px 16px;min-height:48vh}.bubble{border-radius:18px!important;padding:12px 14px!important;box-shadow:0 2px 8px rgba(24,34,30,.05)}.starter-chips{gap:7px!important}.starter-chips button{min-height:42px!important;border-radius:13px!important;background:var(--surface-2)!important;border:1px solid var(--line)!important}.composer{position:sticky!important;bottom:86px;z-index:20;background:rgba(255,255,255,.94)!important;border:1px solid var(--line)!important;border-radius:18px!important;padding:7px!important;box-shadow:0 8px 25px rgba(24,34,30,.10)!important;backdrop-filter:blur(14px)}.composer textarea{border:0!important;background:transparent!important;min-height:46px!important;padding:11px!important}.icon-btn.mic,.send-btn{min-width:48px!important;min-height:48px!important;border-radius:14px!important}.send-btn{background:var(--accent)!important}
+/* repeat */
+.rt-difficulty{display:inline-flex;background:var(--gold-soft);color:#7b5d18;border:1px solid #eadcae;border-radius:999px;padding:7px 11px;font-size:11px;font-weight:700;margin-bottom:10px}.rt-notebook{border-radius:var(--radius-xl);padding:24px 18px;background:#fff}.sentence-label{text-align:center;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.sentence{font-size:clamp(26px,7vw,40px)!important;line-height:1.15!important;text-align:center!important;font-family:Fraunces,serif!important;margin:22px 0!important}.listen-row{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.ghost-btn{min-height:46px!important;border-radius:13px!important;border-color:var(--line)!important;background:var(--surface-2)!important}.mic-big{width:78px!important;height:78px!important;border-radius:50%!important;background:var(--accent)!important;box-shadow:0 9px 22px rgba(47,107,90,.2)!important;margin:20px auto 8px!important}.result{border-radius:16px!important;background:var(--surface-2)!important;border:1px solid var(--line)!important;padding:15px!important}.next-btn{min-height:48px!important;border-radius:14px!important;background:var(--accent)!important}
+/* vocab */
+.vocab-stats{display:grid!important;grid-template-columns:1fr 1fr;gap:9px;border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important}.vocab-stats>div{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center;box-shadow:var(--shadow-card)}.vocab-stats b{display:block;font-size:24px;color:var(--accent)}.vocab-mode-tabs{display:grid!important;grid-template-columns:1fr 1fr;border-radius:16px!important;padding:4px!important;background:#edf2ef!important}.vocab-mode-btn{min-height:44px!important;border-radius:12px!important}.vocab-notebook{border-radius:var(--radius-xl);padding:24px 17px;background:#fff}.card-front{font-size:clamp(28px,8vw,42px)!important;text-align:center!important;margin:22px 0 10px!important}.card-translation{text-align:center;font-size:25px!important}.reveal-btn{width:100%!important;min-height:50px!important;border-radius:14px!important;background:var(--accent)!important;color:#fff!important}.rating-row{display:grid!important;grid-template-columns:repeat(2,1fr);gap:8px!important;margin-top:12px}.rate-btn{min-height:48px!important;border-radius:14px!important;font-weight:700}.manual-add{border-radius:18px!important;padding:10px!important;background:#fff!important}.manual-add input{min-height:46px!important;border-radius:13px!important}.manual-add button{min-height:46px!important;border-radius:13px!important}
+.vocab-list{background:#fff;border-radius:18px;padding:16px}.vocab-list table{font-size:13px}.vocab-list td{padding:11px 6px!important;border-bottom:1px solid var(--line)!important}
+/* course */
+.course-hero,.progress-hero{border-radius:var(--radius-xl)!important;padding:20px!important;background:#fff!important}.course-progress{width:82px!important;height:82px!important;border:7px solid var(--accent-2)!important;border-top-color:var(--accent)!important}.lesson-grid{grid-template-columns:1fr!important;gap:9px!important}.lesson-card{position:relative;text-align:left;border-radius:18px!important;padding:16px!important;min-height:98px!important;background:#fff!important}.lesson-card h3{font-size:20px!important}.lesson-card .state{color:var(--accent);font-weight:700}.lesson-panel{border-radius:22px!important;padding:18px!important;background:#fff!important}.lesson-box{padding-top:16px!important}.lesson-word{padding:9px 11px!important;background:var(--surface-2)!important;border-color:var(--line)!important}.lesson-phrase{padding:13px 0!important;font-size:15px!important}.quiz-option{min-height:50px!important;border-radius:14px!important;padding:12px 14px!important;background:#fff!important}.quiz-option:active{transform:scale(.99)}
+/* progress / errors */
+.progress-hero{display:flex;align-items:center;gap:14px}.daily-goal{margin-left:auto}.progress-grid{grid-template-columns:repeat(2,1fr)!important;gap:9px!important}.progress-card{border-radius:17px!important;padding:15px!important;background:#fff!important}.progress-card b{font-size:28px!important;color:var(--accent)}.progress-section{border-radius:18px!important;background:#fff!important;padding:17px!important}.goal-controls{gap:8px!important}.goal-controls input{accent-color:var(--accent)}.next-step{border:1px solid var(--line);background:var(--surface-2);border-radius:14px;padding:14px;line-height:1.45}.errbook{background:#fff!important;border-radius:18px!important;padding:17px!important}.errbook li{padding:11px 0!important;border-bottom:1px solid var(--line)!important}
+/* install */
+.install-btn{border-radius:999px!important;min-height:40px!important;padding:8px 13px!important;background:var(--accent)!important;box-shadow:0 5px 15px rgba(47,107,90,.2)!important}
+
+/* ===== V8.3 VOCABOLARIO / RIPASSO ===== */
+.vocab-progress{margin:12px 0 16px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow-card)}
+.vocab-progress-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;margin-bottom:8px}.vocab-progress-head span:last-child{color:var(--accent)}
+.vocab-progress-bar{height:9px;background:var(--accent-2);border-radius:999px;overflow:hidden}.vocab-progress-fill{height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .25s ease}
+.vocab-card-count{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:9px}
+.vocab-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.vocab-quick button{min-height:44px;border:1px solid var(--line);border-radius:13px;background:var(--surface);font-weight:700;color:var(--text);cursor:pointer}.vocab-quick button.active{background:var(--accent-2);border-color:var(--accent);color:var(--accent)}
+.vocab-search{width:100%;min-height:46px;border:1px solid var(--line);border-radius:13px;padding:0 13px;background:var(--surface);color:var(--text);box-sizing:border-box;margin:10px 0}.vocab-list-empty{padding:22px 8px;text-align:center;color:var(--ink-soft)}
+@media(max-width:600px){.vocab-quick{grid-template-columns:1fr 1fr 1fr}.vocab-progress{padding:13px}.vocab-search{font-size:16px}}
+
+/* bottom nav */
+.bottom-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:max(10px,env(safe-area-inset-bottom));z-index:60;width:min(680px,calc(100% - 16px));display:flex;gap:3px;padding:6px;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 35px rgba(24,34,30,.16)}.bottom-nav button{min-height:54px;padding:6px 2px;border-radius:15px;font-size:9px;font-weight:600}.bottom-nav button .navico{font-size:20px}.bottom-nav button.active{background:var(--accent-2);color:var(--accent)}
+@media(max-width:600px){body{padding:8px 9px 96px}.masthead{top:4px}.masthead .scoreboard{display:none}.home-hero{padding:22px 17px}.home-grid{gap:8px}.home-action{min-height:110px;padding:14px}.home-action .ico{font-size:25px}.listen-row{grid-template-columns:1fr!important}.progress-hero{display:block}.daily-goal{margin:14px 0 0}.progress-grid{grid-template-columns:1fr 1fr!important}.composer{bottom:76px}.bottom-nav{bottom:max(7px,env(safe-area-inset-bottom));}.setup{border-radius:18px}.field-help{line-height:1.45}.api-row{gap:7px}.api-row button{flex:1}.lesson-head{align-items:center}.lesson-head .ghost-btn{min-width:76px}.vocab-list{overflow:hidden}.vocab-list table{display:block;overflow-x:auto;white-space:nowrap}.rating-row{grid-template-columns:1fr 1fr!important}}
+@media(min-width:601px){.bottom-nav{display:none}}
+
+/* ===== V8 CENTRALIZED SETTINGS ===== */
+.masthead-actions{display:flex;align-items:center;gap:12px}.settings-top-btn{width:46px;height:46px;border:1px solid var(--line);border-radius:15px;background:#fff;box-shadow:var(--shadow-card);font-size:20px;cursor:pointer;transition:.15s}.settings-top-btn:active{transform:scale(.96)}
+.settings-hero{display:flex;align-items:center;gap:16px;background:linear-gradient(145deg,#244f44,#3d7d68);color:#fff;border-radius:var(--radius-xl);padding:22px 20px;margin-bottom:12px;box-shadow:0 12px 30px rgba(47,107,90,.18)}.settings-hero .eyebrow{color:#d9efe6}.settings-hero h2{margin:3px 0 5px;font-size:25px}.settings-hero p{margin:0;color:rgba(255,255,255,.82);font-size:13px;line-height:1.45}.settings-hero-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:17px;background:rgba(255,255,255,.16);font-size:25px;flex:0 0 auto}.settings-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-xl);padding:18px;margin-bottom:12px;box-shadow:var(--shadow-card)}.settings-section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:13px}.settings-section-head h3{margin:3px 0 0;font-size:18px}.settings-kicker{font:9px JetBrains Mono,monospace;letter-spacing:.14em;color:var(--accent)}.settings-badge{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:var(--surface-2)}.settings-status{color:#c58b2e;font-size:15px}.settings-status.ok{color:var(--accent)}.settings-status.warn{color:#c58b2e}.settings-help{margin:8px 0 16px;color:var(--muted);font-size:12px;line-height:1.45}.settings-field{display:flex;flex-direction:column;gap:7px;margin-top:14px}.settings-field:first-of-type{margin-top:0}.settings-field label{font-size:10px}.settings-field input,.settings-field select{width:100%;min-height:48px;background:#fafcfb}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.settings-toggle{display:flex!important;align-items:center!important;justify-content:space-between;gap:16px!important;padding:13px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer}.settings-toggle strong{display:block;font-size:14px}.settings-toggle small{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.35}.settings-toggle input{position:absolute;opacity:0;pointer-events:none}.switch-ui{width:48px;height:28px;border-radius:999px;background:#d8dfdc;position:relative;flex:0 0 auto;transition:.2s}.switch-ui:after{content:'';position:absolute;width:22px;height:22px;top:3px;left:3px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.15);transition:.2s}.settings-toggle input:checked + .switch-ui{background:var(--accent)}.settings-toggle input:checked + .switch-ui:after{transform:translateX(20px)}.settings-range{padding-top:15px}.range-head{display:flex;justify-content:space-between;font-size:13px}.range-head b{color:var(--accent);font-family:JetBrains Mono,monospace;font-size:12px}.settings-range input{width:100%;accent-color:var(--accent);margin:14px 0 5px}.range-labels{display:flex;justify-content:space-between;color:var(--muted);font-size:10px}.settings-local{background:#f4f8f6}.settings-local p{margin:0;color:var(--muted);font-size:12px;line-height:1.55}.settings-local code{background:#e6efeb;border-radius:5px;padding:2px 4px;font-size:11px}.optional{font-family:Inter,sans-serif;text-transform:none;letter-spacing:0;font-size:10px;color:var(--muted)}
+@media(max-width:600px){.masthead-actions .scoreboard{display:none}.settings-top-btn{width:44px;height:44px}.settings-hero{padding:19px 16px}.settings-hero-icon{width:46px;height:46px}.settings-hero h2{font-size:22px}.settings-card{padding:16px;border-radius:20px}.settings-grid{grid-template-columns:1fr}.settings-card .api-row{display:grid;grid-template-columns:1fr 1fr}.settings-card .api-row input{grid-column:1/-1}.settings-card .api-row button{min-height:46px}.bottom-nav{gap:1px}.bottom-nav button{min-width:0;font-size:8px}.bottom-nav button .navico{font-size:18px}.bottom-nav button span:last-child{white-space:nowrap;display:block;overflow:hidden;text-overflow:ellipsis}.settings-toggle{min-height:58px}}
+
+
+/* ===== V8.2 UX POLISH ===== */
+.home-hero,.today-card,.home-action,.home-stat,.notebook,.rt-notebook,.vocab-notebook,.course-hero,.settings-card,.errbook{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.home-action:hover,.settings-action:hover,.theme-btn:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(24,34,30,.08)}
+.home-action:focus-visible,.settings-action:focus-visible,.theme-btn:focus-visible,.ghost-btn:focus-visible,.send-btn:focus-visible,.mic-big:focus-visible{outline:3px solid rgba(47,107,90,.25);outline-offset:2px}
+.conversation-tools{display:flex;gap:8px;margin:10px 0 0;flex-wrap:wrap}
+.conversation-tools button{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:10px 12px;font-size:12px;font-weight:600;cursor:pointer;min-height:42px}
+.conversation-tools button:active{transform:scale(.98)}
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.theme-btn{border:1px solid var(--line);background:var(--surface-2);border-radius:14px;padding:12px 8px;min-height:68px;display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;color:var(--text);font-weight:700;cursor:pointer}
+.theme-btn span{font-size:11px;font-weight:600}
+.theme-btn.active{border-color:var(--accent);background:var(--accent-2);color:var(--accent);box-shadow:0 0 0 2px rgba(47,107,90,.08)}
+.backup-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.settings-action{border:1px solid var(--line);background:var(--surface-2);color:var(--text);border-radius:14px;padding:13px 12px;min-height:48px;font-weight:700;cursor:pointer;text-align:center}
+.import-label{display:flex;align-items:center;justify-content:center}
+.settings-small{font-size:11px;color:var(--muted);margin-top:8px;min-height:16px}
+.rt-score{display:flex;align-items:center;gap:12px;margin:14px 0;padding:13px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+.rt-score-ring{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) 0deg,#e5ebe7 0deg);position:relative;flex:0 0 auto}
+.rt-score-ring::after{content:"";position:absolute;inset:5px;border-radius:50%;background:#fff}
+.rt-score-ring b{position:relative;z-index:1;font-size:15px}
+.rt-score-copy strong{display:block;font-size:14px}.rt-score-copy span{font-size:11px;color:var(--muted)}
+/* dark theme */
+body.theme-dark{--surface:#18211e;--surface-2:#202b27;--text:#edf5f1;--muted:#a9b8b1;--line:#33423c;--accent-2:#233c33;background:#0f1614;color:var(--text)}
+body.theme-dark .masthead,body.theme-dark .bottom-nav,body.theme-dark .home-action,body.theme-dark .home-stat,body.theme-dark .today-card,body.theme-dark .settings-card,body.theme-dark .notebook,body.theme-dark .rt-notebook,body.theme-dark .vocab-notebook,body.theme-dark .errbook,body.theme-dark .course-hero,body.theme-dark .conversation-tools button,body.theme-dark .theme-btn,body.theme-dark .settings-action,body.theme-dark .rt-score{background:var(--surface);color:var(--text);border-color:var(--line)}
+body.theme-dark input[type=text],body.theme-dark input[type=password],body.theme-dark select,body.theme-dark textarea{background:var(--surface-2);color:var(--text);border-color:var(--line)}
+body.theme-dark .today-card p,body.theme-dark .home-action span,body.theme-dark .home-stat span,body.theme-dark .empty-state,body.theme-dark .setup-note{color:var(--muted)}
+body.theme-dark .rt-score-ring::after{background:var(--surface)}
+@media(max-width:600px){
+  body{padding:10px 9px 108px}
+  .page{max-width:100%}
+  .masthead{top:5px!important;border-radius:17px!important}
+  .home-grid{gap:9px}.home-action{min-height:96px;padding:14px 12px}
+  .home-action .ico{font-size:22px;margin-bottom:6px}
+  .conversation-tools{display:grid;grid-template-columns:1fr 1fr}
+  .conversation-tools button{width:100%}
+  .composer{position:sticky;bottom:84px;z-index:20;background:rgba(246,248,247,.92);backdrop-filter:blur(12px);padding:8px;border:1px solid var(--line);border-radius:16px}
+  .theme-grid{gap:6px}.theme-btn{min-height:62px;padding:9px 5px}
+  .backup-grid{grid-template-columns:1fr}
+  .rt-notebook{padding:22px 15px 18px}
+  .sentence{font-size:25px!important;line-height:1.25!important}
+  .mic-big{width:78px!important;height:78px!important}
+  .bottom-nav{bottom:max(8px,env(safe-area-inset-bottom));width:calc(100% - 12px);padding:6px 4px;border-radius:17px}
+  .bottom-nav button{min-height:54px;padding:6px 1px}.bottom-nav button .navico{font-size:18px}
+  .bottom-nav button span:last-child{font-size:9px}
+}
+
+/* ===== V8.4 CORSO A1 UX ===== */
+.lesson-stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0}.lesson-stepper span{font-size:10px;text-align:center;padding:8px 4px;border-radius:999px;background:var(--surface-2,#f4f6f5);color:var(--ink-soft);font-weight:700}.lesson-stepper span.active{background:var(--accent,#2f6f61);color:#fff}.lesson-tip{font-size:12px;color:var(--ink-soft);margin:-4px 0 10px}.lesson-word{display:flex!important;flex-direction:column;align-items:flex-start;gap:2px;cursor:pointer}.lesson-word small{font-size:10px;color:var(--ink-soft)}.lesson-phrase{width:100%;display:grid;grid-template-columns:1fr auto;text-align:left;gap:3px 8px;cursor:pointer;background:var(--paper,#fff)}.lesson-phrase small{grid-column:1;color:var(--ink-soft)}.lesson-phrase span{grid-column:2;grid-row:1/3;align-self:center}.lesson-card.locked{opacity:.58;cursor:not-allowed}.lesson-card.locked:active{transform:none}.speaking-box{background:linear-gradient(180deg,var(--surface-2,#f5f7f6),var(--paper,#fff))}.speak-practice-btn{width:100%;min-height:54px;border:0;border-radius:16px;background:var(--ink,#17342f);color:#fff;font-size:16px;font-weight:800;cursor:pointer}.speak-practice-btn:active{transform:scale(.99)}.lesson-actions .next-btn:disabled{opacity:.45;cursor:not-allowed}@media(max-width:600px){.lesson-stepper span{font-size:9px;padding:7px 2px}.lesson-box{margin-top:12px}.lesson-word{min-height:48px!important}.lesson-phrase{min-height:58px!important;padding:12px!important}.speaking-box{padding:15px!important}}
+</style>
+
+<style id="v86-personalized-css">
+.path-banner{margin:10px 0 14px;padding:14px 15px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,var(--surface),var(--surface-2));display:flex;gap:12px;align-items:center}.path-banner .path-icon{font-size:28px}.path-banner h3{margin:0 0 3px;font-size:15px}.path-banner p{margin:0;color:var(--ink-soft);font-size:12px;line-height:1.4}.lesson-card.personalized{border-left:5px solid var(--accent)!important}.lesson-card.recommended{outline:2px solid var(--accent-2);outline-offset:1px}.lesson-card .level-tag{display:inline-block;margin-top:6px;padding:4px 7px;border-radius:999px;background:var(--surface-2);font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}.personal-note{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:12px;color:var(--ink-soft)}
+@media(max-width:600px){.path-banner{padding:13px}.path-banner .path-icon{font-size:24px}}
+</style>
+</head>
+<body>
+<button class="install-btn" id="installBtn">＋ Installa app</button>
+<div id="globalErrorBanner"></div>
+<div class="page">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Versione 8 · mobile Android</div>
+      <h1>Quaderno d'Inglese</h1>
+    </div>
+    <div class="masthead-actions">
+      <div class="scoreboard">
+        <div><b id="streakVal">0</b> corrette di fila</div>
+        <div id="rtDifficultyTop">Difficoltà ripetizione: 1/10</div>
+      </div>
+      <button class="settings-top-btn" data-go="settings" aria-label="Apri impostazioni" title="Impostazioni">⚙️</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="home">Home</button>
+    <button class="tab-btn" data-tab="conv">Conversazione</button>
+    <button class="tab-btn" data-tab="tutor">🧑‍🏫 Tutor</button>
+    <button class="tab-btn" data-tab="rt">Ripeti e traduci</button>
+    <button class="tab-btn" data-tab="vocab">Vocabolario</button>
+    <button class="tab-btn" data-tab="progress">Progressi</button>
+    <button class="tab-btn" data-tab="course">Corso A1</button>
+    <button class="tab-btn" data-tab="settings">⚙ Impostazioni</button>
+  </div>
+
+  <!-- Gemini e le preferenze sono state spostate nella scheda Impostazioni. -->
+  <!-- ===== HOME V6 ===== -->
+  <div class="view active home-view" id="view-home">
+    <section class="home-hero">
+      <div class="eyebrow">Il tuo inglese, un passo alla volta</div>
+      <h2>Continua a imparare 👋</h2>
+      <p>Fai una piccola sessione oggi. La costanza conta più della perfezione.</p>
+      <div class="home-progress">
+        <div class="home-progress-row"><span>Progresso A1</span><b id="homeCoursePct">0%</b></div>
+        <div class="bar"><div class="fill" id="homeCourseFill"></div></div>
+      </div>
+    </section>
+    <section class="today-card">
+      <div class="tag">🎯 Lezione di oggi</div>
+      <h3 id="homeLessonTitle">Presentarsi</h3>
+      <p id="homeLessonMeta">10 minuti · Livello A1</p>
+      <button class="big-start" data-go="course">▶ Inizia la lezione</button>
+    </section>
+    <div class="home-grid">
+      <button class="home-action" data-go="conv"><span class="ico">🗣️</span><strong>Parla</strong><span>Conversa con Gemini</span></button>
+      <button class="home-action tutor-home-action" data-go="tutor"><span class="ico">🧑‍🏫</span><strong>AI Tutor</strong><span>Allenamento personalizzato</span></button>
+      <button class="home-action" data-go="rt"><span class="ico">🎤</span><strong>Pronuncia</strong><span>Ascolta e ripeti</span></button>
+      <button class="home-action" data-go="vocab"><span class="ico">🧠</span><strong>Ripasso</strong><span>Rivedi le parole</span></button>
+      <button class="home-action" data-go="course"><span class="ico">📚</span><strong>Corso A1</strong><span>Lezioni guidate</span></button>
+    </div>
+    <div class="home-stats">
+      <div class="home-stat"><b id="homeStreak">0</b><span>🔥 giorni</span></div>
+      <div class="home-stat"><b id="homeWords">0</b><span>📖 parole</span></div>
+      <div class="home-stat"><b id="homeCorrect">0</b><span>✅ corrette</span></div>
+    </div>
+  </div>
+
+  <!-- ===== V8.8 AI TUTOR VOCALE ===== -->
+  <div class="view" id="view-tutor">
+    <section class="tutor-hero">
+      <div class="tutor-hero-icon">🧑‍🏫</div>
+      <div><div class="eyebrow">IL TUO INSEGNANTE PERSONALE</div><h2>AI Tutor</h2><p id="tutorGreeting">Ti aiuto a migliorare partendo dai tuoi errori e dal tuo livello.</p></div>
+    </section>
+    <section class="tutor-memory-card">
+      <div class="tutor-memory-head"><div><span class="settings-kicker">MEMORIA</span><h3>Il tuo percorso</h3></div><span id="tutorLevelBadge" class="tutor-badge">A1</span></div>
+      <div class="tutor-memory-grid">
+        <div><b id="tutorLessons">0</b><span>lezioni</span></div><div><b id="tutorErrors">0</b><span>errori da migliorare</span></div><div><b id="tutorWords">0</b><span>parole</span></div>
+      </div>
+      <div id="tutorFocus" class="tutor-focus">🎯 Prepariamo una sessione personalizzata.</div>
+    </section>
+    <section class="tutor-chat" id="tutorChat">
+      <div class="tutor-empty" id="tutorEmpty">Premi <b>Inizia sessione</b> e il tutor analizzerà il tuo livello, le lezioni completate e gli errori recenti.</div>
+    </section>
+    <div class="tutor-quick">
+      <button type="button" data-tutor-prompt="Facciamo una breve conversazione in inglese adatta al mio livello.">🗣️ Conversazione</button>
+      <button type="button" data-tutor-prompt="Fammi 5 esercizi sugli errori che commetto più spesso.">🧩 5 esercizi</button>
+      <button type="button" data-tutor-prompt="Fammi ripassare 5 parole che devo ancora imparare.">🧠 Ripasso</button>
+    </div>
+    <div class="tutor-composer">
+      <textarea id="tutorInput" placeholder="Scrivi oppure parla…"></textarea>
+      <button class="icon-btn mic" id="tutorMic" aria-label="Parla con il tutor">🎤</button>
+      <button class="send-btn" id="tutorSend">Invia</button>
+    </div>
+    <div class="tutor-voice-bar">
+      <button type="button" id="tutorVoiceMode">🎙️ Modalità vocale</button>
+      <button type="button" id="tutorListen" disabled>🔊 Ascolta</button>
+      <span id="tutorVoiceStatus">Voce disattivata</span>
+    </div>
+    <div class="tutor-actions"><button class="big-start" id="tutorStart">▶ Inizia sessione</button><button class="ghost-btn" id="tutorReset">🧹 Nuova sessione</button></div>
+    <div class="status-line" id="tutorStatus"></div>
+  </div>
+
+  <!-- ===== VISTA CONVERSAZIONE ===== -->
+  <div class="view" id="view-conv">
+    <div class="notebook" id="notebook">
+      <div class="thread" id="thread"></div>
+      <div class="empty-state" id="emptyState">Scrivi (o detta) la tua prima frase in inglese qui sotto per iniziare. L'insegnante corregge solo dopo aver letto la frase intera.</div>
+      <div class="starter-chips" id="starterChips"><button type="button" data-starter="Hello! My name is Mic. I want to learn English.">👋 Presentarmi</button><button type="button" data-starter="I would like to practice English about travel.">✈️ Viaggiare</button><button type="button" data-starter="Can we practice English for everyday conversations?">💬 Conversazione</button></div>
+      <div class="conversation-tools"><button type="button" id="clearConversationBtn">🧹 Nuova conversazione</button><button type="button" id="speakLastBtn">🔊 Ascolta ultima risposta</button></div>
+    </div>
+    <div class="composer">
+      <textarea id="composerInput" placeholder="Write your sentence in English..."></textarea>
+      <button class="icon-btn mic" id="micBtnConv" title="Detta la frase" aria-label="Microfono">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <button class="send-btn" id="sendBtn">Invia</button>
+    </div>
+    <div class="status-line" id="statusLineConv"></div>
+  </div>
+
+  <!-- ===== VISTA RIPETI E TRADUCI ===== -->
+  <div class="view" id="view-rt">
+    <div class="rt-difficulty" id="rtDifficultyInline">Difficoltà: 1/10</div>
+    <div class="rt-notebook">
+      <div class="sentence-label">Ripeti questa frase ad alta voce</div>
+      <div class="sentence" id="sentenceText">—</div>
+      <div class="listen-row">
+        <button class="ghost-btn" id="listenBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          Riascolta
+        </button>
+        <button class="ghost-btn" id="genBtn">Genera prima frase</button>
+        <button class="ghost-btn" id="rtTranslateBtn" type="button">🇮🇹 Traduzione</button>
+      </div>
+      <button class="mic-big" id="micBtnRt" title="Premi e parla" aria-label="Microfono">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <div class="mic-hint" id="micHint">Premi il microfono e ripeti la frase</div>
+      <div class="result" id="resultBox" style="display:none;"></div>
+      <div class="next-row" id="nextRow" style="display:none;">
+        <button class="next-btn" id="nextBtn">Prossima frase</button>
+      </div>
+    </div>
+    <div class="status-line" id="statusLineRt"></div>
+  </div>
+
+  <!-- ===== VISTA VOCABOLARIO ===== -->
+  <div class="view" id="view-vocab">
+    <div class="vocab-stats">
+      <div><b id="dueCount">0</b> da ripassare oggi</div>
+      <div><b id="totalCount">0</b> parole totali</div>
+    </div>
+    <div class="vocab-progress">
+      <div class="vocab-progress-head"><span>Ripasso di oggi</span><span id="vocabTodayProgress">0%</span></div>
+      <div class="vocab-progress-bar"><div class="vocab-progress-fill" id="vocabTodayFill"></div></div>
+      <div class="vocab-card-count" id="vocabQueueLabel">0 parole da ripassare</div>
+    </div>
+    <div class="vocab-quick" aria-label="Filtra vocabolario">
+      <button type="button" class="active" data-vfilter="due">Da fare</button>
+      <button type="button" data-vfilter="all">Tutte</button>
+      <button type="button" data-vfilter="hard">Difficili</button>
+    </div>
+
+    <div class="vocab-mode-tabs">
+      <button type="button" class="vocab-mode-btn active" data-vocab-mode="study" id="vocabModeStudy">Studio passo-passo</button>
+      <button type="button" class="vocab-mode-btn" data-vocab-mode="speak" id="vocabModeSpeak">Ascolto e parlato</button>
+    </div>
+    <p class="vocab-mode-hint" id="vocabModeHint">Studio: ascolti l’inglese, vedi la traduzione e valuti quanto la ricordavi.</p>
+
+    <div class="vocab-notebook" id="vocabNotebook">
+      <div id="vocabEmpty" class="vocab-empty">Non hai ancora parole da ripassare. Fai un po' di conversazione o di "Ripeti e traduci", oppure aggiungine una qui sotto.</div>
+      <div id="vocabCard" style="display:none; width:100%;">
+        <div class="card-label" id="cardLabel">Traduci / ricorda</div>
+        <div class="card-front" id="cardFront">—</div>
+        <button class="speak-btn" id="cardSpeakBtn" title="Ascolta la pronuncia" style="font-size:20px; margin-left:0;">🔊</button>
+        <div class="card-note" id="cardNote"></div>
+        <button class="reveal-btn" id="revealBtn">Mostra risposta</button>
+        <div class="card-back" id="cardBack">
+          <div class="card-translation" id="cardTranslation"></div>
+          <div class="card-source" id="cardSource"></div>
+        </div>
+        <div class="speak-practice-row" id="speakPracticeRow" style="display:none;">
+          <button class="mic-big" id="vocabMicBtn" title="Ripeti ad alta voce" aria-label="Microfono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </button>
+          <div class="mic-hint" id="vocabMicHint">Ascolta, poi ripeti la parola/frase in inglese</div>
+          <div class="speak-practice-result" id="vocabSpeakResult"></div>
+        </div>
+        <div class="rating-row" id="ratingRow" style="display:none;">
+          <button class="rate-btn again" data-q="0">Ancora</button>
+          <button class="rate-btn hard" data-q="3">Difficile</button>
+          <button class="rate-btn good" data-q="4">Bene</button>
+          <button class="rate-btn easy" data-q="5">Facile</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="manual-add">
+      <input type="text" id="manualFront" placeholder="Parola/espressione in inglese">
+      <input type="text" id="manualBack" placeholder="Traduzione in italiano">
+      <button id="manualAddBtn">Aggiungi</button>
+    </div>
+
+    <div class="manual-add" style="margin-top:8px;">
+      <button class="ghost-btn" id="importBtn" type="button" style="flex:1; width:100%; justify-content:center;">
+        📚 Importa mazzo Oxford dal dispositivo
+      </button>
+      <input id="oxfordFileInput" type="file" accept=".json,.js,.csv,.txt" hidden>
+    </div>
+    <div class="status-line" id="statusLineVocab"></div>
+
+    <input class="vocab-search" id="vocabSearch" type="search" placeholder="🔎 Cerca una parola..." autocomplete="off">
+    <div class="vocab-list">
+      <h2 id="vocabListTitle">Tutte le voci</h2>
+      <table id="vocabTable"><tbody></tbody></table>
+    </div>
+  </div>
+
+  <div class="errbook">
+    <h2>Quaderno errori <span class="count" id="errCount">0 voci</span></h2>
+    <ul id="errList"></ul>
+    <div class="empty" id="errEmpty">Qui compariranno le parole ed espressioni da ripassare, raccolte da entrambi i moduli.</div>
+  </div>
+
+  <!-- ===== VISTA CORSO A1 ===== -->
+  <div class="view" id="view-course">
+    <div class="course-hero">
+      <div>
+        <div class="eyebrow">Percorso guidato</div>
+        <h2>Corso A1 · 7 giorni</h2>
+        <p>Una lezione breve al giorno: impara, parla, controlla e ripassa.</p>
+      </div>
+      <div class="course-progress"><b id="courseProgressPct">0%</b><span>completato</span></div>
+    </div>
+    <div class="path-banner" id="personalPathBanner">
+      <div class="path-icon">🎯</div><div><h3 id="pathTitle">Percorso personalizzato</h3><p id="pathText">Completa il test iniziale per adattare il percorso al tuo livello.</p></div>
+    </div>
+    <div class="personal-note" id="personalPathNote" style="display:none"></div>
+    <div class="lesson-grid" id="lessonGrid"></div>
+    <div class="lesson-panel" id="lessonPanel" style="display:none;">
+      <div class="lesson-head"><div><div class="eyebrow" id="lessonDay">Giorno 1</div><h2 id="lessonTitle">Presentarsi</h2></div><button class="ghost-btn" id="closeLesson">Chiudi</button></div>
+      <p class="lesson-goal" id="lessonGoal"></p>
+      <div class="lesson-stepper" id="lessonStepper"><span class="active">1 Impara</span><span>2 Ascolta</span><span>3 Controlla</span><span>4 Completa</span></div>
+      <div class="lesson-box"><h3>Parole chiave</h3><p class="lesson-tip">Tocca una parola per ascoltarla.</p><div class="lesson-words" id="lessonWords"></div></div>
+      <div class="lesson-box"><h3>Frasi modello</h3><div id="lessonPhrases"></div></div>
+      <div class="lesson-box speaking-box"><h3>🗣️ Prova a dirlo</h3><p id="speakingPrompt">Ripeti una frase della lezione ad alta voce.</p><button class="speak-practice-btn" id="lessonSpeakBtn">🎤 Parla</button><div id="lessonSpeakFeedback" class="quiz-feedback"></div></div>
+      <div class="lesson-box quiz-box"><h3>3 · Controllo rapido</h3><p id="quizQuestion"></p><div id="quizOptions"></div><div id="quizFeedback" class="quiz-feedback"></div></div>
+      <div class="lesson-actions"><button class="next-btn" id="speakLessonBtn">🔊 Ascolta tutto</button><button class="next-btn" id="completeLessonBtn" disabled>✓ Completa lezione</button></div>
+    </div>
+  </div>
+
+  <!-- ===== VISTA PROGRESSI ===== -->
+  <div class="view" id="view-progress">
+    <div class="progress-hero">
+      <div>
+        <div class="eyebrow">Il tuo percorso</div>
+        <h2>Piccoli passi, ogni giorno.</h2>
+        <p id="progressMessage">Completa una sessione per aggiornare il tuo progresso.</p>
+      </div>
+      <div class="daily-goal">
+        <div class="goal-ring" id="goalRing"><span id="goalPercent">0%</span></div>
+        <div><b id="goalDone">0</b> / <span id="goalTarget">15</span> minuti</div>
+      </div>
+    </div>
+    <div class="progress-grid">
+      <div class="progress-card"><span>Frasi corrette</span><b id="statCorrect">0</b><small>senza errori</small></div>
+      <div class="progress-card"><span>Errori raccolti</span><b id="statErrors">0</b><small>da ripassare</small></div>
+      <div class="progress-card"><span>Parole</span><b id="statWords">0</b><small>nel vocabolario</small></div>
+      <div class="progress-card"><span>Sessioni</span><b id="statSessions">0</b><small>giorni di studio</small></div>
+    </div>
+    <div class="progress-section">
+      <h2>Obiettivo di oggi</h2>
+      <div class="goal-controls">
+        <button class="ghost-btn" id="goalMinus">− 5 min</button>
+        <input id="goalSlider" type="range" min="5" max="60" step="5" value="15" aria-label="Obiettivo giornaliero in minuti">
+        <button class="ghost-btn" id="goalPlus">+ 5 min</button>
+      </div>
+      <p class="progress-note">L'app misura il tempo delle attività quando interagisci con conversazione, ripetizione e vocabolario. I dati restano sul dispositivo.</p>
+    </div>
+    <div class="progress-section">
+      <h2>Prossimo passo consigliato</h2>
+      <div class="next-step" id="nextStep">Inizia con una frase in inglese nella scheda Conversazione.</div>
+      <button class="next-btn" id="goNextStep">Vai all'attività</button>
+    </div>
+  </div>
+
+  <!-- ===== VISTA IMPOSTAZIONI ===== -->
+  <div class="view" id="view-settings">
+    <section class="settings-hero">
+      <div class="settings-hero-icon">⚙️</div>
+      <div>
+        <div class="eyebrow">Impostazioni centralizzate</div>
+        <h2>Tutto in un unico posto</h2>
+        <p>Configura Gemini, livello, argomento e audio senza ripetere queste opzioni nelle altre schede.</p>
+      </div>
+    </section>
+    <section class="settings-card">
+      <div class="settings-section-head"><div><span class="settings-kicker">GEMINI</span><h3>Connessione</h3></div><div class="settings-status" id="settingsStatusDot">●</div></div>
+      <div class="backend-status" id="backendStatus">Pronto per Gemini personale</div>
+      <p class="settings-help">Questa versione è pensata per il tuo uso personale: Gemini viene chiamato direttamente dal dispositivo con la chiave che inserisci qui sotto.</p>
+      <div class="settings-field">
+        <label for="mobileApiKey">Chiave Gemini personale (Android)</label>
+        <div class="api-row"><input type="password" id="mobileApiKey" autocomplete="off" placeholder="Incolla la tua API key solo per uso personale"><button type="button" class="ghost-btn" id="saveApiKey">Salva sul dispositivo</button><button type="button" class="ghost-btn" id="clearApiKey">Cancella</button></div>
+        <small class="field-help">⚠️ La chiave viene salvata solo nel browser di questo dispositivo. Usala solo per uso personale.</small>
+      </div>
+      <div class="settings-grid">
+        <div class="settings-field"><label for="model">Modello Gemini</label><input type="text" id="model" value="gemini-3.6-flash"></div>
+        <div class="settings-field"><label for="level">Livello inglese</label><select id="level"><option value="base" selected>Base</option><option value="intermedio">Intermedio</option><option value="avanzato">Avanzato</option></select></div>
+      </div>
+      <div class="settings-field"><label for="topic">Argomento conversazione <span class="optional">facoltativo</span></label><input type="text" id="topic" placeholder="es. la spesa, il lavoro, un viaggio..."></div>
+    </section>
+    <section class="settings-card">
+      <div class="settings-section-head"><div><span class="settings-kicker">AUDIO</span><h3>Ascolto e lettura</h3></div><span class="settings-badge">🔊</span></div>
+      <label class="settings-toggle"><span><strong>Lettura automatica</strong><small>Legge automaticamente le risposte dell'insegnante.</small></span><input type="checkbox" id="autoSpeak" checked><span class="switch-ui"></span></label>
+      <div class="settings-range"><div class="range-head"><span>Velocità voce</span><b id="rateVal">0.92×</b></div><input type="range" id="speechRate" min="0.6" max="1.3" step="0.05" value="0.92" aria-label="Velocità della voce"><div class="range-labels"><span>Più lenta</span><span>Normale</span><span>Più veloce</span></div></div>
+    </section>
+    <section class="settings-card settings-local">
+      <div class="settings-section-head"><div><span class="settings-kicker">PRIVACY</span><h3>Dove vengono salvati i dati?</h3></div><span class="settings-badge">🔒</span></div>
+      <p>I progressi, il vocabolario, le impostazioni e la chiave Gemini personale restano nel browser di questo dispositivo. Non è richiesto alcun server Node.js.</p>
+    </section>
+    <section class="settings-card">
+      <div class="settings-section-head"><div><span class="settings-kicker">ASPETTO</span><h3>Personalizza l'app</h3></div><span class="settings-badge">🎨</span></div>
+      <div class="theme-grid" role="group" aria-label="Tema">
+        <button type="button" class="theme-btn" data-theme-choice="light">☀️<span>Chiaro</span></button>
+        <button type="button" class="theme-btn" data-theme-choice="dark">🌙<span>Scuro</span></button>
+        <button type="button" class="theme-btn" data-theme-choice="system">📱<span>Sistema</span></button>
+      </div>
+    </section>
+    <section class="settings-card">
+      <div class="settings-section-head"><div><span class="settings-kicker">DATI</span><h3>Backup e ripristino</h3></div><span class="settings-badge">💾</span></div>
+      <p>Salva progressi, impostazioni e vocabolario in un file sul telefono. Utile quando cambi dispositivo.</p>
+      <div class="backup-grid">
+        <button type="button" class="settings-action" id="exportDataBtn">⬇️ Esporta dati</button>
+        <label class="settings-action import-label">⬆️ Importa dati<input type="file" id="importDataInput" accept="application/json,.json" hidden></label>
+      </div>
+      <div class="settings-small" id="backupStatus" aria-live="polite"></div>
+    </section>
+  </div>
+
+
+</div>
+
+<script>
+window.addEventListener('error', function(e){
+  var b = document.getElementById('globalErrorBanner');
+  if(b){ b.style.display = 'block'; b.textContent = 'Errore: ' + e.message + ' (riga ' + e.lineno + ')'; }
+});
+window.addEventListener('unhandledrejection', function(e){
+  var b = document.getElementById('globalErrorBanner');
+  if(b){ b.style.display = 'block'; b.textContent = 'Errore: ' + (e.reason && e.reason.message ? e.reason.message : e.reason); }
+});
+
+/* ============ STATO CONDIVISO ============ */
+let errorBook = []; // {right, why, source}
+let correctStreak = 0;
+let rtDifficulty = 1;
+let rtTotal = 0;
+
+// Progressi locali: nessun account e nessun server.
+const PROGRESS_KEY = 'quaderno_progress_v2';
+let progress = loadProgress();
+function loadProgress(){
+  try{
+    const p = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '{}');
+    return Object.assign({
+      sessions: 0, correct: 0, errors: 0, minutes: 0,
+      goal: 15, lastDay: '', todayMinutes: 0
+    }, p);
+  }catch(_){ return {sessions:0,correct:0,errors:0,minutes:0,goal:15,lastDay:'',todayMinutes:0}; }
+}
+function saveProgress(){
+  try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress)); }catch(_){}
+}
+function todayLocalISO(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function touchSession(){
+  const today = todayLocalISO();
+  if(progress.lastDay !== today){
+    progress.lastDay = today;
+    progress.todayMinutes = 0;
+    progress.sessions += 1;
+  }
+  saveProgress();
+  renderProgress();
+}
+function addStudyMinutes(n){
+  touchSession();
+  progress.todayMinutes = Math.min(progress.goal, progress.todayMinutes + n);
+  progress.minutes += n;
+  saveProgress();
+  renderProgress();
+}
+function renderProgress(){
+  const goal = Math.max(5, Number(progress.goal) || 15);
+  const done = Math.min(goal, Number(progress.todayMinutes) || 0);
+  const pct = Math.min(100, Math.round(done / goal * 100));
+  const ring = document.getElementById('goalRing');
+  if(ring) ring.style.background = 'conic-gradient(var(--teal) ' + (pct*3.6) + 'deg, var(--paper-line) 0deg)';
+  const ids = {
+    goalPercent: pct + '%', goalDone: Math.round(done),
+    goalTarget: goal, statWords: document.getElementById('totalCount')?.textContent || 0,
+    statCorrect: progress.correct || 0,
+    statErrors: progress.errors || errorBook.length, statSessions: progress.sessions || 0
+  };
+  Object.keys(ids).forEach(id => { const el=document.getElementById(id); if(el) el.textContent=ids[id]; });
+  if(document.getElementById('goalSlider')) document.getElementById('goalSlider').value = goal;
+  const msg=document.getElementById('progressMessage');
+  if(msg) msg.textContent = pct >= 100 ? 'Obiettivo completato. Ottimo lavoro: puoi continuare con il ripasso.' : 'Ti mancano ' + Math.max(0, goal-done) + ' minuti per completare l’obiettivo di oggi.';
+  const step=document.getElementById('nextStep');
+  if(step){
+    if((document.getElementById('dueCount')?.textContent || '0') !== '0') step.textContent='Hai parole da ripassare: fai 5 minuti di vocabolario.';
+    else if(rtDifficulty <= 4) step.textContent='Allenati con “Ripeti e traduci” per migliorare ascolto e pronuncia.';
+    else step.textContent='Continua la conversazione e prova a usare una frase nuova.';
+  }
+}
+
+function model(){ return document.getElementById('model').value.trim() || 'gemini-3.6-flash'; }
+function level(){ return document.getElementById('level').value; }
+function topic(){ return document.getElementById('topic').value.trim(); }
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+let preferredVoiceEn = null;
+let preferredVoiceIt = null;
+function pickVoice(langPrefix){
+  if(!('speechSynthesis' in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if(!voices || !voices.length) return null;
+  const re = new RegExp('^' + langPrefix, 'i');
+  const prefer = [
+    v => re.test(v.lang) && /natural|neural|enhanced|premium|google|microsoft/i.test(v.name),
+    v => re.test(v.lang)
+  ];
+  for(const pred of prefer){
+    const found = voices.find(pred);
+    if(found) return found;
+  }
+  return null;
+}
+function refreshVoices(){
+  preferredVoiceEn = pickVoice('en') || pickVoice('en-US');
+  preferredVoiceIt = pickVoice('it') || pickVoice('it-IT');
+}
+if('speechSynthesis' in window){
+  refreshVoices();
+  window.speechSynthesis.onvoiceschanged = refreshVoices;
+}
+
+function speechRate(){
+  const el = document.getElementById('speechRate');
+  return el ? parseFloat(el.value) || 0.92 : 0.92;
+}
+function autoSpeakEnabled(){
+  const el = document.getElementById('autoSpeak');
+  return el ? el.checked : true;
+}
+
+/**
+ * @param {string} text
+ * @param {object} [opts]
+ * @param {string} [opts.lang='en-US']
+ * @param {boolean} [opts.cancel=true]
+ * @param {function} [opts.onEnd]
+ */
+function speak(text, opts){
+  if(!text || !('speechSynthesis' in window)) return;
+  // Compatibilità: speak(text, false) disabilita
+  if(opts === false) return;
+  const options = (opts && typeof opts === 'object') ? opts : {};
+  const lang = options.lang || 'en-US';
+  const u = new SpeechSynthesisUtterance(String(text));
+  u.lang = lang;
+  u.rate = speechRate();
+  if(/^it/i.test(lang) && preferredVoiceIt) u.voice = preferredVoiceIt;
+  else if(/^en/i.test(lang) && preferredVoiceEn) u.voice = preferredVoiceEn;
+  if(options.cancel !== false) window.speechSynthesis.cancel();
+  if(typeof options.onEnd === 'function'){
+    u.onend = options.onEnd;
+    u.onerror = options.onEnd;
+  }
+  window.speechSynthesis.speak(u);
+}
+
+/** Legge prima inglese, poi (se c'è testo) italiano */
+function speakEnThenIt(enText, itText){
+  if(!enText) return;
+  if(!autoSpeakEnabled()) return;
+  const it = (itText || '').trim();
+  speak(enText, {
+    lang: 'en-US',
+    onEnd: () => {
+      if(it && it !== '(nessuna traduzione salvata)'){
+        // piccola pausa tra le due lingue
+        setTimeout(() => speak(it, { lang: 'it-IT', cancel: false }), 350);
+      }
+    }
+  });
+}
+
+// Persist audio prefs
+(function initAudioPrefs(){
+  const autoEl = document.getElementById('autoSpeak');
+  const rateEl = document.getElementById('speechRate');
+  const rateVal = document.getElementById('rateVal');
+  try{
+    const saved = JSON.parse(localStorage.getItem('quaderno_audio') || '{}');
+    if(typeof saved.auto === 'boolean' && autoEl) autoEl.checked = saved.auto;
+    if(typeof saved.rate === 'number' && rateEl){
+      rateEl.value = saved.rate;
+      if(rateVal) rateVal.textContent = saved.rate.toFixed(2) + '×';
+    }
+  }catch(_){}
+  function persist(){
+    try{
+      localStorage.setItem('quaderno_audio', JSON.stringify({
+        auto: autoSpeakEnabled(),
+        rate: speechRate()
+      }));
+    }catch(_){}
+  }
+  if(autoEl) autoEl.addEventListener('change', persist);
+  if(rateEl){
+    rateEl.addEventListener('input', () => {
+      if(rateVal) rateVal.textContent = speechRate().toFixed(2) + '×';
+      persist();
+    });
+  }
+})();
+
+function getMobileApiKey(){ try{return localStorage.getItem('quaderno_gemini_key')||'';}catch(_){return '';} }
+function saveMobileApiKey(){ const el=document.getElementById('mobileApiKey'); if(!el)return; const v=el.value.trim(); try{ if(v)localStorage.setItem('quaderno_gemini_key',v); else localStorage.removeItem('quaderno_gemini_key'); }catch(_){} updateConnectionStatus(); }
+function clearMobileApiKey(){ try{localStorage.removeItem('quaderno_gemini_key');}catch(_){} const el=document.getElementById('mobileApiKey'); if(el)el.value=''; updateConnectionStatus(); }
+async function callGemini(systemPrompt, userText, history){
+  const localKey=getMobileApiKey();
+  if(!localKey) throw new Error('Gemini non configurato. Inserisci la tua API key nelle Impostazioni.');
+  const contents=(history||[]).map(h=>({
+    role:h.role==='user'?'user':'model',
+    parts:[{text:String(h.text||'')}]
+  }));
+  contents.push({role:'user',parts:[{text:String(userText||'')}]});
+  const endpoint='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model())+':generateContent?key='+encodeURIComponent(localKey);
+  const r=await fetch(endpoint,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      contents,
+      systemInstruction:{parts:[{text:String(systemPrompt||'')}]},
+      generationConfig:{responseMimeType:'application/json'}
+    })
+  });
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error((d.error&&d.error.message)||('Gemini ('+r.status+')'));
+  const raw=d.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';
+  if(!raw) throw new Error('Risposta vuota da Gemini.');
+  try{return JSON.parse(raw);}
+  catch(_){throw new Error('Gemini non ha restituito JSON valido.');}
+}
+function updateConnectionStatus(){
+  const el=document.getElementById('backendStatus');
+  if(!el)return;
+  const dot=document.getElementById('settingsStatusDot');
+  const key=!!getMobileApiKey();
+  el.textContent=key?'● Gemini personale pronto':'● Inserisci la tua chiave Gemini';
+  el.className='backend-status '+(key?'ok':'warn');
+  if(dot)dot.className='settings-status '+(key?'ok':'warn');
+}
+(function initMobileKey(){
+  const el=document.getElementById('mobileApiKey');
+  if(el)el.value=getMobileApiKey();
+  document.getElementById('saveApiKey')?.addEventListener('click',()=>{
+    saveMobileApiKey();
+    updateConnectionStatus();
+    alert('Chiave salvata su questo dispositivo.');
+  });
+  document.getElementById('clearApiKey')?.addEventListener('click',()=>{
+    clearMobileApiKey();
+    updateConnectionStatus();
+  });
+  updateConnectionStatus();
+})();
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();
+  deferredInstallPrompt=e;
+  const b=document.getElementById('installBtn');
+  if(b)b.style.display='block';
+});
+document.getElementById('installBtn')?.addEventListener('click',async()=>{
+  if(!deferredInstallPrompt)return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt=null;
+  document.getElementById('installBtn').style.display='none';
+});
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+
+function updateStreakDisplay(){
+  document.getElementById('streakVal').textContent = correctStreak;
+}
+
+function renderErrorBook(){
+  const errList = document.getElementById('errList');
+  const errEmpty = document.getElementById('errEmpty');
+  const errCount = document.getElementById('errCount');
+  errList.innerHTML = '';
+  if(errorBook.length === 0){
+    errEmpty.style.display = 'block';
+  } else {
+    errEmpty.style.display = 'none';
+    errorBook.slice().reverse().forEach(c => {
+      const li = document.createElement('li');
+      li.innerHTML = '<span class="w">' + escapeHtml(c.right) + '</span> — ' + escapeHtml(c.why) + '<span class="src">' + escapeHtml(c.source) + '</span>';
+      errList.appendChild(li);
+    });
+  }
+  errCount.textContent = errorBook.length + ' voci';
+}
+
+/* ============ TABS ============ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-' + btn.dataset.tab).classList.add('active');
+  });
+});
+// Controlli progressi
+document.getElementById('goalSlider')?.addEventListener('input', e => {
+  progress.goal = Number(e.target.value) || 15;
+  saveProgress(); renderProgress();
+});
+document.getElementById('goalMinus')?.addEventListener('click', () => {
+  progress.goal = Math.max(5, (Number(progress.goal)||15) - 5);
+  saveProgress(); renderProgress();
+});
+document.getElementById('goalPlus')?.addEventListener('click', () => {
+  progress.goal = Math.min(60, (Number(progress.goal)||15) + 5);
+  saveProgress(); renderProgress();
+});
+document.getElementById('goNextStep')?.addEventListener('click', () => {
+  const due = Number(document.getElementById('dueCount')?.textContent || 0);
+  const target = due > 0 ? 'vocab' : (rtDifficulty <= 4 ? 'rt' : 'conv');
+  document.querySelector('.tab-btn[data-tab="'+target+'"]')?.click();
+});
+renderProgress();
+
+
+/* ============ MODULO CONVERSAZIONE ============ */
+(function(){
+  const thread = document.getElementById('thread');
+  const emptyState = document.getElementById('emptyState');
+  const composerInput = document.getElementById('composerInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const micBtn = document.getElementById('micBtnConv');
+  const statusLine = document.getElementById('statusLineConv');
+
+  let history = [];
+
+  function setStatus(msg, isError, loading){
+    statusLine.innerHTML = '';
+    statusLine.classList.toggle('error', !!isError);
+    if(loading){
+      const sp = document.createElement('span');
+      sp.className = 'spinner';
+      statusLine.appendChild(sp);
+    }
+    if(msg){
+      const t = document.createElement('span');
+      t.textContent = msg;
+      statusLine.appendChild(t);
+    }
+  }
+
+  function addBubble(role, text){
+    emptyState.style.display = 'none';
+    const row = document.createElement('div');
+    row.className = 'msg-row ' + (role === 'user' ? 'user' : 'teacher');
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble ' + (role === 'user' ? 'user' : 'teacher');
+    bubble.textContent = text;
+    if(role !== 'user'){
+      const speakBtn = document.createElement('button');
+      speakBtn.className = 'speak-btn';
+      speakBtn.innerHTML = '🔊';
+      speakBtn.title = 'Ascolta';
+      speakBtn.onclick = () => speak(text);
+      bubble.appendChild(speakBtn);
+    }
+    row.appendChild(bubble);
+    thread.appendChild(row);
+    document.getElementById('notebook').scrollTop = document.getElementById('notebook').scrollHeight;
+  }
+
+  function addCorrectionBlock(corrections){
+    if(!corrections || corrections.length === 0){
+      const ok = document.createElement('div');
+      ok.className = 'all-correct';
+      ok.textContent = '✓ All correct — nice!';
+      thread.appendChild(ok);
+      correctStreak++;
+    } else {
+      correctStreak = 0;
+      progress.errors += corrections.length;
+      corrections.forEach(c => {
+        const block = document.createElement('div');
+        block.className = 'correction';
+        block.innerHTML =
+          '<span class="original">' + escapeHtml(c.wrong) + '</span>' +
+          '<span class="fixed">' + escapeHtml(c.right) + '</span>' +
+          '<div class="why">' + escapeHtml(c.why) + '</div>';
+        thread.appendChild(block);
+        errorBook.push({ right: c.right, why: c.why, source: 'conversazione' });
+        addVocabCard(c.right, '', c.why, 'conversazione');
+      });
+      renderErrorBook();
+    }
+    if(!corrections || corrections.length === 0) progress.correct++;
+    touchSession();
+    updateStreakDisplay();
+    saveProgress();
+    renderProgress();
+  }
+
+  function buildSystemPrompt(){
+    const lvl = level();
+    const tp = topic();
+    return [
+      "Sei un insegnante d'inglese paziente e incoraggiante, madrelingua, che conversa con uno studente italiano di livello " + lvl + ".",
+      "Parli SOLO dopo che lo studente ha scritto una frase completa: non interrompere mai a metà.",
+      "Per ogni turno dello studente:",
+      "1. Individua eventuali errori grammaticali, lessicali o di naturalezza nella frase dello studente.",
+      "2. Continua la conversazione in modo naturale su temi quotidiani di uso comune" + (tp ? (", con particolare attenzione al tema: " + tp) : "") + ", ponendo tu stesso domande per tenere viva la chiacchierata.",
+      "3. La tua risposta di conversazione (reply) deve essere in inglese, breve (1-3 frasi), naturale, adatta al livello dello studente.",
+      "4. Le spiegazioni degli errori (why) vanno scritte in ITALIANO, brevi e chiare, spiegando il perché dell'errore, non solo la forma corretta.",
+      "5. Se la frase è corretta, l'array corrections deve essere vuoto.",
+      "Rispondi SEMPRE e SOLO con un oggetto JSON valido, senza markdown, in questo formato esatto:",
+      '{"corrections":[{"wrong":"parte errata originale","right":"forma corretta","why":"spiegazione breve in italiano"}],"reply":"risposta in inglese che continua la conversazione"}'
+    ].join('\n');
+  }
+
+  async function sendMessage(){
+    const text = composerInput.value.trim();
+    if(!text) return;
+    sendBtn.disabled = true;
+    composerInput.disabled = true;
+    addBubble('user', text);
+    composerInput.value = '';
+    setStatus('L\'insegnante sta leggendo la frase…', false, true);
+    try{
+      const result = await callGemini(buildSystemPrompt(), text, history);
+      history.push({ role: 'user', text: text });
+      addCorrectionBlock(result.corrections);
+      const reply = result.reply || '(nessuna risposta)';
+      addBubble('teacher', reply);
+      history.push({ role: 'model', text: result.reply || '' });
+      if(autoSpeakEnabled() && result.reply) speak(result.reply);
+      setStatus('');
+    } catch(err){
+      setStatus(err.message || 'Errore imprevisto.', true);
+    } finally {
+      sendBtn.disabled = false;
+      composerInput.disabled = false;
+      composerInput.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  composerInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+  });
+
+  document.querySelectorAll('[data-starter]').forEach(btn => {
+    btn.addEventListener('click', () => { composerInput.value = btn.dataset.starter || ''; composerInput.focus(); });
+  });
+
+  const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(SpeechRecognitionImpl){
+    const recognition = new SpeechRecognitionImpl();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    let recording = false;
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      composerInput.value = (composerInput.value ? composerInput.value + ' ' : '') + transcript;
+    };
+    recognition.onerror = () => setStatus('Non sono riuscito a sentire bene, riprova.', true);
+    recognition.onend = () => { recording = false; micBtn.classList.remove('recording'); };
+    micBtn.addEventListener('click', () => {
+      if(recording){ recognition.stop(); }
+      else { recording = true; micBtn.classList.add('recording'); setStatus('Ascolto in corso…', false, true); recognition.start(); }
+    });
+  } else {
+    micBtn.disabled = true;
+    micBtn.title = 'Dettatura vocale non supportata da questo browser';
+  }
+})();
+
+/* ============ MODULO RIPETI E TRADUCI ============ */
+(function(){
+  const sentenceText = document.getElementById('sentenceText');
+  const listenBtn = document.getElementById('listenBtn');
+  const genBtn = document.getElementById('genBtn');
+  const micBtn = document.getElementById('micBtnRt');
+  const micHint = document.getElementById('micHint');
+  const resultBox = document.getElementById('resultBox');
+  const nextRow = document.getElementById('nextRow');
+  const nextBtn = document.getElementById('nextBtn');
+  const statusLine = document.getElementById('statusLineRt');
+  const rtDifficultyTop = document.getElementById('rtDifficultyTop');
+  const rtDifficultyInline = document.getElementById('rtDifficultyInline');
+
+  let currentSentence = null;
+  let usedSentences = [];
+
+  function setStatus(msg, isError, loading){
+    statusLine.innerHTML = '';
+    statusLine.classList.toggle('error', !!isError);
+    if(loading){
+      const sp = document.createElement('span');
+      sp.className = 'spinner';
+      statusLine.appendChild(sp);
+    }
+    if(msg){
+      const t = document.createElement('span');
+      t.textContent = msg;
+      statusLine.appendChild(t);
+    }
+  }
+
+  function difficultyDescription(d){
+    if(d <= 3) return "frase molto semplice, 4-6 parole, vocabolario quotidiano di base, presente semplice";
+    if(d <= 6) return "frase semplice, 6-9 parole, può includere passato o futuro, vocabolario comune";
+    return "frase moderatamente complessa, 9-14 parole, con almeno un connettivo (because, when, if, while...) o una proposizione subordinata";
+  }
+
+  function updateDifficultyDisplay(){
+    rtDifficultyTop.textContent = 'Difficoltà ripetizione: ' + rtDifficulty + '/10';
+    rtDifficultyInline.textContent = 'Difficoltà: ' + rtDifficulty + '/10';
+  }
+
+  let startMicFn = null; // impostato dopo init recognition
+
+  async function generateSentence(){
+    genBtn.disabled = true; micBtn.disabled = true;
+    setStatus('Genero una nuova frase…', false, true);
+    resultBox.style.display = 'none'; nextRow.style.display = 'none';
+    sentenceText.textContent = '…';
+    try{
+      const sys = "Generi frasi in inglese per uno studente italiano di livello " + level() +
+        " che deve esercitarsi a ripeterle ad alta voce. Difficoltà richiesta: " + difficultyDescription(rtDifficulty) +
+        ". Evita di ripetere frasi già usate: " + (usedSentences.slice(-8).join(' | ') || 'nessuna') +
+        ". Rispondi SOLO con JSON: {\"sentence\":\"la frase in inglese\"}";
+      const result = await callGemini(sys, "Genera una nuova frase.");
+      currentSentence = result.sentence;
+      usedSentences.push(currentSentence);
+      sentenceText.textContent = currentSentence;
+      setStatus('');
+      // Legge la frase, poi attiva automaticamente il microfono
+      speak(currentSentence, {
+        lang: 'en-US',
+        onEnd: () => {
+          setTimeout(() => {
+            if(typeof startMicFn === 'function' && currentSentence) startMicFn();
+          }, 400);
+        }
+      });
+    } catch(err){
+      setStatus(err.message, true);
+      sentenceText.textContent = '—';
+    } finally {
+      genBtn.disabled = false; micBtn.disabled = false;
+    }
+  }
+
+  async function evaluateAttempt(spokenText){
+    setStatus('Controllo la tua pronuncia e traduco…', false, true);
+    const sys = "Sei un insegnante d'inglese che valuta se uno studente italiano ha ripetuto correttamente una frase data. " +
+      "Frase originale da ripetere: \"" + currentSentence + "\". " +
+      "Confronta la frase originale con quello che lo studente ha effettivamente detto (trascritto dal riconoscimento vocale, quindi puoi ignorare differenze minime di punteggiatura o maiuscole). " +
+      "Poi fornisci la traduzione in italiano della frase ORIGINALE, e un elenco di correzioni per le differenze reali tra originale e ripetizione (parole omesse, sbagliate, o cambiate). " +
+      "Se la ripetizione è sostanzialmente corretta, l'array corrections deve essere vuoto e correct deve essere true. " +
+      "Le spiegazioni (why) in italiano, brevi. Rispondi SOLO con JSON: " +
+      "{\"translation\":\"traduzione in italiano della frase originale\",\"correct\":true,\"corrections\":[{\"wrong\":\"parte detta in modo errato od omessa\",\"right\":\"forma corretta\",\"why\":\"spiegazione breve in italiano\"}]}";
+    return await callGemini(sys, "Ecco quello che ho detto: \"" + spokenText + "\"");
+  }
+
+  let autoNextTimer = null;
+  function clearAutoNext(){
+    if(autoNextTimer){ clearTimeout(autoNextTimer); autoNextTimer = null; }
+  }
+
+  function renderResult(spokenText, result){
+    clearAutoNext();
+    rtTotal++;
+    if(result.correct){
+      correctStreak++;
+      rtDifficulty = Math.min(10, rtDifficulty + 1);
+    } else {
+      correctStreak = 0;
+      rtDifficulty = Math.max(1, rtDifficulty - 1);
+    }
+    updateStreakDisplay();
+    updateDifficultyDisplay();
+
+    let html = '';
+    const score = window.__v82Score ? window.__v82Score(currentSentence, spokenText) : (result.correct ? 100 : 60);
+    const scoreAngle = Math.max(0, Math.min(100, score)) * 3.6;
+    const scoreLabel = score >= 90 ? 'Ottima pronuncia!' : score >= 70 ? 'Buon lavoro, continua così.' : 'Riprova lentamente e ascolta la frase.';
+    html += '<div class="rt-score"><div class="rt-score-ring" style="background:conic-gradient(var(--accent) '+scoreAngle+'deg,#e5ebe7 0deg)"><b>'+score+'</b></div><div class="rt-score-copy"><strong>'+score+'/100</strong><span>'+scoreLabel+'</span></div></div>';
+    html += '<div class="result-row"><span class="k">Hai detto</span><span class="said">' + escapeHtml(spokenText) + '</span></div>';
+    html += '<div class="result-row"><span class="k">Traduzione</span><span class="translation">' + escapeHtml(result.translation || '') + '</span></div>';
+    if(result.correct || !result.corrections || result.corrections.length === 0){
+      html += '<div class="verdict-ok">✓ Ripetizione corretta — well done!</div>';
+    } else {
+      result.corrections.forEach(c => {
+        html += '<div class="correction"><span class="original">' + escapeHtml(c.wrong) + '</span><span class="fixed">' + escapeHtml(c.right) + '</span><div class="why">' + escapeHtml(c.why) + '</div></div>';
+        errorBook.push({ right: c.right, why: c.why, source: 'ripeti e traduci' });
+        addVocabCard(c.right, '', c.why, 'ripeti e traduci');
+      });
+      renderErrorBook();
+    }
+    resultBox.innerHTML = html;
+    resultBox.style.display = 'block';
+    nextRow.style.display = 'flex';
+    nextBtn.textContent = 'Prossima frase (tra 2,5 s…)';
+    // Dopo la valutazione passa automaticamente alla frase successiva
+    autoNextTimer = setTimeout(() => {
+      autoNextTimer = null;
+      nextBtn.textContent = 'Prossima frase';
+      generateSentence();
+    }, 2500);
+  }
+
+  listenBtn.addEventListener('click', () => { if(currentSentence) speak(currentSentence); });
+  genBtn.addEventListener('click', () => { clearAutoNext(); nextBtn.textContent = 'Prossima frase'; generateSentence(); });
+  nextBtn.addEventListener('click', () => { clearAutoNext(); nextBtn.textContent = 'Prossima frase'; generateSentence(); });
+
+  const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(SpeechRecognitionImpl){
+    const recognition = new SpeechRecognitionImpl();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    let recording = false;
+    recognition.onresult = async (e) => {
+      const transcript = e.results[0][0].transcript;
+      micHint.textContent = 'Hai detto: "' + transcript + '"';
+      try{
+        const result = await evaluateAttempt(transcript);
+        renderResult(transcript, result);
+        addStudyMinutes(2);
+        setStatus('');
+      } catch(err){
+        setStatus(err.message, true);
+      }
+    };
+    recognition.onerror = () => {
+      recording = false;
+      micBtn.classList.remove('recording');
+      setStatus('Non sono riuscito a sentire bene, riprova.', true);
+    };
+    recognition.onend = () => { recording = false; micBtn.classList.remove('recording'); };
+    function startMic(){
+      if(!currentSentence){ setStatus('Genera prima una frase.', true); return; }
+      if(recording) return;
+      try{
+        recording = true;
+        micBtn.classList.add('recording');
+        micHint.textContent = 'Ascolto in corso…';
+        setStatus('');
+        recognition.start();
+      } catch(err){
+        recording = false;
+        micBtn.classList.remove('recording');
+        setStatus('Microfono non disponibile: ' + (err.message || 'riprova'), true);
+      }
+    }
+    startMicFn = startMic;
+    micBtn.addEventListener('click', () => {
+      if(!currentSentence){ setStatus('Genera prima una frase.', true); return; }
+      if(recording){ recognition.stop(); }
+      else { startMic(); }
+    });
+  } else {
+    micBtn.disabled = true;
+    micHint.textContent = 'Dettatura vocale non supportata da questo browser';
+  }
+
+  updateDifficultyDisplay();
+})();
+
+/* ============ VOCABOLARIO — IndexedDB + SM-2 ============ */
+const VOCAB_DB_NAME = 'quaderno-inglese-vocab';
+const VOCAB_STORE = 'cards';
+let vocabDb = null;
+
+function openVocabDb(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(VOCAB_DB_NAME, 1);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(VOCAB_STORE)){
+        const store = db.createObjectStore(VOCAB_STORE, { keyPath: 'id' });
+        store.createIndex('front', 'front', { unique: false });
+      }
+    };
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+
+function vocabTx(mode){
+  return vocabDb.transaction(VOCAB_STORE, mode).objectStore(VOCAB_STORE);
+}
+
+function vocabGetAll(){
+  return new Promise((resolve, reject) => {
+    const req = vocabTx('readonly').getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function vocabPut(card){
+  return new Promise((resolve, reject) => {
+    const req = vocabTx('readwrite').put(card);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function todayISO(){
+  return new Date().toISOString().slice(0,10);
+}
+
+async function addVocabCard(front, back, note, source){
+  if(!vocabDb) return; // il database locale non è ancora pronto
+  const all = await vocabGetAll();
+  const dup = all.find(c => c.front.trim().toLowerCase() === front.trim().toLowerCase());
+  if(dup) return; // evita duplicati
+  const card = {
+    id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    front: front,
+    back: back || '',
+    note: note || '',
+    source: source || 'manuale',
+    interval: 0,
+    repetitions: 0,
+    easiness: 2.5,
+    dueDate: todayISO(),
+    created: todayISO()
+  };
+  await vocabPut(card);
+  await refreshVocabUI();
+}
+
+// Algoritmo SM-2 semplificato
+function sm2Update(card, quality){
+  if(quality < 3){
+    card.repetitions = 0;
+    card.interval = 1;
+  } else {
+    card.easiness = Math.max(1.3, card.easiness + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)));
+    card.repetitions += 1;
+    if(card.repetitions === 1) card.interval = 1;
+    else if(card.repetitions === 2) card.interval = 6;
+    else card.interval = Math.round(card.interval * card.easiness);
+  }
+  const due = new Date();
+  due.setDate(due.getDate() + card.interval);
+  card.dueDate = due.toISOString().slice(0,10);
+  return card;
+}
+
+let vocabQueue = [];
+let vocabAllCache = [];
+let vocabFilter = 'due';
+let vocabSearchText = '';
+let vocabTodayDone = 0;
+let vocabTodayTarget = 0;
+let currentCard = null;
+let vocabMode = 'study'; // 'study' | 'speak'
+try{
+  const savedMode = localStorage.getItem('quaderno_vocab_mode');
+  if(savedMode === 'study' || savedMode === 'speak') vocabMode = savedMode;
+}catch(_){}
+
+function normalizeSpeech(s){
+  return String(s || '')
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s']/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function speechMatch(spoken, expected){
+  const a = normalizeSpeech(spoken);
+  const b = normalizeSpeech(expected);
+  if(!a || !b) return false;
+  if(a === b) return true;
+  // tolleranza leggera: una contiene l'altra o differenza di 1-2 caratteri su parole corte
+  if(a.includes(b) || b.includes(a)) return true;
+  if(Math.abs(a.length - b.length) <= 2){
+    let diff = 0;
+    const n = Math.min(a.length, b.length);
+    for(let i = 0; i < n; i++) if(a[i] !== b[i]) diff++;
+    diff += Math.abs(a.length - b.length);
+    if(diff <= 2) return true;
+  }
+  return false;
+}
+
+async function refreshVocabUI(){
+  const all = await vocabGetAll();
+  vocabAllCache = all;
+  const today = todayISO();
+  vocabQueue = all.filter(c => c.dueDate <= today);
+  vocabTodayTarget = vocabQueue.length + vocabTodayDone;
+  document.getElementById('dueCount').textContent = vocabQueue.length;
+  document.getElementById('totalCount').textContent = all.length;
+  const pct = vocabTodayTarget ? Math.min(100, Math.round(vocabTodayDone / vocabTodayTarget * 100)) : 0;
+  const fill = document.getElementById('vocabTodayFill');
+  const pctEl = document.getElementById('vocabTodayProgress');
+  const label = document.getElementById('vocabQueueLabel');
+  if(fill) fill.style.width = pct + '%';
+  if(pctEl) pctEl.textContent = pct + '%';
+  if(label) label.textContent = vocabQueue.length ? vocabQueue.length + ' ' + (vocabQueue.length === 1 ? 'parola da ripassare' : 'parole da ripassare') : 'Ripasso completato 🎉';
+
+  renderVocabList(all, today);
+  if(!currentCard) showNextCard();
+}
+
+function renderVocabList(all, today){
+  const tbody = document.querySelector('#vocabTable tbody');
+  const title = document.getElementById('vocabListTitle');
+  if(!tbody) return;
+  const q = vocabSearchText.toLowerCase().trim();
+  let list = all.slice();
+  if(vocabFilter === 'due') list = list.filter(c => c.dueDate <= today);
+  if(vocabFilter === 'hard') list = list.filter(c => Number(c.easiness || 2.5) < 2.3 || Number(c.repetitions || 0) === 0);
+  if(q) list = list.filter(c => (c.front+' '+c.back+' '+(c.note||'')).toLowerCase().includes(q));
+  list.sort((a,b) => a.dueDate.localeCompare(b.dueDate));
+  if(title) title.textContent = vocabFilter === 'due' ? 'Da ripassare' : vocabFilter === 'hard' ? 'Parole difficili' : 'Tutte le voci';
+  tbody.innerHTML = '';
+  if(!list.length){
+    const tr=document.createElement('tr'); const td=document.createElement('td'); td.colSpan=3; td.className='vocab-list-empty';
+    td.textContent = q ? 'Nessun risultato.' : (vocabFilter==='due' ? 'Nessuna parola da ripassare oggi 🎉' : 'Nessuna parola in questa categoria.');
+    tr.appendChild(td); tbody.appendChild(tr); return;
+  }
+  list.forEach(c => {
+    const tr = document.createElement('tr'); const isDue = c.dueDate <= today;
+    tr.innerHTML = '<td><strong>' + escapeHtml(c.front) + '</strong></td>' + '<td>' + escapeHtml(c.back) + '</td>' + '<td class="' + (isDue ? 'due-today' : 'due-future') + '">' + (isDue ? 'oggi' : c.dueDate) + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function showNextCard(){
+  const vocabEmpty = document.getElementById('vocabEmpty');
+  const vocabCard = document.getElementById('vocabCard');
+  if(vocabQueue.length === 0){
+    currentCard = null;
+    vocabEmpty.style.display = 'block';
+    vocabCard.style.display = 'none';
+    return;
+  }
+  currentCard = vocabQueue[0];
+  vocabEmpty.style.display = 'none';
+  vocabCard.style.display = 'block';
+  document.getElementById('cardFront').textContent = currentCard.front;
+  document.getElementById('cardNote').textContent = currentCard.note || '';
+  document.getElementById('cardTranslation').textContent = currentCard.back || '(nessuna traduzione salvata)';
+  document.getElementById('cardSource').textContent = 'fonte: ' + currentCard.source;
+  document.getElementById('cardBack').classList.remove('shown');
+  document.getElementById('ratingRow').style.display = 'none';
+  document.getElementById('revealBtn').style.display = 'inline-block';
+  const speakRow = document.getElementById('speakPracticeRow');
+  const speakResult = document.getElementById('vocabSpeakResult');
+  const cardLabel = document.getElementById('cardLabel');
+  if(speakResult){ speakResult.textContent = ''; speakResult.className = 'speak-practice-result'; }
+
+  if(vocabMode === 'speak'){
+    cardLabel.textContent = 'Ascolta e ripeti';
+    document.getElementById('revealBtn').style.display = 'none';
+    if(speakRow) speakRow.style.display = 'flex';
+    // Solo inglese + microfono automatico; traduzione dopo il tentativo
+    if(autoSpeakEnabled()){
+      speak(currentCard.front, {
+        lang: 'en-US',
+        onEnd: () => {
+          setTimeout(() => {
+            if(typeof window.__vocabStartMic === 'function') window.__vocabStartMic();
+          }, 400);
+        }
+      });
+    } else {
+      setTimeout(() => {
+        if(typeof window.__vocabStartMic === 'function') window.__vocabStartMic();
+      }, 600);
+    }
+  } else {
+    cardLabel.textContent = 'Traduci / ricorda';
+    if(speakRow) speakRow.style.display = 'none';
+    // Studio passo-passo: inglese → mostra traduzione → italiano
+    function autoRevealAndSpeakIt(){
+      document.getElementById('cardBack').classList.add('shown');
+      document.getElementById('ratingRow').style.display = 'flex';
+      document.getElementById('revealBtn').style.display = 'none';
+      if(currentCard && currentCard.back && autoSpeakEnabled()){
+        speak(currentCard.back, { lang: 'it-IT', cancel: false });
+      }
+    }
+    if(autoSpeakEnabled()){
+      speak(currentCard.front, {
+        lang: 'en-US',
+        onEnd: () => setTimeout(autoRevealAndSpeakIt, 400)
+      });
+    } else {
+      setTimeout(autoRevealAndSpeakIt, 1200);
+    }
+  }
+}
+
+async function bulkAddVocabCards(cards){
+  for(const c of cards){
+    await vocabPut({
+      id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      front: c.front,
+      back: c.back || '',
+      note: c.note || '',
+      source: c.source || 'import',
+      interval: 0,
+      repetitions: 0,
+      easiness: 2.5,
+      dueDate: todayISO(),
+      created: todayISO()
+    });
+  }
+  await refreshVocabUI();
+}
+
+async function importOxfordDeckFile(file){
+  const statusLine=document.getElementById('statusLineVocab');
+  const importBtn=document.getElementById('importBtn');
+  const setStatus=(msg,error=false,loading=false)=>{
+    statusLine.innerHTML='';
+    statusLine.classList.toggle('error',!!error);
+    if(loading){
+      const sp=document.createElement('span');
+      sp.className='spinner';
+      statusLine.appendChild(sp);
+    }
+    const t=document.createElement('span');
+    t.textContent=msg||'';
+    statusLine.appendChild(t);
+  };
+  importBtn.disabled=true;
+  setStatus('Leggo il mazzo Oxford dal dispositivo…',false,true);
+  try{
+    const raw=await file.text();
+    let cards=[];
+    const ext=(file.name.split('.').pop()||'').toLowerCase();
+
+    if(ext==='js'){
+      const match=raw.match(/const\s+DECKS\s*=\s*(\[[\s\S]*\]);?/);
+      if(!match) throw new Error('File JS non riconosciuto: serve un array DECKS.');
+      const decks=new Function('return '+match[1])();
+      const enDeck=decks.find(d=>d.id==='en') || decks.find(d=>/oxford/i.test(d.name||d.title||''));
+      cards=enDeck?.cards||[];
+      cards=cards.map(c=>({front:c.back||c.word||c.en||'',back:c.front||c.it||c.translation||'',note:c.phon||c.ipa||'',source:'Oxford'}));
+    }else if(ext==='json'){
+      const data=JSON.parse(raw);
+      if(Array.isArray(data)) cards=data;
+      else if(Array.isArray(data.cards)) cards=data.cards;
+      else if(Array.isArray(data.decks)){
+        const d=data.decks.find(x=>x.id==='en')||data.decks.find(x=>/oxford/i.test(x.name||x.title||''));
+        cards=d?.cards||[];
+      }
+      cards=cards.map(c=>({front:c.front||c.word||c.en||c.english||'',back:c.back||c.translation||c.it||c.italian||'',note:c.note||c.phon||c.ipa||'',source:'Oxford'}));
+    }else{
+      const lines=raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+      const delimiter=lines.some(x=>x.includes(';'))?';':',';
+      cards=lines.slice(1).map(line=>{
+        const parts=line.split(delimiter).map(x=>x.trim().replace(/^"(.*)"$/,'$1'));
+        return {front:parts[0]||'',back:parts[1]||'',note:parts[2]||'',source:'Oxford'};
+      });
+    }
+
+    cards=cards.filter(c=>c.front&&c.back);
+    if(!cards.length) throw new Error('Nessuna carta valida trovata nel file.');
+
+    const existing=await vocabGetAll();
+    const existingFronts=new Set(existing.map(c=>(c.front||'').trim().toLowerCase()));
+    const seen=new Set(),toAdd=[];
+    for(const c of cards){
+      const key=c.front.trim().toLowerCase();
+      if(!key||existingFronts.has(key)||seen.has(key))continue;
+      seen.add(key);
+      toAdd.push(c);
+    }
+    if(!toAdd.length){
+      setStatus('Nessuna voce nuova: il mazzo è già presente.');
+    }else{
+      setStatus('Importo '+toAdd.length+' parole Oxford…',false,true);
+      await bulkAddVocabCards(toAdd);
+      setStatus('Importate '+toAdd.length+' parole dal mazzo Oxford.');
+    }
+  }catch(err){
+    setStatus(err.message||'Errore durante l’importazione.',true);
+  }finally{
+    importBtn.disabled=false;
+  }
+}
+
+function initOxfordImporter(){
+  const btn=document.getElementById('importBtn');
+  const input=document.getElementById('oxfordFileInput');
+  if(!btn||!input)return;
+  btn.addEventListener('click',()=>input.click());
+  input.addEventListener('change',()=>{
+    const file=input.files?.[0];
+    if(file)importOxfordDeckFile(file);
+    input.value='';
+  });
+}
+
+function initVocabUI(){
+  try { vocabTodayDone = parseInt(localStorage.getItem('quaderno_vocab_done_' + todayISO()) || '0', 10) || 0; } catch(_) { vocabTodayDone = 0; }
+  const modeHint = document.getElementById('vocabModeHint');
+  function applyModeUI(){
+    document.querySelectorAll('.vocab-mode-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.vocabMode === vocabMode);
+    });
+    if(modeHint){
+      modeHint.textContent = vocabMode === 'speak'
+        ? 'Ascolto e parlato: senti l’inglese, ripeti al microfono, poi vedi traduzione e valuti.'
+        : 'Studio passo-passo: ascolti l’inglese, vedi la traduzione e valuti quanto la ricordavi.';
+    }
+    try{ localStorage.setItem('quaderno_vocab_mode', vocabMode); }catch(_){}
+    if(currentCard) showNextCard();
+  }
+  document.querySelectorAll('.vocab-mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      vocabMode = btn.dataset.vocabMode;
+      applyModeUI();
+    });
+  });
+  // sync initial tab highlight
+  document.querySelectorAll('.vocab-mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.vocabMode === vocabMode);
+  });
+  if(modeHint){
+    modeHint.textContent = vocabMode === 'speak'
+      ? 'Ascolto e parlato: senti l’inglese, ripeti al microfono, poi vedi traduzione e valuti.'
+      : 'Studio passo-passo: ascolti l’inglese, vedi la traduzione e valuti quanto la ricordavi.';
+  }
+
+  document.getElementById('cardSpeakBtn').addEventListener('click', () => {
+    if(!currentCard) return;
+    const backShown = document.getElementById('cardBack').classList.contains('shown');
+    if(backShown && currentCard.back){
+      speakEnThenIt(currentCard.front, currentCard.back);
+    } else {
+      speak(currentCard.front, { lang: 'en-US' });
+    }
+  });
+  document.getElementById('revealBtn').addEventListener('click', () => {
+    document.getElementById('cardBack').classList.add('shown');
+    document.getElementById('ratingRow').style.display = 'flex';
+    document.getElementById('revealBtn').style.display = 'none';
+    if(currentCard && currentCard.back && autoSpeakEnabled()){
+      speak(currentCard.back, { lang: 'it-IT' });
+    }
+  });
+  document.querySelectorAll('.rate-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if(!currentCard) return;
+      const q = parseInt(btn.dataset.q, 10);
+      sm2Update(currentCard, q);
+      await vocabPut(currentCard);
+      vocabQueue.shift();
+      vocabTodayDone += 1;
+      try { localStorage.setItem('quaderno_vocab_done_' + todayISO(), String(vocabTodayDone)); } catch(_){}
+      currentCard = null;
+      await refreshVocabUI();
+      showNextCard();
+    });
+  });
+  document.getElementById('manualAddBtn').addEventListener('click', async () => {
+    const front = document.getElementById('manualFront').value.trim();
+    const back = document.getElementById('manualBack').value.trim();
+    if(!front) return;
+    await addVocabCard(front, back, '', 'manuale');
+    document.getElementById('manualFront').value = '';
+    document.getElementById('manualBack').value = '';
+  });
+  document.querySelectorAll('[data-vfilter]').forEach(btn => btn.addEventListener('click', () => {
+    vocabFilter = btn.dataset.vfilter;
+    document.querySelectorAll('[data-vfilter]').forEach(b => b.classList.toggle('active', b === btn));
+    renderVocabList(vocabAllCache, todayISO());
+  }));
+  const vocabSearch = document.getElementById('vocabSearch');
+  if(vocabSearch) vocabSearch.addEventListener('input', () => { vocabSearchText = vocabSearch.value; renderVocabList(vocabAllCache, todayISO()); });
+
+  document.getElementById('importBtn').addEventListener('click', importFromFlashcardsRepo);
+
+  // Microfono modalità "Ascolto e parlato"
+  const vocabMicBtn = document.getElementById('vocabMicBtn');
+  const vocabMicHint = document.getElementById('vocabMicHint');
+  const vocabSpeakResult = document.getElementById('vocabSpeakResult');
+  const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(SpeechRecognitionImpl && vocabMicBtn){
+    const recognition = new SpeechRecognitionImpl();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    let recording = false;
+    recognition.onresult = async (e) => {
+      const transcript = e.results[0][0].transcript;
+      if(vocabMicHint) vocabMicHint.textContent = 'Hai detto: "' + transcript + '"';
+      const ok = currentCard && speechMatch(transcript, currentCard.front);
+      if(vocabSpeakResult){
+        if(ok){
+          vocabSpeakResult.textContent = '✓ Bene! Pronuncia ok';
+          vocabSpeakResult.className = 'speak-practice-result ok';
+        } else {
+          vocabSpeakResult.textContent = 'Riprova — target: "' + (currentCard ? currentCard.front : '') + '"';
+          vocabSpeakResult.className = 'speak-practice-result bad';
+        }
+      }
+      // Mostra traduzione + rating; in caso di ok pre-seleziona un voto più alto è a carico dell'utente
+      document.getElementById('cardBack').classList.add('shown');
+      document.getElementById('ratingRow').style.display = 'flex';
+      if(currentCard && currentCard.back && autoSpeakEnabled()){
+        setTimeout(() => speak(currentCard.back, { lang: 'it-IT' }), 300);
+      }
+      // Aggiorna SM-2 in modo leggero se ok (quality 4) o non ok (quality 1) — l'utente può ancora cambiare col rating
+      // Non auto-avanza: aspetta il rating manuale
+    };
+    recognition.onerror = () => {
+      recording = false;
+      vocabMicBtn.classList.remove('recording');
+      if(vocabMicHint) vocabMicHint.textContent = 'Non ho capito bene, riprova';
+    };
+    recognition.onend = () => {
+      recording = false;
+      vocabMicBtn.classList.remove('recording');
+    };
+    function startVocabMic(){
+      if(!currentCard || vocabMode !== 'speak') return;
+      if(recording) return;
+      try{
+        recording = true;
+        vocabMicBtn.classList.add('recording');
+        if(vocabMicHint) vocabMicHint.textContent = 'Ascolto in corso…';
+        if(vocabSpeakResult){ vocabSpeakResult.textContent = ''; vocabSpeakResult.className = 'speak-practice-result'; }
+        recognition.start();
+      } catch(err){
+        recording = false;
+        vocabMicBtn.classList.remove('recording');
+        if(vocabMicHint) vocabMicHint.textContent = 'Microfono non disponibile';
+      }
+    }
+    window.__vocabStartMic = startVocabMic;
+    vocabMicBtn.addEventListener('click', () => {
+      if(recording) recognition.stop();
+      else startVocabMic();
+    });
+  } else if(vocabMicBtn){
+    vocabMicBtn.disabled = true;
+    if(vocabMicHint) vocabMicHint.textContent = 'Microfono non supportato da questo browser';
+  }
+}
+
+renderErrorBook();
+
+initVocabUI();
+openVocabDb().then(db => {
+  vocabDb = db;
+  refreshVocabUI();
+}).catch(err => {
+  console.error('Errore apertura vocabolario locale:', err);
+});
+
+
+/* ============ MODULO CORSO A1 — V8.4 ============ */
+(function(){
+  const lessons=[
+    {title:'Presentarsi',goal:'Dire chi sei, da dove vieni e chiedere il nome.',words:[['hello','ciao'],['name','nome'],['from','da / di'],['live','vivere'],['work','lavorare'],['nice','piacevole / bello']],phrases:[['My name is Anna.','Mi chiamo Anna.'],['I am from Italy.','Vengo dall’Italia.'],['Nice to meet you.','Piacere di conoscerti.']],q:'Come dici “Mi chiamo Anna”?',opts:['My name Anna.','My name is Anna.','I name is Anna.'],a:1},
+    {title:'La routine',goal:'Parlare delle attività quotidiane al presente semplice.',words:[['wake up','svegliarsi'],['work','lavorare'],['eat','mangiare'],['go','andare'],['usually','di solito'],['every day','ogni giorno']],phrases:[['I usually wake up at seven.','Di solito mi sveglio alle sette.'],['I go to work by car.','Vado al lavoro in macchina.'],['I eat lunch at one.','Pranzo all’una.']],q:'Qual è la forma corretta?',opts:['I goes to work.','I go to work.','I going to work.'],a:1},
+    {title:'La famiglia',goal:'Descrivere le persone della tua famiglia.',words:[['family','famiglia'],['wife','moglie'],['husband','marito'],['son','figlio'],['daughter','figlia'],['brother','fratello']],phrases:[['I have two children.','Ho due figli.'],['My brother lives nearby.','Mio fratello vive vicino.'],['She is my daughter.','Lei è mia figlia.']],q:'“Ho un fratello” è:',opts:['I have a brother.','I am a brother.','I has a brother.'],a:0},
+    {title:'Al ristorante',goal:'Ordinare cibo e bevande in modo semplice.',words:[['menu','menù'],['water','acqua'],['coffee','caffè'],['please','per favore'],['bill','conto'],['want','volere']],phrases:[['Can I have a coffee, please?','Posso avere un caffè, per favore?'],['I would like the chicken.','Vorrei il pollo.'],['Can I have the bill?','Posso avere il conto?']],q:'Quale frase è più naturale per ordinare?',opts:['Give me coffee.','I would like a coffee, please.','I coffee please.'],a:1},
+    {title:'Fare acquisti',goal:'Chiedere prezzi, taglie e disponibilità.',words:[['price','prezzo'],['cheap','economico'],['expensive','costoso'],['size','taglia'],['small','piccolo'],['large','grande']],phrases:[['How much is it?','Quanto costa?'],['Do you have a larger size?','Avete una taglia più grande?'],['It is too expensive.','È troppo costoso.']],q:'Come chiedi il prezzo?',opts:['How many is it?','How much is it?','What price it?'],a:1},
+    {title:'Parlare del passato',goal:'Usare alcune forme semplici del passato.',words:[['yesterday','ieri'],['went','andò / sono andato'],['had','ebbe / ho avuto'],['saw','vide / ho visto'],['worked','lavorò / ho lavorato'],['visited','visitò / ho visitato']],phrases:[['I worked yesterday.','Ho lavorato ieri.'],['I went to Turin.','Sono andato a Torino.'],['We had a good day.','Abbiamo passato una bella giornata.']],q:'Qual è il passato di “go”?',opts:['goed','went','gone'],a:1},
+    {title:'Ripasso e conversazione',goal:'Usare insieme le frasi delle sei lezioni precedenti.',words:[['because','perché'],['but','ma'],['and','e'],['then','poi'],['today','oggi'],['yesterday','ieri']],phrases:[['Today I work, but yesterday I stayed home.','Oggi lavoro, ma ieri sono rimasto a casa.'],['I like English because it is useful.','Mi piace l’inglese perché è utile.'],['Then I went home.','Poi sono andato a casa.']],q:'Completa: “I like English ___ it is useful.”',opts:['because','but','yesterday'],a:0}
+  ];
+  const KEY='quaderno_course_a1_v4'; let state={done:[]};
+  try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(_){} if(!Array.isArray(state.done))state.done=[];
+  const grid=document.getElementById('lessonGrid'),panel=document.getElementById('lessonPanel'); if(!grid)return;
+  let current=0, answered=false, speechRecognition=null;
+  function profile(){
+    try{
+      const t=JSON.parse(localStorage.getItem('quaderno_level_test_v85')||'null');
+      if(t&&t.level)return t.level;
+      const st=JSON.parse(localStorage.getItem('quaderno_user_settings_v82')||'{}');
+      return st.level==='intermedio'?'A2':'A1';
+    }catch(_){return 'A1';}
+  }
+  function pathInfo(){
+    const lv=profile();
+    if(lv==='B1') return {icon:'🚀',title:'Percorso B1 personalizzato',text:'Hai già una buona base: lavoriamo su fluidità, conversazione e precisione.',tag:'B1',note:'Consiglio: usa ogni lezione come ripasso rapido e passa poi a Parla per allenare la conversazione.'};
+    if(lv==='A2') return {icon:'📈',title:'Percorso A2 personalizzato',text:'Consolidiamo le basi e aumentiamo vocabolario e sicurezza.',tag:'A2',note:'Consiglio: completa la lezione, poi ripassa le parole nuove e prova una breve conversazione.'};
+    return {icon:'🌱',title:'Percorso A1 personalizzato',text:'Partiamo dalle basi con frasi pratiche e progressione graduale.',tag:'A1',note:'Consiglio: ascolta ogni frase, ripetila ad alta voce e completa il quiz prima di proseguire.'};
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){} }
+  function unlocked(i){ return i===0 || state.done.includes(i-1); }
+  function render(){
+    const pi=pathInfo();
+    const banner=document.getElementById('personalPathBanner');
+    if(banner){banner.querySelector('.path-icon').textContent=pi.icon;document.getElementById('pathTitle').textContent=pi.title;document.getElementById('pathText').textContent=pi.text;}
+    const note=document.getElementById('personalPathNote'); if(note){note.textContent=pi.note;note.style.display='block';}
+    const recommended=state.done.length<lessons.length?state.done.length:-1;
+    grid.innerHTML=lessons.map((l,i)=>{const done=state.done.includes(i),open=unlocked(i);return `<button class="lesson-card personalized ${done?'done':''} ${!open?'locked':''} ${i===recommended?'recommended':''}" data-i="${i}" ${open?'':'disabled'}><div class="day">Giorno ${i+1} ${i===recommended?' · CONSIGLIATA':''}</div><h3>${l.title}</h3><p>${l.goal}</p><span class="level-tag">${pi.tag}</span><div class="state">${done?'✓ Completata':open?'▶ Inizia':'🔒 Completa prima la lezione precedente'}</div></button>`}).join('');
+    grid.querySelectorAll('.lesson-card:not([disabled])').forEach(b=>b.addEventListener('click',()=>openLesson(Number(b.dataset.i))));
+    const pct=Math.round(state.done.length/lessons.length*100); const el=document.getElementById('courseProgressPct'); if(el)el.textContent=pct+'%';
+  }
+  function setStep(n){document.querySelectorAll('#lessonStepper span').forEach((x,i)=>x.classList.toggle('active',i<=n));}
+  function openLesson(i){
+    if(!unlocked(i))return; current=i; answered=false; const l=lessons[i]; panel.style.display='block'; setStep(0);
+    document.getElementById('lessonDay').textContent='Giorno '+(i+1); document.getElementById('lessonTitle').textContent=l.title; document.getElementById('lessonGoal').textContent=l.goal;
+    const pi=pathInfo(); const goal=document.getElementById('lessonGoal'); if(goal)goal.textContent=l.goal+' · Percorso '+pi.tag;
+    document.getElementById('lessonWords').innerHTML=l.words.map(w=>`<button class="lesson-word" data-word="${w[0]}" data-back="${w[1]}">${w[0]}<small>${w[1]}</small></button>`).join('');
+    document.querySelectorAll('.lesson-word').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.word,{lang:'en-US'})));
+    document.getElementById('lessonPhrases').innerHTML=l.phrases.map(p=>`<button class="lesson-phrase" data-phrase="${p[0]}"><b>${p[0]}</b><small>${p[1]}</small><span>🔊</span></button>`).join('');
+    document.querySelectorAll('.lesson-phrase').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.phrase,{lang:'en-US'})));
+    document.getElementById('speakingPrompt').textContent='Ripeti: “'+l.phrases[0][0]+'”';
+    document.getElementById('lessonSpeakFeedback').textContent='';
+    document.getElementById('quizQuestion').textContent=l.q; document.getElementById('quizFeedback').textContent=''; document.getElementById('quizFeedback').className='quiz-feedback';
+    document.getElementById('quizOptions').innerHTML=l.opts.map((o,j)=>`<button class="quiz-option" data-a="${j}">${o}</button>`).join('');
+    document.querySelectorAll('.quiz-option').forEach(b=>b.addEventListener('click',()=>answer(Number(b.dataset.a))));
+    const complete=document.getElementById('completeLessonBtn'); complete.disabled=!state.done.includes(i);
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function answer(a){
+    if(answered)return; const l=lessons[current],f=document.getElementById('quizFeedback');
+    if(a===l.a){ answered=true; f.textContent='✓ Esatto! Ora puoi completare la lezione.'; f.className='quiz-feedback ok'; setStep(2);
+      const btn=document.getElementById('completeLessonBtn'); btn.disabled=false; progress.correct=(progress.correct||0)+1; touchSession(); addStudyMinutes(2); saveProgress(); renderProgress();
+    }else{ f.textContent='Riprova. Leggi le frasi modello e scegli di nuovo.'; f.className='quiz-feedback bad'; progress.errors=(progress.errors||0)+1; saveProgress(); renderProgress(); }
+  }
+  async function addLessonWords(){ const l=lessons[current]; for(const w of l.words){try{await addVocabCard(w[0],w[1],'Parola del corso A1: '+l.title,'corso A1');}catch(e){console.warn(e)}} }
+  document.getElementById('closeLesson').addEventListener('click',()=>panel.style.display='none');
+  document.getElementById('completeLessonBtn').addEventListener('click',async()=>{if(!answered)return; if(!state.done.includes(current)){state.done.push(current);state.done.sort((a,b)=>a-b);await addLessonWords();save();render();document.getElementById('progressMessage').textContent='Ottimo! Lezione completata e parole aggiunte al ripasso.';} setStep(3); const next=current+1; if(next<lessons.length){setTimeout(()=>openLesson(next),350);} });
+  document.getElementById('speakLessonBtn').addEventListener('click',()=>{const l=lessons[current];setStep(1);speak(l.phrases.map(x=>x[0]).join('. '),{lang:'en-US'});});
+  const speakBtn=document.getElementById('lessonSpeakBtn');
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(SR&&speakBtn){
+    speakBtn.addEventListener('click',()=>{const l=lessons[current]; try{if(speechRecognition)speechRecognition.stop(); speechRecognition=new SR(); speechRecognition.lang='en-US'; speechRecognition.interimResults=false;speechRecognition.maxAlternatives=1; document.getElementById('lessonSpeakFeedback').textContent='🎤 Ascolto…'; speechRecognition.onresult=e=>{const heard=e.results[0][0].transcript; const target=l.phrases[0][0]; const ok=speechMatch(heard,target); const f=document.getElementById('lessonSpeakFeedback'); f.textContent=ok?'✓ Molto bene! Pronuncia riconosciuta.':'Hai detto: “'+heard+'”. Prova ancora con la frase modello.'; f.className='quiz-feedback '+(ok?'ok':'bad'); setStep(1);}; speechRecognition.onerror=()=>document.getElementById('lessonSpeakFeedback').textContent='Microfono non disponibile. Puoi continuare con l’ascolto.'; speechRecognition.start();}catch(e){}});
+  }else if(speakBtn){speakBtn.disabled=true;speakBtn.textContent='🎤 Microfono non disponibile';}
+  render();
+})();
+
+
+
+/* ===== V8 HOME / MOBILE NAV ===== */
+(function(){
+  const views=[...document.querySelectorAll('.view')];
+  const tabs=[...document.querySelectorAll('.tab-btn')];
+  const nav=[...document.querySelectorAll('.bottom-nav button')];
+  function go(tab){
+    views.forEach(v=>v.classList.toggle('active',v.id==='view-'+tab));
+    tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+    nav.forEach(b=>b.classList.toggle('active',b.dataset.go===tab));
+    window.scrollTo({top:0,behavior:'smooth'});
+    updateHome();
+  }
+  [...document.querySelectorAll('[data-go]')].forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+  // Replace legacy tab handler visually/functionally by intercepting clicks.
+  tabs.forEach(b=>b.addEventListener('click',e=>{e.preventDefault();go(b.dataset.tab)}));
+  function updateHome(){
+    try{
+      const done=JSON.parse(localStorage.getItem('quaderno_course_a1_v3')||'{}').done||[];
+      const pct=Math.round(done.length/7*100);
+      const fill=document.getElementById('homeCourseFill'), txt=document.getElementById('homeCoursePct');
+      if(fill)fill.style.width=pct+'%'; if(txt)txt.textContent=pct+'%';
+      const st=document.getElementById('homeStreak'), correct=document.getElementById('homeCorrect'), words=document.getElementById('homeWords');
+      if(st)st.textContent=document.getElementById('streakVal')?.textContent||'0';
+      if(correct)correct.textContent=localStorage.getItem('quaderno_correct_count')||'0';
+      if(words)words.textContent=localStorage.getItem('quaderno_vocab_count')||'0';
+    }catch(e){}
+  }
+  updateHome();
+})();
+
+</script>
+
+<!-- V8.5: test iniziale di livello / onboarding -->
+<div id="levelTestOverlay" class="level-overlay" aria-hidden="true">
+  <div class="level-modal" role="dialog" aria-modal="true" aria-labelledby="levelTestTitle">
+    <button class="level-close" id="levelTestClose" aria-label="Chiudi">×</button>
+    <div class="level-kicker">IL TUO PERCORSO</div>
+    <h2 id="levelTestTitle">Scopri il tuo livello</h2>
+    <p class="level-intro">8 domande rapide. Non è un esame: serve solo a personalizzare il percorso.</p>
+    <div class="level-progress"><div id="levelProgressFill"></div></div>
+    <div id="levelQuestionWrap">
+      <div class="level-counter" id="levelCounter">Domanda 1 di 8</div>
+      <h3 id="levelQuestion">—</h3>
+      <div id="levelOptions" class="level-options"></div>
+      <div id="levelFeedback" class="level-feedback" aria-live="polite"></div>
+    </div>
+    <div id="levelResult" class="level-result" style="display:none"></div>
+    <div class="level-actions">
+      <button class="ghost-btn" id="levelSkip">Salta per ora</button>
+      <button class="send-btn" id="levelNext" disabled>Avanti</button>
+    </div>
+  </div>
+</div>
+<style>
+.level-overlay{position:fixed;inset:0;background:rgba(17,25,22,.58);backdrop-filter:blur(7px);z-index:10000;display:none;align-items:flex-end;justify-content:center;padding:14px}.level-overlay.show{display:flex}.level-modal{position:relative;width:min(560px,100%);max-height:92vh;overflow:auto;background:var(--surface,#fff);color:var(--text,#17201c);border:1px solid var(--line,#dce5e1);border-radius:28px;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,.25)}.level-close{position:absolute;right:14px;top:12px;width:40px;height:40px;border:0;border-radius:50%;background:var(--surface-2,#f1f5f3);font-size:25px;cursor:pointer}.level-kicker{font:10px JetBrains Mono,monospace;letter-spacing:.15em;color:var(--accent,#2f6b5a);font-weight:800}.level-modal h2{margin:5px 45px 5px 0;font-size:27px}.level-intro{margin:0 0 18px;color:var(--muted,#66736d);line-height:1.5;font-size:13px}.level-progress{height:8px;background:var(--surface-2,#eef3f0);border-radius:99px;overflow:hidden;margin-bottom:20px}.level-progress>div{height:100%;width:12.5%;background:var(--accent,#2f6b5a);border-radius:99px;transition:width .25s}.level-counter{font-size:11px;color:var(--muted,#66736d);margin-bottom:8px}.level-modal h3{font-size:20px;line-height:1.35;margin:0 0 16px}.level-options{display:grid;gap:10px}.level-option{width:100%;text-align:left;padding:14px 15px;border:1px solid var(--line,#dce5e1);border-radius:15px;background:var(--surface-2,#f6f8f7);color:inherit;font-size:15px;font-weight:700;cursor:pointer;min-height:52px}.level-option.selected{border-color:var(--accent,#2f6b5a);background:rgba(47,107,90,.1)}.level-option.correct{border-color:#3a8b68;background:rgba(58,139,104,.12)}.level-option.wrong{border-color:#c76b63;background:rgba(199,107,99,.1)}.level-feedback{min-height:22px;margin-top:10px;font-size:12px;color:var(--muted,#66736d)}.level-result{background:var(--surface-2,#f2f7f4);border-radius:20px;padding:20px;margin-top:10px}.level-result .level-big{font-size:42px;font-weight:900;color:var(--accent,#2f6b5a)}.level-result h3{margin:4px 0}.level-result p{color:var(--muted,#66736d);line-height:1.5}.level-actions{display:flex;gap:10px;margin-top:18px}.level-actions>*{flex:1;min-height:50px}.theme-dark .level-modal{box-shadow:0 24px 70px rgba(0,0,0,.5)}
+@media(max-width:600px){.level-overlay{padding:0;align-items:flex-end}.level-modal{border-radius:26px 26px 0 0;padding:21px 16px calc(20px + env(safe-area-inset-bottom));max-height:94vh}.level-modal h2{font-size:24px}.level-options{gap:8px}.level-option{min-height:50px;padding:13px}.level-actions{position:sticky;bottom:0;background:var(--surface,#fff);padding-top:10px}}
+</style>
+
+<div class="bottom-nav" id="bottomNav">
+  <button data-go="home" class="active"><span class="navico">🏠</span><span>Home</span></button>
+  <button data-go="course"><span class="navico">📚</span><span>Corso</span></button>
+  <button data-go="tutor"><span class="navico">🧑‍🏫</span><span>Tutor</span></button>
+  <button data-go="vocab"><span class="navico">🧠</span><span>Ripasso</span></button>
+  <button data-go="progress"><span class="navico">📊</span><span>Progressi</span></button>
+  <button data-go="settings"><span class="navico">⚙️</span><span>Impostazioni</span></button>
+</div>
+
+<!-- V8.1: la barra inferiore viene dichiarata dopo lo script principale, quindi colleghiamo i suoi pulsanti qui. -->
+<script>
+(function(){
+  const bottomNav = document.getElementById('bottomNav');
+  if(!bottomNav) return;
+  bottomNav.addEventListener('click', function(e){
+    const btn = e.target.closest('button[data-go]');
+    if(!btn) return;
+    const target = btn.dataset.go;
+    const tab = document.querySelector('.tab-btn[data-tab="'+target+'"]');
+    if(tab){
+      tab.click();
+    } else {
+      document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-'+target));
+      bottomNav.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+  });
+})();
+</script>
+
+
+
+<style>
+.tutor-voice-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}.tutor-voice-bar button{min-height:44px;border:1px solid var(--line,#dfe6e3);border-radius:14px;background:var(--paper,#fff);padding:10px 13px;font-weight:800;color:var(--ink,#17342f)}.tutor-voice-bar button.active{background:var(--accent,#2f6f61);color:#fff;border-color:var(--accent,#2f6f61)}.tutor-voice-bar button:disabled{opacity:.45}.tutor-voice-bar span{font-size:12px;color:var(--ink-soft,#687773);flex:1}.tutor-msg.ai{position:relative}.tutor-speak-inline{float:right;border:0;background:transparent;font-size:18px;cursor:pointer;padding:2px 4px}@media(max-width:600px){.tutor-voice-bar{position:sticky;bottom:72px;z-index:3;background:var(--paper,#fff);padding:8px 0}.tutor-voice-bar button{flex:0 0 auto}.tutor-voice-bar span{min-width:120px}}</style>
+<script>
+/* ===== V8.8 AI TUTOR VOCALE - memoria locale ===== */
+(function(){
+  const KEY='quaderno_ai_tutor_v88';
+  let voiceMode=false, speaking=false, lastReply='';
+  const LEVEL_KEY='quaderno_level_v85';
+  const COURSE_KEY='quaderno_course_a1_v3';
+  const SETTINGS_KEY='quaderno_user_settings_v82';
+  let state={messages:[],sessions:0,lastFocus:'',recentErrors:[]};
+  try{state=Object.assign(state,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(_){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}}
+  function level(){try{return localStorage.getItem(LEVEL_KEY)||JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}').level||'Base';}catch(_){return 'Base';}}
+  function course(){try{return JSON.parse(localStorage.getItem(COURSE_KEY)||'{}')||{};}catch(_){return {};}}
+  function errors(){
+    const out=[];
+    try{const raw=localStorage.getItem('quaderno_errors'); if(raw){const x=JSON.parse(raw); if(Array.isArray(x)) out.push(...x); else if(Array.isArray(x.errors)) out.push(...x.errors);}}catch(_){}
+    try{const raw=localStorage.getItem('quaderno_error_book'); if(raw){const x=JSON.parse(raw); if(Array.isArray(x)) out.push(...x);}}catch(_){}
+    return out.slice(-10);
+  }
+  function vocabCount(){return Number(localStorage.getItem('quaderno_vocab_count')||0)||0;}
+  function renderMemory(){
+    const l=level(), c=course(), done=Array.isArray(c.done)?c.done.length:0, es=errors();
+    document.getElementById('tutorLevelBadge')?.replaceChildren(document.createTextNode(String(l).replace('Base','A1')));
+    const a=document.getElementById('tutorLessons'); if(a)a.textContent=done;
+    const b=document.getElementById('tutorErrors'); if(b)b.textContent=es.length;
+    const w=document.getElementById('tutorWords'); if(w)w.textContent=vocabCount();
+    const f=document.getElementById('tutorFocus'); if(f)f.textContent=es.length?'🎯 Oggi lavoriamo soprattutto sugli errori recenti.':'🎯 Oggi facciamo una sessione breve adatta al tuo livello.';
+    const g=document.getElementById('tutorGreeting'); if(g)g.textContent='Livello '+String(l).replace('Base','A1')+'. Ricordo i tuoi progressi direttamente su questo dispositivo.';
+  }
+  function add(role,text,why){
+    const box=document.getElementById('tutorChat'); if(!box)return; const empty=document.getElementById('tutorEmpty'); if(empty)empty.remove();
+    const d=document.createElement('div'); d.className='tutor-msg '+role; d.textContent=text||'';
+    if(role==='ai'){ const sp=document.createElement('button'); sp.className='tutor-speak-inline'; sp.type='button'; sp.textContent='🔊'; sp.title='Ascolta'; sp.onclick=()=>speak(text); d.appendChild(sp); lastReply=text||''; document.getElementById('tutorListen')?.removeAttribute('disabled'); }
+    if(why){const w=document.createElement('div');w.className='why';w.textContent='💡 '+why;d.appendChild(w);}
+    box.appendChild(d);box.scrollTop=box.scrollHeight;
+  }
+  function system(){
+    const l=level(),c=course(),done=Array.isArray(c.done)?c.done.length:0,es=errors();
+    return `Sei l'AI Tutor personale di uno studente italiano che usa questa app solo per uso personale. Livello attuale: ${l}. Lezioni completate: ${done}. Errori recenti disponibili: ${JSON.stringify(es)}.
+Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON valido con le chiavi reply, why, nextExercise. reply deve essere breve e adatto al livello; se correggi un errore, spiega why in italiano. Non inventare dati sulla memoria. Proponi un solo piccolo passo alla volta.`;
+  }
+  async function ask(text){
+    if(!text)return; const input=document.getElementById('tutorInput'); if(input)input.value=''; add('user',text);
+    const status=document.getElementById('tutorStatus'); if(status)status.textContent='🧑‍🏫 Il tutor sta pensando…';
+    state.messages=Array.isArray(state.messages)?state.messages:[];
+    try{
+      const history=state.messages.slice(-8).map(m=>({role:m.role,text:m.text}));
+      const result=await callGemini(system(),text,history);
+      const reply=result.reply||"Let's continue!"; add('ai',reply,result.why); if(voiceMode) setTimeout(()=>speak(reply,true),120);
+      state.messages.push({role:'user',text,ts:Date.now()},{role:'model',text:reply,ts:Date.now()});
+      state.sessions=(state.sessions||0)+1; state.lastFocus=result.nextExercise||''; save();
+      if(result.nextExercise){const f=document.getElementById('tutorFocus');if(f)f.textContent='🎯 Prossimo passo: '+result.nextExercise;}
+      if(status)status.textContent='';
+    }catch(e){if(status)status.textContent='⚠️ '+(e.message||'Errore Gemini');}
+  }
+  function start(){
+    renderMemory();
+    const l=String(level()).replace('Base','A1');
+    const es=errors();
+    const prompt=es.length?`Inizia una sessione di 5 minuti. Prima dammi un breve esercizio sugli errori recenti e poi fammi rispondere in inglese.`:`Inizia una sessione di 5 minuti per livello ${l}. Fammi una domanda semplice in inglese e guidami passo passo.`;
+    ask(prompt);
+  }
+  document.getElementById('tutorStart')?.addEventListener('click',start);
+  document.getElementById('tutorSend')?.addEventListener('click',()=>ask(document.getElementById('tutorInput')?.value.trim()));
+  document.getElementById('tutorInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('tutorSend')?.click();}});
+  document.querySelectorAll('[data-tutor-prompt]').forEach(b=>b.addEventListener('click',()=>ask(b.dataset.tutorPrompt)));
+  document.getElementById('tutorReset')?.addEventListener('click',()=>{state.messages=[];state.lastFocus='';save();const box=document.getElementById('tutorChat');if(box)box.innerHTML='<div class="tutor-empty" id="tutorEmpty">Premi <b>Inizia sessione</b> e il tutor analizzerà il tuo percorso.</div>';const s=document.getElementById('tutorStatus');if(s)s.textContent='';renderMemory();});
+  function speak(text,autoListen=false){
+    if(!text||!('speechSynthesis' in window))return;
+    speechSynthesis.cancel(); speaking=true;
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='en-US'; u.rate=.9; u.pitch=1;
+    const status=document.getElementById('tutorVoiceStatus'); if(status)status.textContent='🔊 Il tutor sta parlando…';
+    u.onend=()=>{speaking=false;if(status)status.textContent=voiceMode?'🎙️ Tocca il microfono e rispondi':'Voce attiva'; if(autoListen&&voiceMode)listen();};
+    u.onerror=()=>{speaking=false;if(status)status.textContent='Voce non disponibile';};
+    speechSynthesis.speak(u);
+  }
+  function listen(){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){const s=document.getElementById('tutorVoiceStatus');if(s)s.textContent='⚠️ Riconoscimento vocale non disponibile';return;}
+    const status=document.getElementById('tutorVoiceStatus'); if(status)status.textContent='🎤 Ascolto… parla in inglese';
+    const r=new SR(); r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1; r.onresult=e=>{const t=e.results?.[0]?.[0]?.transcript||'';const i=document.getElementById('tutorInput');if(i)i.value=t; if(t)ask(t);}; r.onerror=()=>{if(status)status.textContent='🎙️ Tocca il microfono e riprova';}; r.onend=()=>{if(!speaking&&voiceMode&&status&&status.textContent==='🎤 Ascolto… parla in inglese')status.textContent='🎙️ Pronto';}; r.start();
+  }
+  document.getElementById('tutorMic')?.addEventListener('click',()=>voiceMode?listen():(()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Il riconoscimento vocale non è disponibile in questo browser.');return;}const r=new SR();r.lang='en-US';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{const t=e.results?.[0]?.[0]?.transcript||'';const i=document.getElementById('tutorInput');if(i)i.value=t;};r.start();})());
+  document.getElementById('tutorVoiceMode')?.addEventListener('click',()=>{voiceMode=!voiceMode;const b=document.getElementById('tutorVoiceMode'),s=document.getElementById('tutorVoiceStatus');b?.classList.toggle('active',voiceMode);if(s)s.textContent=voiceMode?'🎙️ Modalità vocale attiva':'Voce disattivata';});
+  document.getElementById('tutorListen')?.addEventListener('click',()=>speak(lastReply));
+  window.addEventListener('storage',renderMemory);
+  renderMemory();
+})();
+</script>
+<script>
+/* ===== V8.2 INTERACTION / PERSONALIZZAZIONE ===== */
+(function(){
+  const COURSE_KEY='quaderno_course_a1_v3';
+  const SETTINGS_KEY='quaderno_user_settings_v82';
+  const THEME_KEY='quaderno_theme_v82';
+  const LESSONS=[['Presentarsi','10 minuti · Livello A1'],['La routine','10 minuti · Livello A1'],['La famiglia','10 minuti · Livello A1'],['Al ristorante','10 minuti · Livello A1'],['Fare acquisti','10 minuti · Livello A1'],['Parlare del passato','10 minuti · Livello A1'],['Ripasso e conversazione','10 minuti · Livello A1']];
+  function go(tab){
+    const b=document.querySelector('.tab-btn[data-tab="'+tab+'"]');
+    if(b) b.click(); else document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+tab));
+    document.querySelectorAll('.bottom-nav button').forEach(n=>n.classList.toggle('active',n.dataset.go===tab));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function courseState(){try{return JSON.parse(localStorage.getItem(COURSE_KEY)||'{}')||{};}catch(_){return {};}}
+  function refreshHome(){
+    const st=courseState(),done=Array.isArray(st.done)?st.done:[];
+    const next=Math.min(done.length,LESSONS.length-1);
+    const finished=done.length>=LESSONS.length;
+    const title=document.getElementById('homeLessonTitle'),meta=document.getElementById('homeLessonMeta'),btn=document.querySelector('.today-card .big-start');
+    if(title)title.textContent=finished?'🎉 Corso A1 completato!':LESSONS[next][0];
+    if(meta)meta.textContent=finished?'Ripassa e continua a praticare':LESSONS[next][1];
+    if(btn){btn.textContent=finished?'↻ Ripassa il corso':'▶ Continua la lezione';btn.onclick=()=>{go('course');setTimeout(()=>document.querySelector('.lesson-card[data-i="'+next+'"]')?.click(),120);};}
+    const pct=Math.round(done.length/LESSONS.length*100),fill=document.getElementById('homeCourseFill'),txt=document.getElementById('homeCoursePct');
+    if(fill)fill.style.width=pct+'%';if(txt)txt.textContent=pct+'%';
+  }
+  refreshHome();
+  window.addEventListener('storage',refreshHome);
+
+  // Settings persistence
+  const ids=['model','level','topic'];
+  function loadSettings(){try{const x=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');ids.forEach(id=>{const el=document.getElementById(id);if(el&&x[id]!=null)el.value=x[id];});}catch(_){}}
+  function saveSettings(){try{const x={};ids.forEach(id=>{const el=document.getElementById(id);if(el)x[id]=el.value;});localStorage.setItem(SETTINGS_KEY,JSON.stringify(x));const s=document.getElementById('backupStatus');if(s)s.textContent='✓ Impostazioni salvate';}catch(_){}}
+  loadSettings();ids.forEach(id=>document.getElementById(id)?.addEventListener('change',saveSettings));ids.forEach(id=>document.getElementById(id)?.addEventListener('blur',saveSettings));
+
+  // Theme
+  function applyTheme(t){document.body.classList.toggle('theme-dark',t==='dark');document.documentElement.style.colorScheme=t==='dark'?'dark':'light';document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.themeChoice===t));try{localStorage.setItem(THEME_KEY,t);}catch(_){} }
+  let theme='system';try{theme=localStorage.getItem(THEME_KEY)||'system';}catch(_){}
+  if(theme==='system'){const mq=window.matchMedia('(prefers-color-scheme: dark)');applyTheme(mq.matches?'dark':'light');}
+  else applyTheme(theme);
+  document.querySelectorAll('.theme-btn').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.themeChoice;if(t==='system'){const mq=window.matchMedia('(prefers-color-scheme: dark)');applyTheme(mq.matches?'dark':'light');try{localStorage.setItem(THEME_KEY,'system');}catch(_){} }else applyTheme(t);}));
+
+  // Backup / restore
+  function readVocabCards(){
+    return new Promise(resolve=>{
+      try{
+        if(typeof vocabGetAll==='function' && vocabDb){ vocabGetAll().then(cards=>resolve(cards||[])).catch(()=>resolve([])); }
+        else resolve([]);
+      }catch(_){resolve([]);}
+    });
+  }
+  function writeVocabCards(cards){
+    return new Promise(resolve=>{
+      try{
+        if(!cards||!cards.length){resolve();return;}
+        openVocabDb().then(db=>{
+          vocabDb=db;
+          const tx=db.transaction(VOCAB_STORE,'readwrite'),store=tx.objectStore(VOCAB_STORE);
+          cards.forEach(c=>store.put(c));
+          tx.oncomplete=()=>resolve(); tx.onerror=()=>resolve();
+        }).catch(()=>resolve());
+      }catch(_){resolve();}
+    });
+  }
+  async function collectData(){
+    const keys=['quaderno_progress_v2','quaderno_course_a1_v3','quaderno_audio','quaderno_gemini_key','quaderno_user_settings_v82','quaderno_theme_v82'];
+    const data={version:'8.2',createdAt:new Date().toISOString(),localStorage:{},vocabulary:await readVocabCards()};
+    keys.forEach(k=>{try{const v=localStorage.getItem(k);if(v!==null)data.localStorage[k]=v;}catch(_){}});
+    return data;
+  }
+  document.getElementById('exportDataBtn')?.addEventListener('click',async()=>{
+    const s=document.getElementById('backupStatus');if(s)s.textContent='Preparazione backup…';
+    const data=await collectData();
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download='quaderno-inglese-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+    if(s)s.textContent='✓ Backup esportato con '+(data.vocabulary?.length||0)+' parole';
+  });
+  document.getElementById('importDataInput')?.addEventListener('change',async e=>{
+    const f=e.target.files?.[0];if(!f)return;
+    try{const data=JSON.parse(await f.text());if(!data.localStorage)throw new Error('File non valido');Object.entries(data.localStorage).forEach(([k,v])=>{if(typeof v==='string')localStorage.setItem(k,v);});
+      await writeVocabCards(Array.isArray(data.vocabulary)?data.vocabulary:[]);
+      const s=document.getElementById('backupStatus');if(s)s.textContent='✓ Dati importati. Ricarico l’app…';setTimeout(()=>location.reload(),700);
+    }catch(err){const s=document.getElementById('backupStatus');if(s)s.textContent='⚠️ Impossibile importare il backup.';}finally{e.target.value='';}
+  });
+
+  // Conversation tools
+  let lastAssistant='';
+  const observer=new MutationObserver(()=>{const bubbles=[...document.querySelectorAll('#thread .bubble')];const last=bubbles.reverse().find(b=>b.classList.contains('assistant')||b.classList.contains('ai'));if(last)lastAssistant=last.textContent.trim();});
+  const thread=document.getElementById('thread');if(thread)observer.observe(thread,{childList:true,subtree:true});
+  document.getElementById('speakLastBtn')?.addEventListener('click',()=>{if(lastAssistant)speak(lastAssistant,{lang:'en-US'});else{const st=document.getElementById('statusLineConv');if(st)st.textContent='Non c’è ancora una risposta da ascoltare.';}});
+  document.getElementById('clearConversationBtn')?.addEventListener('click',()=>{if(!confirm('Iniziare una nuova conversazione?'))return;const t=document.getElementById('thread');if(t)t.innerHTML='';const e=document.getElementById('emptyState');if(e)e.style.display='block';const input=document.getElementById('composerInput');if(input){input.value='';input.focus();}});
+
+  // RT translation button + score helper
+  document.getElementById('rtTranslateBtn')?.addEventListener('click',()=>{const text=document.getElementById('sentenceText')?.textContent?.trim();if(text&&text!=='—'&&text!=='…')speak(text,{lang:'en-US'});});
+  window.__v82Score=function(expected,spoken){
+    const norm=s=>String(s||'').toLowerCase().replace(/[^a-zà-ÿ' ]/g,' ').split(/\s+/).filter(Boolean);
+    const a=norm(expected),b=norm(spoken);if(!a.length)return 0;const set=new Set(b);let hits=a.filter(w=>set.has(w)).length;return Math.round(hits/a.length*100);
+  };
+})();
+</script>
+
+<script>
+/* ===== V8.5 LEVEL TEST ===== */
+(function(){
+  const KEY='quaderno_level_test_v85';
+  const questions=[
+    {q:'Choose: “Io sono italiano.”',o:['I have Italian.','I am Italian.','I Italian am.'],a:1},
+    {q:'What is the correct answer? “How are you?”',o:['I am fine, thanks.','I have 42.','I fine.'],a:0},
+    {q:'Choose: “She works every day.”',o:['She work every day.','She works every day.','She working every day.'],a:1},
+    {q:'What is the past of “go”?',o:['goed','went','gone'],a:1},
+    {q:'Complete: “I have lived here ___ 2020.”',o:['for','since','from'],a:1},
+    {q:'Which sounds natural?',o:['I would like some water, please.','I like would water.','I would some like water.'],a:0},
+    {q:'Complete: “If I had more time, I ___ travel more.”',o:['will','would','can'],a:1},
+    {q:'Choose the most natural sentence.',o:['I have been learning English for two years.','I learn English since two years.','I am learn English from two years.'],a:0}
+  ];
+  let index=0,score=0,selected=-1;
+  const overlay=document.getElementById('levelTestOverlay');
+  if(!overlay)return;
+  const qEl=document.getElementById('levelQuestion'),opts=document.getElementById('levelOptions'),counter=document.getElementById('levelCounter'),fill=document.getElementById('levelProgressFill'),feedback=document.getElementById('levelFeedback'),next=document.getElementById('levelNext'),result=document.getElementById('levelResult');
+  function show(){
+    overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
+    index=0;score=0;selected=-1;result.style.display='none';document.getElementById('levelQuestionWrap').style.display='block';next.disabled=true;next.textContent='Avanti';render();
+  }
+  function close(){overlay.classList.remove('show');overlay.setAttribute('aria-hidden','true');}
+  function render(){
+    const x=questions[index];counter.textContent='Domanda '+(index+1)+' di '+questions.length;fill.style.width=((index+1)/questions.length*100)+'%';qEl.textContent=x.q;feedback.textContent='';selected=-1;next.disabled=true;opts.innerHTML=x.o.map((v,i)=>`<button type="button" class="level-option" data-i="${i}">${v}</button>`).join('');
+    opts.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>choose(Number(b.dataset.i))));
+  }
+  function choose(i){
+    if(selected!==-1)return; selected=i; const x=questions[index],buttons=[...opts.children];buttons[i].classList.add('selected');
+    if(i===x.a){score++;buttons[i].classList.add('correct');feedback.textContent='✓ Risposta corretta';}else{buttons[i].classList.add('wrong');buttons[x.a].classList.add('correct');feedback.textContent='La risposta corretta è: '+x.o[x.a];}
+    next.disabled=false;next.textContent=index===questions.length-1?'Vedi risultato':'Avanti';
+  }
+  function finish(){
+    const pct=Math.round(score/questions.length*100);let level='A1',desc='Partiamo dalle basi e costruiamo una buona sicurezza passo dopo passo.';
+    if(score>=6){level='B1';desc='Hai una buona base. Possiamo lavorare su conversazione, fluidità e precisione.';}else if(score>=4){level='A2';desc='Conosci già diverse strutture. Possiamo consolidarle e aumentare il vocabolario.';}
+    localStorage.setItem(KEY,JSON.stringify({completedAt:new Date().toISOString(),score,level}));
+    try{const settings=JSON.parse(localStorage.getItem('quaderno_user_settings_v82')||'{}');settings.level=level==='B1'?'intermedio':level==='A2'?'intermedio':'base';localStorage.setItem('quaderno_user_settings_v82',JSON.stringify(settings));}catch(_){}
+    document.getElementById('levelQuestionWrap').style.display='none';result.style.display='block';result.innerHTML=`<div class="level-big">${level}</div><h3>Il tuo livello iniziale</h3><p><strong>${score}/${questions.length} risposte corrette (${pct}%)</strong><br>${desc}</p><button type="button" class="send-btn" id="levelStartCourse" style="width:100%;min-height:50px">📚 Inizia il mio percorso</button>`;
+    document.getElementById('levelStartCourse').addEventListener('click',()=>{close();document.querySelector('.tab-btn[data-tab="course"]')?.click();});
+    next.style.display='none';
+  }
+  next.addEventListener('click',()=>{if(selected===-1)return;if(index<questions.length-1){index++;render();}else finish();});
+  document.getElementById('levelTestClose')?.addEventListener('click',close);
+  document.getElementById('levelSkip')?.addEventListener('click',close);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('show'))close();});
+  window.openLevelTest=show;
+  const btn=document.createElement('button');btn.type='button';btn.className='settings-action';btn.id='levelTestBtn';btn.textContent='🎯 Rifai test livello';
+  const backup=document.getElementById('exportDataBtn')?.closest('.settings-card');
+  if(backup) backup.parentNode.insertBefore(btn,backup);
+  btn.addEventListener('click',show);
+  let done=false;try{done=!!localStorage.getItem(KEY);}catch(_){}
+  if(!done && !sessionStorage.getItem('quaderno_level_prompted_v85')){sessionStorage.setItem('quaderno_level_prompted_v85','1');setTimeout(show,700);}
+})();
+</script>
+
+
+<script>window.addEventListener('DOMContentLoaded',()=>{try{initOxfordImporter();}catch(e){console.error(e);}});</script>
+</body>
+</html>
