@@ -1,14 +1,14 @@
-# Quaderno d'Inglese — Personal V12
+# Quaderno d'Inglese — Personal V13
 
 Versione personale, statica e PWA. Non richiede Node.js, Express o un backend.
 
-## V12 — Percorso personale quotidiano
+## V13 — Percorso personale quotidiano
 - Tutte le funzioni della V11 Oxford.
 - Nuova **Sessione di oggi** nella Home con 5 attività: ripasso, parole nuove, pronuncia, mini-conversazione e corso A1.
 - Stato della sessione salvato localmente per data; il giorno successivo parte una nuova sessione.
 - Barra di avanzamento e conteggio attività completate.
 - Collegamenti diretti alle sezioni dell'app.
-- Service Worker aggiornato alla cache V12.
+- Service Worker aggiornato alla cache V13.
 
 ## Funzioni principali
 - Corso A1 e percorso personalizzato
@@ -36,7 +36,15 @@ Pubblica il contenuto della cartella del progetto su GitHub Pages. Il file `inde
 ## File
 - `index.html` — app completa
 - `manifest.webmanifest` — configurazione PWA
-- `sw.js` — cache/offline V12
+- `sw.js` — cache/offline V13
 - `icons/` — icone PWA
 - `data/oxford3000.js` — mazzo Oxford locale
 - `.nojekyll` — pubblicazione GitHub Pages
+
+
+## V13
+- Interfaccia compatta pensata per smartphone Android.
+- Navigazione principale ridotta a Home, Impara, Parla, Impostazioni.
+- Tutor, pronuncia e Corso restano disponibili dalla Home.
+- Gemini 3.6 Flash come modello principale, con verifica del modello e fallback esplicito a Gemini 3.5 Flash se la chiave API non accetta 3.6.
+- Sessione giornaliera ridotta a 3 attività e completata dagli eventi reali di ripasso, pronuncia e conversazione.
