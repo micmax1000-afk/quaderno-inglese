@@ -1,4 +1,4 @@
-# Quaderno d'Inglese — Personal V9.1
+# Quaderno d'Inglese — Personal V10
 
 Versione personale, statica e PWA. Non richiede Node.js, Express o un backend.
 
@@ -21,7 +21,7 @@ Il modello predefinito è `gemini-3.6-flash`. La richiesta non usa `temperature`
 **Questa configurazione è adatta al tuo uso personale. Non usare una chiave personale incorporata in una versione pubblica destinata ad altri utenti.**
 
 ## Mazzo Oxford
-La V9.1 non scarica più un mazzo da GitHub. Il pulsante **Importa mazzo Oxford dal dispositivo** accetta un file `.json`, `.js`, `.csv` o `.txt` già in tuo possesso.
+La V10 include direttamente il mazzo Oxford 3000 locale. Il pulsante di importazione resta disponibile per eventuali mazzi esterni `.json`, `.js`, `.csv` o `.txt`.
 
 Per il mazzo Oxford completo, usa il file del tuo progetto Flashcards/il file che hai diritto di utilizzare e importalo dall'app. L'app non copia automaticamente il contenuto del sito Oxford.
 
@@ -39,3 +39,11 @@ Apri la pagina HTTPS di GitHub Pages da Chrome → menu → **Installa app** / *
 - `sw.js` — cache/offline
 - `icons/` — icone PWA
 - `.nojekyll` — pubblicazione GitHub Pages
+
+
+## V10 — Oxford 3000 integrato
+- Mazzo Oxford 3000 locale in `data/oxford3000.js`.
+- Ricerca e filtro A1/A2/B1/B2.
+- Schede arricchibili con Gemini (traduzione + esempio originale).
+- Aggiunta al ripasso locale con IndexedDB.
+- Nessuna API key inclusa nei file del progetto.

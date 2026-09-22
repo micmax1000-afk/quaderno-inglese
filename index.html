@@ -863,7 +863,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
   <header class="masthead">
     <div>
-      <div class="eyebrow">Versione 8 · mobile Android</div>
+      <div class="eyebrow">Versione 10 · Oxford 3000 · mobile Android</div>
       <h1>Quaderno d'Inglese</h1>
     </div>
     <div class="masthead-actions">
@@ -1048,6 +1048,26 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
       </div>
     </div>
 
+    <div class="oxford-panel" id="oxfordPanel">
+      <div class="oxford-head">
+        <div><div class="oxford-title">📚 Oxford 3000</div><div class="oxford-sub">Le 3.000 parole del mazzo integrato, filtrabili per livello.</div></div>
+        <div class="oxford-count" id="oxfordCount">3.000</div>
+      </div>
+      <div class="oxford-controls">
+        <input id="oxfordSearch" type="search" placeholder="🔎 Cerca parola..." autocomplete="off">
+        <select id="oxfordLevel"><option value="all">Tutti i livelli</option><option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option></select>
+      </div>
+      <div class="oxford-card" id="oxfordCard">
+        <div class="oxford-empty">Cerca una parola oppure premi “Parola successiva”.</div>
+      </div>
+      <div class="oxford-actions">
+        <button type="button" class="ghost-btn" id="oxfordNextBtn">🎲 Parola successiva</button>
+        <button type="button" class="send-btn" id="oxfordAddBtn">➕ Aggiungi al ripasso</button>
+      </div>
+      <div class="oxford-status" id="oxfordStatus"></div>
+      <div class="oxford-results" id="oxfordResults" style="display:none"></div>
+    </div>
+
     <div class="manual-add">
       <input type="text" id="manualFront" placeholder="Parola/espressione in inglese">
       <input type="text" id="manualBack" placeholder="Traduzione in italiano">
@@ -1056,7 +1076,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
     <div class="manual-add" style="margin-top:8px;">
       <button class="ghost-btn" id="importBtn" type="button" style="flex:1; width:100%; justify-content:center;">
-        📚 Importa mazzo Oxford dal dispositivo
+        📥 Importa un mazzo esterno dal dispositivo
       </button>
       <input id="oxfordFileInput" type="file" accept=".json,.js,.csv,.txt" hidden>
     </div>
@@ -1192,6 +1212,8 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
 
 </div>
+
+<script src="./data/oxford3000.js"></script>
 
 <script>
 window.addEventListener('error', function(e){
@@ -2129,7 +2151,7 @@ async function importOxfordDeckFile(file){
       const decks=new Function('return '+match[1])();
       const enDeck=decks.find(d=>d.id==='en') || decks.find(d=>/oxford/i.test(d.name||d.title||''));
       cards=enDeck?.cards||[];
-      cards=cards.map(c=>({front:c.back||c.word||c.en||'',back:c.front||c.it||c.translation||'',note:c.phon||c.ipa||'',source:'Oxford'}));
+      cards=cards.map(c=>({front:c.back||c.word||c.en||'',back:c.front||c.it||c.translation||'',note:c.phon||c.ipa||'',source:'import'}));
     }else if(ext==='json'){
       const data=JSON.parse(raw);
       if(Array.isArray(data)) cards=data;
@@ -2138,7 +2160,7 @@ async function importOxfordDeckFile(file){
         const d=data.decks.find(x=>x.id==='en')||data.decks.find(x=>/oxford/i.test(x.name||x.title||''));
         cards=d?.cards||[];
       }
-      cards=cards.map(c=>({front:c.front||c.word||c.en||c.english||'',back:c.back||c.translation||c.it||c.italian||'',note:c.note||c.phon||c.ipa||'',source:'Oxford'}));
+      cards=cards.map(c=>({front:c.front||c.word||c.en||c.english||'',back:c.back||c.translation||c.it||c.italian||'',note:c.note||c.phon||c.ipa||'',source:'import'}));
     }else{
       const lines=raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
       const delimiter=lines.some(x=>x.includes(';'))?';':',';
@@ -2172,6 +2194,79 @@ async function importOxfordDeckFile(file){
   }finally{
     importBtn.disabled=false;
   }
+}
+
+
+/* ===== V10 — Oxford 3000 integrato ===== */
+const OXFORD_STORAGE_KEY='quaderno_oxford_v10';
+let oxfordCurrent=null;
+let oxfordFiltered=[];
+let oxfordProgress={};
+try{ oxfordProgress=JSON.parse(localStorage.getItem(OXFORD_STORAGE_KEY)||'{}')||{}; }catch(_){ oxfordProgress={}; }
+function oxfordCards(){ return (window.OXFORD_3000&&Array.isArray(window.OXFORD_3000.cards)) ? window.OXFORD_3000.cards : []; }
+function oxfordSave(){ try{localStorage.setItem(OXFORD_STORAGE_KEY,JSON.stringify(oxfordProgress));}catch(_){} }
+function oxfordGet(id){ return oxfordProgress[id]||{status:'new',interval:0,repetitions:0,easiness:2.5,dueDate:todayISO()}; }
+function oxfordSet(id,data){ oxfordProgress[id]=data; oxfordSave(); }
+function oxfordEsc(v){return escapeHtml(String(v??''));}
+function oxfordFilteredList(){
+  const q=(document.getElementById('oxfordSearch')?.value||'').trim().toLowerCase();
+  const lvl=document.getElementById('oxfordLevel')?.value||'all';
+  return oxfordCards().filter(c=>{
+    const text=(c.word+' '+c.pos).toLowerCase();
+    return (!q||text.includes(q)) && (lvl==='all'||(c.cefrLevels||[c.cefr]).includes(lvl));
+  });
+}
+function oxfordRenderResults(){
+  const box=document.getElementById('oxfordResults'); if(!box)return;
+  oxfordFiltered=oxfordFilteredList();
+  const count=document.getElementById('oxfordCount'); if(count)count.textContent=oxfordFiltered.length.toLocaleString('it-IT');
+  if(!document.getElementById('oxfordSearch')?.value.trim()){box.style.display='none';box.innerHTML='';return;}
+  box.style.display='block';
+  box.innerHTML=oxfordFiltered.slice(0,30).map(c=>`<button type="button" class="oxford-result" data-oid="${oxfordEsc(c.id)}"><span><strong>${oxfordEsc(c.word)}</strong><br><small>${oxfordEsc(c.pos)}</small></span><small>${oxfordEsc(c.cefr)}</small></button>`).join('') || '<div class="oxford-empty">Nessun risultato.</div>';
+  box.querySelectorAll('[data-oid]').forEach(b=>b.addEventListener('click',()=>oxfordShow(b.dataset.oid)));
+}
+function oxfordShow(id){
+  const c=oxfordCards().find(x=>x.id===id); if(!c)return; oxfordCurrent=c;
+  const saved=oxfordGet(c.id); const card=document.getElementById('oxfordCard');
+  if(!card)return;
+  const translation=saved.translation||c.translation||'';
+  const example=saved.example||c.example||'';
+  const exampleIt=saved.exampleIt||c.exampleIt||'';
+  card.innerHTML=`<div class="oxford-word">${oxfordEsc(c.word)}</div><div class="oxford-meta"><span class="oxford-pill">${oxfordEsc(c.cefr)}</span><span class="oxford-pill">${oxfordEsc(c.pos)}</span><span class="oxford-pill">${saved.status==='learned'?'✓ studiata':'Nuova'}</span></div><div class="oxford-translation">${translation?oxfordEsc(translation):'Traduzione non ancora preparata'}</div>${example?`<div class="oxford-example"><strong>Esempio:</strong> ${oxfordEsc(example)}</div>`:''}${exampleIt?`<div class="oxford-example-it">${oxfordEsc(exampleIt)}</div>`:''}`;
+  const add=document.getElementById('oxfordAddBtn'); if(add)add.textContent=saved.status==='learned'?'✓ Nel ripasso':'➕ Aggiungi al ripasso';
+}
+async function oxfordEnrich(){
+  if(!oxfordCurrent)return;
+  const status=document.getElementById('oxfordStatus'); const c=oxfordCurrent; const saved=oxfordGet(c.id);
+  if(saved.translation&&saved.example){ oxfordShow(c.id); if(status)status.textContent='Questa scheda è già completa.'; return; }
+  if(status){status.className='oxford-status';status.textContent='🤖 Preparo traduzione ed esempio…';}
+  try{
+    const sys='Sei un insegnante di inglese per uno studente italiano. Per la parola inglese data, crea una traduzione italiana breve e naturale e un esempio inglese semplice, originale, adatto al livello CEFR indicato, con traduzione italiana. Non copiare definizioni o esempi da dizionari. Rispondi SOLO JSON: {"translation":"...","example":"...","exampleIt":"..."}';
+    const r=await callGemini(sys,`Parola: ${c.word}\nParte del discorso: ${c.pos}\nLivello CEFR: ${c.cefr}`);
+    const n={...saved,translation:r.translation||'',example:r.example||'',exampleIt:r.exampleIt||'',status:saved.status||'new'};
+    oxfordSet(c.id,n); oxfordShow(c.id); if(status)status.textContent='✓ Scheda preparata e salvata sul dispositivo.';
+  }catch(e){if(status){status.className='oxford-status error';status.textContent=e.message||'Errore Gemini.';}}
+}
+async function oxfordAddCurrent(){
+  if(!oxfordCurrent)return;
+  let saved=oxfordGet(oxfordCurrent.id);
+  if(!saved.translation||!saved.example){await oxfordEnrich();saved=oxfordGet(oxfordCurrent.id);}
+  await addVocabCard(oxfordCurrent.word,saved.translation||'',saved.example||oxfordCurrent.pos,'Oxford 3000');
+  oxfordSet(oxfordCurrent.id,{...saved,status:'learned'}); oxfordShow(oxfordCurrent.id);
+  const status=document.getElementById('oxfordStatus');if(status)status.textContent='✓ Parola aggiunta al ripasso del vocabolario.';
+}
+function oxfordNext(){
+  const list=oxfordFilteredList(); if(!list.length){oxfordRenderResults();return;}
+  const due=list.filter(c=>{const p=oxfordGet(c.id);return !p.dueDate||p.dueDate<=todayISO();});
+  const pool=due.length?due:list; const c=pool[Math.floor(Math.random()*pool.length)]; oxfordShow(c.id); const box=document.getElementById('oxfordResults');if(box)box.style.display='none';
+}
+function initOxfordV10(){
+  if(!window.OXFORD_3000)return;
+  document.getElementById('oxfordSearch')?.addEventListener('input',oxfordRenderResults);
+  document.getElementById('oxfordLevel')?.addEventListener('change',oxfordRenderResults);
+  document.getElementById('oxfordNextBtn')?.addEventListener('click',oxfordNext);
+  document.getElementById('oxfordAddBtn')?.addEventListener('click',oxfordAddCurrent);
+  oxfordNext();
 }
 
 function initOxfordImporter(){
@@ -2514,7 +2609,25 @@ openVocabDb().then(db => {
 
 
 <style>
-.tutor-voice-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}.tutor-voice-bar button{min-height:44px;border:1px solid var(--line,#dfe6e3);border-radius:14px;background:var(--paper,#fff);padding:10px 13px;font-weight:800;color:var(--ink,#17342f)}.tutor-voice-bar button.active{background:var(--accent,#2f6f61);color:#fff;border-color:var(--accent,#2f6f61)}.tutor-voice-bar button:disabled{opacity:.45}.tutor-voice-bar span{font-size:12px;color:var(--ink-soft,#687773);flex:1}.tutor-msg.ai{position:relative}.tutor-speak-inline{float:right;border:0;background:transparent;font-size:18px;cursor:pointer;padding:2px 4px}@media(max-width:600px){.tutor-voice-bar{position:sticky;bottom:72px;z-index:3;background:var(--paper,#fff);padding:8px 0}.tutor-voice-bar button{flex:0 0 auto}.tutor-voice-bar span{min-width:120px}}</style>
+.tutor-voice-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}.tutor-voice-bar button{min-height:44px;border:1px solid var(--line,#dfe6e3);border-radius:14px;background:var(--paper,#fff);padding:10px 13px;font-weight:800;color:var(--ink,#17342f)}.tutor-voice-bar button.active{background:var(--accent,#2f6f61);color:#fff;border-color:var(--accent,#2f6f61)}.tutor-voice-bar button:disabled{opacity:.45}.tutor-voice-bar span{font-size:12px;color:var(--ink-soft,#687773);flex:1}.tutor-msg.ai{position:relative}.tutor-speak-inline{float:right;border:0;background:transparent;font-size:18px;cursor:pointer;padding:2px 4px}@media(max-width:600px){.tutor-voice-bar{position:sticky;bottom:72px;z-index:3;background:var(--paper,#fff);padding:8px 0}.tutor-voice-bar button{flex:0 0 auto}.tutor-voice-bar span{min-width:120px}}
+/* ===== V10 — OXFORD 3000 INTEGRATO ===== */
+.oxford-panel{margin:14px 0;padding:15px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow-card)}
+.oxford-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.oxford-title{font-weight:800;font-size:1rem}.oxford-sub{font-size:.72rem;color:var(--ink-soft);margin-top:3px}
+.oxford-count{font-weight:800;color:var(--accent);white-space:nowrap}
+.oxford-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.oxford-controls input,.oxford-controls select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:0 11px;background:var(--surface);color:var(--text);font:inherit}
+.oxford-card{border:1px solid var(--line);border-radius:16px;padding:16px;background:var(--surface);min-height:150px}
+.oxford-word{font-size:clamp(27px,7vw,38px);font-weight:800;line-height:1.05;word-break:break-word}
+.oxford-meta{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}.oxford-pill{font-size:.68rem;font-weight:800;padding:5px 8px;border-radius:999px;background:var(--accent-2);color:var(--accent)}
+.oxford-translation{font-size:1.05rem;font-weight:700;margin:8px 0}.oxford-example{font-size:.9rem;line-height:1.45;margin-top:8px}.oxford-example-it{font-size:.82rem;color:var(--ink-soft);margin-top:4px}
+.oxford-empty{color:var(--ink-soft);font-size:.85rem;padding:18px 0;text-align:center}.oxford-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.oxford-actions button{min-height:46px;border-radius:13px}
+.oxford-results{margin-top:10px;max-height:230px;overflow:auto;border-top:1px solid var(--line)}
+.oxford-result{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:10px 4px;border:0;border-bottom:1px solid var(--line);background:transparent;color:inherit;cursor:pointer}
+.oxford-result strong{font-size:.88rem}.oxford-result small{color:var(--ink-soft)}
+.oxford-status{font-size:.75rem;color:var(--ink-soft);min-height:18px;margin-top:8px}.oxford-status.error{color:#b42318}
+@media(max-width:600px){.oxford-controls{grid-template-columns:1fr}.oxford-actions{grid-template-columns:1fr}.oxford-panel{padding:13px}.oxford-card{padding:14px}}
+</style>
 <script>
 /* ===== V8.8 AI TUTOR VOCALE - memoria locale ===== */
 (function(){
@@ -2762,6 +2875,6 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
 </script>
 
 
-<script>window.addEventListener('DOMContentLoaded',()=>{try{initOxfordImporter();}catch(e){console.error(e);}});</script>
+<script>window.addEventListener('DOMContentLoaded',()=>{try{initOxfordImporter();initOxfordV10();}catch(e){console.error(e);}});</script>
 </body>
 </html>
