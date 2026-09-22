@@ -863,7 +863,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
   <header class="masthead">
     <div>
-      <div class="eyebrow">Versione 10 · Oxford 3000 · mobile Android</div>
+      <div class="eyebrow">Versione 11 · Oxford 3000 · percorso personale · mobile Android</div>
       <h1>Quaderno d'Inglese</h1>
     </div>
     <div class="masthead-actions">
@@ -1050,9 +1050,16 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
     <div class="oxford-panel" id="oxfordPanel">
       <div class="oxford-head">
-        <div><div class="oxford-title">📚 Oxford 3000</div><div class="oxford-sub">Le 3.000 parole del mazzo integrato, filtrabili per livello.</div></div>
-        <div class="oxford-count" id="oxfordCount">3.000</div>
+        <div><div class="oxford-title">📚 Oxford 3000</div><div class="oxford-sub">Il tuo percorso personale sulle 3.000 parole, da A1 a B2.</div></div>
+        <div class="oxford-count"><span id="oxfordCount">3.000</span><small>risultati</small></div>
       </div>
+      <div class="oxford-dashboard">
+        <div><b id="oxfordLearnedCount">0</b><span>studiate</span></div>
+        <div><b id="oxfordDueCount">0</b><span>da ripassare</span></div>
+        <div><b id="oxfordTodayCount">0</b><span>oggi</span></div>
+        <div><b id="oxfordGoalCount">20</b><span>obiettivo</span></div>
+      </div>
+      <div class="oxford-level-progress" id="oxfordLevelProgress"></div>
       <div class="oxford-controls">
         <input id="oxfordSearch" type="search" placeholder="🔎 Cerca parola..." autocomplete="off">
         <select id="oxfordLevel"><option value="all">Tutti i livelli</option><option value="A1">A1</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option></select>
@@ -1063,6 +1070,8 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
       <div class="oxford-actions">
         <button type="button" class="ghost-btn" id="oxfordNextBtn">🎲 Parola successiva</button>
         <button type="button" class="send-btn" id="oxfordAddBtn">➕ Aggiungi al ripasso</button>
+        <button type="button" class="ghost-btn" id="oxfordKnownBtn">✓ La conosco</button>
+        <button type="button" class="ghost-btn" id="oxfordGoalBtn">🎯 Obiettivo: 20</button>
       </div>
       <div class="oxford-status" id="oxfordStatus"></div>
       <div class="oxford-results" id="oxfordResults" style="display:none"></div>
@@ -1149,6 +1158,15 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
         <button class="ghost-btn" id="goalPlus">+ 5 min</button>
       </div>
       <p class="progress-note">L'app misura il tempo delle attività quando interagisci con conversazione, ripetizione e vocabolario. I dati restano sul dispositivo.</p>
+    </div>
+    <div class="progress-section oxford-progress-section">
+      <h2>📚 Oxford 3000</h2>
+      <div class="oxford-big-progress">
+        <div class="oxford-big-number"><b id="progressOxfordLearned">0</b><span>/ 3000 parole</span></div>
+        <div class="oxford-progress-bar"><i id="progressOxfordBar"></i></div>
+        <p id="progressOxfordText">Inizia a studiare le parole Oxford per costruire il tuo percorso personale.</p>
+      </div>
+      <div class="progress-level-grid" id="progressOxfordLevels"></div>
     </div>
     <div class="progress-section">
       <h2>Prossimo passo consigliato</h2>
@@ -2197,8 +2215,9 @@ async function importOxfordDeckFile(file){
 }
 
 
-/* ===== V10 — Oxford 3000 integrato ===== */
-const OXFORD_STORAGE_KEY='quaderno_oxford_v10';
+
+/* ===== V11 — Oxford 3000 + percorso personale ===== */
+const OXFORD_STORAGE_KEY='quaderno_oxford_v11';
 let oxfordCurrent=null;
 let oxfordFiltered=[];
 let oxfordProgress={};
@@ -2206,7 +2225,38 @@ try{ oxfordProgress=JSON.parse(localStorage.getItem(OXFORD_STORAGE_KEY)||'{}')||
 function oxfordCards(){ return (window.OXFORD_3000&&Array.isArray(window.OXFORD_3000.cards)) ? window.OXFORD_3000.cards : []; }
 function oxfordSave(){ try{localStorage.setItem(OXFORD_STORAGE_KEY,JSON.stringify(oxfordProgress));}catch(_){} }
 function oxfordGet(id){ return oxfordProgress[id]||{status:'new',interval:0,repetitions:0,easiness:2.5,dueDate:todayISO()}; }
-function oxfordSet(id,data){ oxfordProgress[id]=data; oxfordSave(); }
+function oxfordSet(id,data){ oxfordProgress[id]=data; oxfordSave(); renderOxfordDashboard(); renderOxfordProgressView(); }
+function oxfordGoal(){ try{return Math.max(5,Math.min(100,parseInt(localStorage.getItem('quaderno_oxford_goal')||'20',10)||20));}catch(_){return 20;} }
+function oxfordSetGoal(v){ try{localStorage.setItem('quaderno_oxford_goal',String(v));}catch(_){} renderOxfordDashboard(); }
+function oxfordTodayCount(){ const key='quaderno_oxford_today_'+todayISO(); try{return parseInt(localStorage.getItem(key)||'0',10)||0;}catch(_){return 0;} }
+function oxfordTodayInc(){ const key='quaderno_oxford_today_'+todayISO(); try{localStorage.setItem(key,String(oxfordTodayCount()+1));}catch(_){} }
+function oxfordStats(){
+  const cards=oxfordCards();
+  const stats={total:cards.length,learned:0,due:0,today:oxfordTodayCount(),levels:{A1:{total:0,learned:0},A2:{total:0,learned:0},B1:{total:0,learned:0},B2:{total:0,learned:0}}};
+  for(const c of cards){
+    const p=oxfordGet(c.id), learned=p.status==='learned';
+    if(learned)stats.learned++;
+    if(p.dueDate&&p.dueDate<=todayISO()&&learned)stats.due++;
+    for(const lvl of (c.cefrLevels||[c.cefr]||[])){ if(stats.levels[lvl]){stats.levels[lvl].total++; if(learned)stats.levels[lvl].learned++;} }
+  }
+  return stats;
+}
+function renderOxfordDashboard(){
+  const st=oxfordStats(), goal=oxfordGoal();
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('oxfordLearnedCount',st.learned.toLocaleString('it-IT')); set('oxfordDueCount',st.due.toLocaleString('it-IT')); set('oxfordTodayCount',st.today.toLocaleString('it-IT')); set('oxfordGoalCount',goal);
+  const gb=document.getElementById('oxfordGoalBtn'); if(gb)gb.textContent='🎯 Obiettivo: '+goal;
+  const box=document.getElementById('oxfordLevelProgress');
+  if(box)box.innerHTML=Object.entries(st.levels).map(([lvl,x])=>{const pct=x.total?Math.round(x.learned/x.total*100):0;return `<div class="oxford-level"><div><b>${lvl}</b><span>${x.learned}/${x.total}</span></div><div><i style="width:${pct}%"></i></div></div>`}).join('');
+}
+function renderOxfordProgressView(){
+  const st=oxfordStats(), pct=st.total?Math.round(st.learned/st.total*100):0;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('progressOxfordLearned',st.learned.toLocaleString('it-IT')); set('progressOxfordText',st.learned?`${pct}% completato · ${st.due} parole da ripassare.`:'Inizia a studiare le parole Oxford per costruire il tuo percorso personale.');
+  const bar=document.getElementById('progressOxfordBar');if(bar)bar.style.width=pct+'%';
+  const box=document.getElementById('progressOxfordLevels');
+  if(box)box.innerHTML=Object.entries(st.levels).map(([lvl,x])=>`<div><b>${lvl}</b><span>${x.learned}/${x.total}</span></div>`).join('');
+}
 function oxfordEsc(v){return escapeHtml(String(v??''));}
 function oxfordFilteredList(){
   const q=(document.getElementById('oxfordSearch')?.value||'').trim().toLowerCase();
@@ -2232,8 +2282,10 @@ function oxfordShow(id){
   const translation=saved.translation||c.translation||'';
   const example=saved.example||c.example||'';
   const exampleIt=saved.exampleIt||c.exampleIt||'';
-  card.innerHTML=`<div class="oxford-word">${oxfordEsc(c.word)}</div><div class="oxford-meta"><span class="oxford-pill">${oxfordEsc(c.cefr)}</span><span class="oxford-pill">${oxfordEsc(c.pos)}</span><span class="oxford-pill">${saved.status==='learned'?'✓ studiata':'Nuova'}</span></div><div class="oxford-translation">${translation?oxfordEsc(translation):'Traduzione non ancora preparata'}</div>${example?`<div class="oxford-example"><strong>Esempio:</strong> ${oxfordEsc(example)}</div>`:''}${exampleIt?`<div class="oxford-example-it">${oxfordEsc(exampleIt)}</div>`:''}`;
+  const dueText=saved.status==='learned' ? (saved.dueDate&&saved.dueDate<=todayISO()?'🔄 Da ripassare':'✓ Consolidata') : '🆕 Nuova';
+  card.innerHTML=`<div class="oxford-word">${oxfordEsc(c.word)}</div><div class="oxford-meta"><span class="oxford-pill">${oxfordEsc(c.cefr)}</span><span class="oxford-pill">${oxfordEsc(c.pos)}</span><span class="oxford-pill">${dueText}</span></div><div class="oxford-translation">${translation?oxfordEsc(translation):'Traduzione non ancora preparata'}</div>${example?`<div class="oxford-example"><strong>Esempio:</strong> ${oxfordEsc(example)}</div>`:''}${exampleIt?`<div class="oxford-example-it">${oxfordEsc(exampleIt)}</div>`:''}`;
   const add=document.getElementById('oxfordAddBtn'); if(add)add.textContent=saved.status==='learned'?'✓ Nel ripasso':'➕ Aggiungi al ripasso';
+  const known=document.getElementById('oxfordKnownBtn'); if(known)known.textContent=saved.status==='learned'?'✓ Già conosciuta':'✓ La conosco';
 }
 async function oxfordEnrich(){
   if(!oxfordCurrent)return;
@@ -2251,22 +2303,34 @@ async function oxfordAddCurrent(){
   if(!oxfordCurrent)return;
   let saved=oxfordGet(oxfordCurrent.id);
   if(!saved.translation||!saved.example){await oxfordEnrich();saved=oxfordGet(oxfordCurrent.id);}
+  const firstLearn=!saved || saved.status!=='learned';
   await addVocabCard(oxfordCurrent.word,saved.translation||'',saved.example||oxfordCurrent.pos,'Oxford 3000');
-  oxfordSet(oxfordCurrent.id,{...saved,status:'learned'}); oxfordShow(oxfordCurrent.id);
+  const next={...saved,status:'learned',interval:saved.interval||1,repetitions:(saved.repetitions||0)+1,dueDate:todayISO()};
+  oxfordSet(oxfordCurrent.id,next); if(firstLearn)oxfordTodayInc(); oxfordShow(oxfordCurrent.id); renderOxfordDashboard();
   const status=document.getElementById('oxfordStatus');if(status)status.textContent='✓ Parola aggiunta al ripasso del vocabolario.';
 }
 function oxfordNext(){
   const list=oxfordFilteredList(); if(!list.length){oxfordRenderResults();return;}
-  const due=list.filter(c=>{const p=oxfordGet(c.id);return !p.dueDate||p.dueDate<=todayISO();});
-  const pool=due.length?due:list; const c=pool[Math.floor(Math.random()*pool.length)]; oxfordShow(c.id); const box=document.getElementById('oxfordResults');if(box)box.style.display='none';
+  const due=list.filter(c=>{const p=oxfordGet(c.id);return p.status==='learned'&&p.dueDate&&p.dueDate<=todayISO();});
+  const fresh=list.filter(c=>oxfordGet(c.id).status!=='learned');
+  const pool=due.length?due:(fresh.length?fresh:list); const c=pool[Math.floor(Math.random()*pool.length)]; oxfordShow(c.id); const box=document.getElementById('oxfordResults');if(box)box.style.display='none';
 }
-function initOxfordV10(){
+function initOxfordV11(){
   if(!window.OXFORD_3000)return;
   document.getElementById('oxfordSearch')?.addEventListener('input',oxfordRenderResults);
   document.getElementById('oxfordLevel')?.addEventListener('change',oxfordRenderResults);
   document.getElementById('oxfordNextBtn')?.addEventListener('click',oxfordNext);
   document.getElementById('oxfordAddBtn')?.addEventListener('click',oxfordAddCurrent);
-  oxfordNext();
+  document.getElementById('oxfordKnownBtn')?.addEventListener('click',()=>{
+    if(!oxfordCurrent)return; const p=oxfordGet(oxfordCurrent.id); if(p.status==='learned'){return;}
+    oxfordSet(oxfordCurrent.id,{...p,status:'learned',interval:1,repetitions:1,dueDate:todayISO()}); oxfordTodayInc(); oxfordShow(oxfordCurrent.id);
+    const st=document.getElementById('oxfordStatus');if(st)st.textContent='✓ Segnata come conosciuta e aggiunta al tuo progresso.';
+  });
+  document.getElementById('oxfordGoalBtn')?.addEventListener('click',()=>{
+    const current=oxfordGoal(); const next=current>=60?10:current+10; oxfordSetGoal(next);
+    const st=document.getElementById('oxfordStatus');if(st)st.textContent='🎯 Obiettivo giornaliero impostato a '+next+' parole.';
+  });
+  renderOxfordDashboard(); renderOxfordProgressView(); oxfordNext();
 }
 
 function initOxfordImporter(){
@@ -2625,6 +2689,11 @@ openVocabDb().then(db => {
 .oxford-result strong{font-size:.88rem}.oxford-result small{color:var(--ink-soft)}
 .oxford-status{font-size:.75rem;color:var(--ink-soft);min-height:18px;margin-top:8px}.oxford-status.error{color:#b42318}
 @media(max-width:600px){.oxford-controls{grid-template-columns:1fr}.oxford-actions{grid-template-columns:1fr}.oxford-panel{padding:13px}.oxford-card{padding:14px}}
+/* ===== V11 — Oxford dashboard ===== */
+.oxford-count{display:flex;flex-direction:column;align-items:flex-end;gap:1px}.oxford-count small{font-size:9px;color:var(--ink-soft);font-weight:500}.oxford-dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}.oxford-dashboard>div{padding:9px 7px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);text-align:center}.oxford-dashboard b{display:block;font-size:18px;color:var(--accent)}.oxford-dashboard span{display:block;font-size:9px;color:var(--ink-soft);margin-top:2px}.oxford-level-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:8px 0 11px}.oxford-level>div:first-child{display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px}.oxford-level span{color:var(--ink-soft)}.oxford-level>div:last-child{height:5px;background:var(--line);border-radius:99px;overflow:hidden}.oxford-level i{display:block;height:100%;background:var(--accent);border-radius:99px}.oxford-actions{grid-template-columns:1fr 1fr}.oxford-big-progress{margin-top:5px}.oxford-big-number{display:flex;align-items:baseline;gap:5px}.oxford-big-number b{font-size:32px;color:var(--accent)}.oxford-big-number span{font-size:12px;color:var(--muted)}.oxford-progress-bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden;margin:9px 0}.oxford-progress-bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px}.progress-level-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.progress-level-grid>div{display:flex;justify-content:space-between;padding:8px;border:1px solid var(--line);border-radius:10px;font-size:11px}.progress-level-grid span{color:var(--muted)}
+@media(max-width:600px){.oxford-dashboard{grid-template-columns:repeat(2,1fr)}.oxford-level-progress{grid-template-columns:repeat(2,1fr)}.progress-level-grid{grid-template-columns:repeat(2,1fr)}}
+
+
 </style>
 <script>
 /* ===== V8.8 AI TUTOR VOCALE - memoria locale ===== */
@@ -2873,6 +2942,6 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
 </script>
 
 
-<script>window.addEventListener('DOMContentLoaded',()=>{try{initOxfordImporter();initOxfordV10();}catch(e){console.error(e);}});</script>
+<script>window.addEventListener('DOMContentLoaded',()=>{try{initOxfordImporter();initOxfordV11();}catch(e){console.error(e);}});</script>
 </body>
 </html>
