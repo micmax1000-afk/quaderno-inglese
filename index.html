@@ -2359,8 +2359,6 @@ function initVocabUI(){
   const vocabSearch = document.getElementById('vocabSearch');
   if(vocabSearch) vocabSearch.addEventListener('input', () => { vocabSearchText = vocabSearch.value; renderVocabList(vocabAllCache, todayISO()); });
 
-  document.getElementById('importBtn').addEventListener('click', importFromFlashcardsRepo);
-
   // Microfono modalità "Ascolto e parlato"
   const vocabMicBtn = document.getElementById('vocabMicBtn');
   const vocabMicHint = document.getElementById('vocabMicHint');
