@@ -546,6 +546,10 @@
   }
 
 
+  /* ---- V12 Sessione quotidiana ---- */
+  .daily-session-card{background:var(--surface);border:1px solid var(--paper-line);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-md)}
+  .daily-session-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.daily-session-head h3{font-family:'Fraunces',serif;font-size:21px;margin:4px 0 5px}.daily-session-head p{margin:0;color:var(--ink-soft);font-size:12px;line-height:1.45}.daily-session-percent{font:800 18px 'JetBrains Mono',monospace;color:var(--teal);white-space:nowrap}.daily-session-bar{height:8px;background:var(--paper);border-radius:999px;overflow:hidden;margin:14px 0}.daily-session-bar i{display:block;height:100%;width:0;background:var(--teal);border-radius:inherit;transition:width .25s}.daily-session-list{display:grid;gap:8px}.daily-session-item{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;padding:10px;border:1px solid var(--paper-line);border-radius:12px;background:var(--paper)}.daily-session-item.done{opacity:.72}.daily-session-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--surface);font-size:16px}.daily-session-item strong{display:block;font-size:12px}.daily-session-item small{display:block;color:var(--ink-soft);font-size:10px;margin-top:2px}.daily-session-item button{border:1px solid var(--paper-line);background:var(--surface);color:var(--ink);border-radius:9px;padding:7px 9px;font-size:10px;font-weight:700;cursor:pointer}.daily-session-item.done button{color:var(--teal)}
+@media(max-width:600px){.daily-session-card{padding:15px}.daily-session-item{grid-template-columns:32px 1fr}.daily-session-item button{grid-column:2;justify-self:start}.daily-session-percent{font-size:16px}}
   /* ---- Progressi ---- */
   .progress-hero{
     background:var(--surface); border:1px solid var(--paper-line);
@@ -863,7 +867,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
   <header class="masthead">
     <div>
-      <div class="eyebrow">Versione 11 · Oxford 3000 · percorso personale · mobile Android</div>
+      <div class="eyebrow">Versione 12 · percorso personale · sessione quotidiana · mobile Android</div>
       <h1>Quaderno d'Inglese</h1>
     </div>
     <div class="masthead-actions">
@@ -897,6 +901,14 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
         <div class="home-progress-row"><span>Progresso A1</span><b id="homeCoursePct">0%</b></div>
         <div class="bar"><div class="fill" id="homeCourseFill"></div></div>
       </div>
+    </section>
+    <section class="daily-session-card" id="dailySessionCard">
+      <div class="daily-session-head">
+        <div><div class="tag">🗓️ Sessione di oggi</div><h3>Il tuo percorso quotidiano</h3><p id="dailySessionSummary">5 attività brevi per allenare parole, ripasso, ascolto e conversazione.</p></div>
+        <div class="daily-session-percent" id="dailySessionPercent">0%</div>
+      </div>
+      <div class="daily-session-bar"><i id="dailySessionFill"></i></div>
+      <div class="daily-session-list" id="dailySessionList"></div>
     </section>
     <section class="today-card">
       <div class="tag">🎯 Lezione di oggi</div>
@@ -2215,6 +2227,39 @@ async function importOxfordDeckFile(file){
 }
 
 
+
+/* ===== V12 — Sessione quotidiana personale ===== */
+const DAILY_SESSION_KEY='quaderno_daily_session_v12';
+const DAILY_SESSION_TASKS=[
+  {id:'review',icon:'🔄',title:'Ripasso',desc:'Ripassa le parole che sono già scadute.',go:'vocab'},
+  {id:'newwords',icon:'📚',title:'5 parole nuove',desc:'Studia nuove parole del percorso Oxford 3000.',go:'vocab'},
+  {id:'pronunciation',icon:'🎤',title:'Pronuncia',desc:'Ascolta una frase e ripetila al microfono.',go:'rt'},
+  {id:'conversation',icon:'💬',title:'Mini conversazione',desc:'Fai qualche scambio in inglese con Gemini.',go:'conv'},
+  {id:'course',icon:'🎓',title:'Corso A1',desc:'Continua la prossima lezione guidata.',go:'course'}
+];
+function dailySessionKey(){return DAILY_SESSION_KEY+'_'+todayISO();}
+function dailySessionLoad(){
+  try{const x=JSON.parse(localStorage.getItem(dailySessionKey())||'{}');return x&&typeof x==='object'?x:{}}catch(_){return {}}
+}
+function dailySessionSave(x){try{localStorage.setItem(dailySessionKey(),JSON.stringify(x));}catch(_){} }
+function dailySessionDoneCount(){const x=dailySessionLoad();return DAILY_SESSION_TASKS.filter(t=>x[t.id]).length;}
+function dailySessionComplete(id){const x=dailySessionLoad();x[id]=true;dailySessionSave(x);renderDailySession();}
+function dailySessionGo(id){
+  const task=DAILY_SESSION_TASKS.find(t=>t.id===id); if(!task)return;
+  const tab=document.querySelector('.tab-btn[data-tab="'+task.go+'"]');
+  if(tab)tab.click();
+}
+function renderDailySession(){
+  const box=document.getElementById('dailySessionList'); if(!box)return;
+  const state=dailySessionLoad(), done=dailySessionDoneCount(), total=DAILY_SESSION_TASKS.length, pct=Math.round(done/total*100);
+  const p=document.getElementById('dailySessionPercent'),fill=document.getElementById('dailySessionFill'),sum=document.getElementById('dailySessionSummary');
+  if(p)p.textContent=pct+'%'; if(fill)fill.style.width=pct+'%';
+  if(sum)sum.textContent=done===total?'Sessione completata. Puoi continuare liberamente con il ripasso.':done+' di '+total+' attività completate oggi.';
+  box.innerHTML=DAILY_SESSION_TASKS.map(t=>{const ok=!!state[t.id];return `<div class="daily-session-item ${ok?'done':''}"><div class="daily-session-icon">${t.icon}</div><div><strong>${ok?'✓ ':''}${t.title}</strong><small>${t.desc}</small></div><button type="button" data-session-go="${t.id}">${ok?'Completata':'Inizia'}</button></div>`;}).join('');
+  box.querySelectorAll('[data-session-go]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.sessionGo;if(dailySessionLoad()[id])return;dailySessionComplete(id);dailySessionGo(id);}));
+}
+window.addEventListener('storage',renderDailySession);
+renderDailySession();
 
 /* ===== V11 — Oxford 3000 + percorso personale ===== */
 const OXFORD_STORAGE_KEY='quaderno_oxford_v11';

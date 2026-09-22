@@ -1,14 +1,23 @@
-# Quaderno d'Inglese — Personal V11
+# Quaderno d'Inglese — Personal V12
 
 Versione personale, statica e PWA. Non richiede Node.js, Express o un backend.
 
-## Funzioni
+## V12 — Percorso personale quotidiano
+- Tutte le funzioni della V11 Oxford.
+- Nuova **Sessione di oggi** nella Home con 5 attività: ripasso, parole nuove, pronuncia, mini-conversazione e corso A1.
+- Stato della sessione salvato localmente per data; il giorno successivo parte una nuova sessione.
+- Barra di avanzamento e conteggio attività completate.
+- Collegamenti diretti alle sezioni dell'app.
+- Service Worker aggiornato alla cache V12.
+
+## Funzioni principali
 - Corso A1 e percorso personalizzato
 - test iniziale del livello
 - conversazione con Gemini
 - AI Tutor
 - pronuncia, riconoscimento vocale e sintesi vocale
 - vocabolario e ripasso SM-2
+- Oxford 3000 locale con filtri A1/A2/B1/B2
 - progressi, errori e backup locale
 - tema e impostazioni
 - installazione PWA su Android
@@ -16,43 +25,18 @@ Versione personale, statica e PWA. Non richiede Node.js, Express o un backend.
 ## Gemini personale
 Inserisci la tua API key in **Impostazioni → Gemini**. La chiave viene salvata nel `localStorage` del dispositivo.
 
-Il modello predefinito è `gemini-3.6-flash`. La richiesta non usa `temperature`, `top_p` o `top_k`, parametri deprecati per Gemini 3.6.
+Questa configurazione è pensata per uso personale. Non inserire una chiave personale in una versione pubblica destinata ad altri utenti.
 
-**Questa configurazione è adatta al tuo uso personale. Non usare una chiave personale incorporata in una versione pubblica destinata ad altri utenti.**
-
-## Mazzo Oxford
-La V11 include direttamente il mazzo Oxford 3000 locale. Il pulsante di importazione resta disponibile per eventuali mazzi esterni `.json`, `.js`, `.csv` o `.txt`.
-
-Per il mazzo Oxford completo, usa il file del tuo progetto Flashcards/il file che hai diritto di utilizzare e importalo dall'app. L'app non copia automaticamente il contenuto del sito Oxford.
-
-Oxford Learner's Dictionaries descrive Oxford 3000 come una lista di 3.000 parole core allineate al CEFR A1-B2.
+## Offline
+Il Service Worker precarica gli asset principali e usa Cache Storage per consentire il caricamento dell'app senza rete; i dati di studio restano nel browser del dispositivo. Una PWA può combinare Service Worker/Cache Storage e IndexedDB per risorse e dati offline.
 
 ## GitHub Pages
 Pubblica il contenuto della cartella del progetto su GitHub Pages. Il file `index.html` è l'ingresso dell'app.
 
-## Installazione Android
-Apri la pagina HTTPS di GitHub Pages da Chrome → menu → **Installa app** / **Aggiungi alla schermata Home**.
-
 ## File
 - `index.html` — app completa
 - `manifest.webmanifest` — configurazione PWA
-- `sw.js` — cache/offline
+- `sw.js` — cache/offline V12
 - `icons/` — icone PWA
+- `data/oxford3000.js` — mazzo Oxford locale
 - `.nojekyll` — pubblicazione GitHub Pages
-
-
-## V11 — Oxford 3000 + percorso personale
-- Mazzo Oxford 3000 locale in `data/oxford3000.js`.
-- Ricerca e filtro A1/A2/B1/B2.
-- Schede arricchibili con Gemini (traduzione + esempio originale).
-- Aggiunta al ripasso locale con IndexedDB.
-- Nessuna API key inclusa nei file del progetto.
-
-
-### V11 — nuove funzioni
-- Dashboard Oxford con parole studiate, da ripassare e obiettivo giornaliero.
-- Progresso separato per A1, A2, B1 e B2.
-- Pulsante “La conosco” per registrare una parola senza doverla aggiungere al vocabolario.
-- Selezione della prossima parola con priorità alle parole da ripassare e alle parole nuove.
-- Schermata Progressi con avanzamento complessivo Oxford 3000.
-- Service Worker aggiornato alla cache V11 per evitare di servire gli asset della V10.
