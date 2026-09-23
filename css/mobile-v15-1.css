@@ -1,0 +1,139 @@
+/* Quaderno d'Inglese V15.1 — mobile-first hardening */
+html{width:100%;overflow-x:hidden;}
+body{width:100%;max-width:100%;overflow-x:hidden;}
+*,*::before,*::after{max-width:100%;}
+img,svg,video,canvas{max-width:100%;height:auto;}
+button,input,select,textarea{font:inherit;}
+button{touch-action:manipulation;}
+input,select,textarea{font-size:16px;} /* evita zoom automatico su iOS/Android browser */
+.view{width:100%;min-width:0;}
+.view.active{display:block;}
+.view > section,.view > .oxford-panel,.view > .manual-add,.view > .status-line{min-width:0;}
+.simple-hero,.home-hero,.daily-session-card,.today-card,.learn-continue,.hub-tip,.hub-mini-progress,
+.tutor-hero,.tutor-memory-card,.tutor-chat,.tutor-composer,.talk-hero,.rt-notebook,.vocab-notebook,
+.oxford-panel,.progress-hero,.progress-section,.course-hero,.lesson-panel,.settings-card,.settings-hero{overflow:hidden;}
+
+/* Oxford: una sola colonna e controlli grandi */
+.oxford-head{min-width:0;}
+.oxford-head>div:first-child{min-width:0;}
+.oxford-sub{line-height:1.4;}
+.oxford-controls{min-width:0;}
+.oxford-controls input,.oxford-controls select{min-width:0;}
+.oxford-dashboard>div,.oxford-level-progress>div{min-width:0;}
+.oxford-actions{grid-template-columns:1fr 1fr;}
+.oxford-actions button{width:100%;min-width:0;white-space:normal;line-height:1.2;padding:10px 8px;}
+.oxford-translation{overflow-wrap:anywhere;word-break:break-word;}
+.oxford-example,.oxford-example-it{overflow-wrap:anywhere;word-break:break-word;}
+.oxford-prepare-btn{width:100%;margin-top:12px;min-height:46px;}
+.oxford-status{overflow-wrap:anywhere;}
+
+/* AI Tutor: chat leggibile e composer sempre raggiungibile */
+.tutor-hero{display:flex;align-items:flex-start;gap:12px;}
+.tutor-hero>div:last-child{min-width:0;}
+.tutor-memory-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;}
+.tutor-memory-grid>div{min-width:0;overflow-wrap:anywhere;}
+.tutor-chat{min-height:180px;max-height:none;overflow:visible;display:flex;flex-direction:column;gap:10px;}
+.tutor-msg{width:min(88%,620px);max-width:100%;padding:12px 13px;border-radius:16px;line-height:1.5;overflow-wrap:anywhere;word-break:break-word;}
+.tutor-msg.user{align-self:flex-end;}
+.tutor-msg.ai{align-self:flex-start;}
+.tutor-quick{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;}
+.tutor-quick button{min-height:46px;border:1px solid var(--line);border-radius:13px;background:var(--surface);color:var(--text);padding:9px 7px;font-weight:700;line-height:1.2;}
+.tutor-composer{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;align-items:end;}
+.tutor-composer textarea{width:100%;min-width:0;min-height:48px;max-height:140px;resize:vertical;}
+.tutor-composer .send-btn,.tutor-composer .icon-btn{min-width:48px;min-height:48px;}
+.tutor-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.tutor-actions button{width:100%;min-height:48px;}
+.tutor-voice-bar{min-width:0;}
+.tutor-voice-bar span{min-width:0!important;overflow-wrap:anywhere;}
+
+/* Conversazione e pronuncia */
+.talk-hero{display:flex;gap:10px;align-items:flex-start;}
+.talk-copy{min-width:0;}
+.talk-copy p{line-height:1.45;overflow-wrap:anywhere;}
+.conversation-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.conversation-tools button{width:100%;min-height:46px;}
+.composer{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:7px;align-items:end;}
+.composer textarea{width:100%;min-width:0;}
+.starter-chips{display:flex;flex-wrap:wrap;}
+.starter-chips button{max-width:100%;}
+
+/* Corso / ripasso / progressi / impostazioni */
+.lesson-head,.settings-section-head,.progress-hero{min-width:0;}
+.lesson-head>*{min-width:0;}
+.lesson-actions,.backup-grid,.settings-grid{min-width:0;}
+.settings-grid{grid-template-columns:1fr 1fr;}
+.settings-field input,.settings-field select{min-width:0;}
+.goal-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;}
+.progress-grid{min-width:0;}
+
+@media (max-width:600px){
+  body{padding:8px 8px calc(104px + env(safe-area-inset-bottom));}
+  .page{width:100%;max-width:100%;}
+  .masthead{margin-bottom:10px;padding-bottom:12px;gap:8px;}
+  .masthead h1{font-size:clamp(23px,7vw,30px);}
+  .eyebrow{font-size:9px;letter-spacing:.09em;}
+  .section-back{min-height:42px;padding:9px 13px;}
+
+  .home-grid,.hub-grid{grid-template-columns:1fr!important;}
+  .home-action,.hub-card{width:100%;min-height:82px;}
+  .home-action{display:grid;grid-template-columns:42px 1fr;grid-template-rows:auto auto;align-items:center;text-align:left;}
+  .home-action .ico{grid-row:1/3;}
+  .home-action strong,.home-action span:last-child{grid-column:2;}
+  .home-action span:last-child{font-size:11px;line-height:1.3;}
+
+  .oxford-head{flex-direction:column;}
+  .oxford-count{align-items:flex-start;}
+  .oxford-dashboard{grid-template-columns:1fr 1fr!important;}
+  .oxford-level-progress{grid-template-columns:1fr 1fr!important;}
+  .oxford-controls{grid-template-columns:1fr!important;}
+  .oxford-actions{grid-template-columns:1fr!important;}
+  .oxford-card{min-height:170px;padding:15px;}
+  .oxford-word{font-size:clamp(30px,10vw,42px);}
+
+  .tutor-hero{padding:15px!important;}
+  .tutor-hero-icon{flex:0 0 auto;}
+  .tutor-memory-grid{grid-template-columns:repeat(3,1fr);}
+  .tutor-memory-grid>div{padding:9px 4px;text-align:center;}
+  .tutor-chat{padding:12px!important;min-height:180px;}
+  .tutor-msg{width:92%;font-size:14px;}
+  .tutor-quick{grid-template-columns:1fr;}
+  .tutor-quick button{min-height:48px;text-align:left;padding:11px 13px;}
+  .tutor-composer{grid-template-columns:minmax(0,1fr) 48px 58px;position:sticky;bottom:calc(88px + env(safe-area-inset-bottom));z-index:25;padding:8px!important;}
+  .tutor-composer textarea{min-height:48px;}
+  .tutor-actions{grid-template-columns:1fr;}
+  .tutor-voice-bar{position:sticky;bottom:calc(166px + env(safe-area-inset-bottom));z-index:24;margin:0;padding:7px 0;}
+
+  .conversation-tools{grid-template-columns:1fr;}
+  .composer{grid-template-columns:minmax(0,1fr) 48px 58px;bottom:calc(88px + env(safe-area-inset-bottom));}
+  .composer textarea{min-height:48px;}
+  .listen-row{grid-template-columns:1fr!important;}
+  .rt-notebook{padding:16px 13px!important;}
+  .sentence{font-size:clamp(23px,7vw,30px)!important;overflow-wrap:anywhere;}
+  .mic-big{width:74px!important;height:74px!important;}
+
+  .settings-grid{grid-template-columns:1fr!important;}
+  .settings-card{padding:14px!important;}
+  .settings-card .api-row{grid-template-columns:1fr!important;}
+  .settings-card .api-row input{grid-column:auto;}
+  .settings-card .api-row button{width:100%;}
+  .backup-grid{grid-template-columns:1fr!important;}
+  .goal-controls{grid-template-columns:1fr;}
+  .progress-grid{grid-template-columns:1fr 1fr!important;}
+  .progress-level-grid{grid-template-columns:1fr 1fr!important;}
+  .lesson-stepper{grid-template-columns:repeat(4,1fr);overflow:hidden;}
+  .lesson-stepper span{font-size:8px;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+
+  .bottom-nav{width:calc(100% - 12px)!important;max-width:680px;}
+  .bottom-nav button{min-width:0;flex:1;}
+}
+@media (max-width:380px){
+  body{padding-left:6px;padding-right:6px;}
+  .bottom-nav{width:calc(100% - 8px)!important;}
+  .bottom-nav button{padding-left:0;padding-right:0;}
+  .bottom-nav button span:last-child{font-size:8px;}
+  .progress-grid,.progress-level-grid{grid-template-columns:1fr!important;}
+  .tutor-memory-grid{grid-template-columns:1fr 1fr 1fr;}
+}
+@media (min-width:601px){
+  .tutor-chat{min-height:220px;}
+}

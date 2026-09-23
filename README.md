@@ -51,3 +51,10 @@ V14 Final2: tema chiaro/scuro ad alto contrasto, icona bandiera UK, gestione leg
 
 ## V15 Theme FIX
 Tema chiaro/scuro completamente sovrascritto con una palette coerente ad alto contrasto per sfondo, schede, testo, input, pulsanti, navigazione, conversazione, corso, Oxford, tutor, pronuncia, progressi, impostazioni e messaggi Gemini. Il colore della barra del browser segue il tema.
+
+
+## V15.1 Mobile + Oxford FIX
+- Oxford prepara automaticamente traduzione ed esempio quando apri una parola, con pulsante manuale di riprova.
+- Traduzioni ed esempi generati da Gemini e salvati in localStorage; il dataset Oxford contiene parola/POS/CEFR, non traduzioni.
+- Layout mobile-first rafforzato per Home, Impara, Oxford, Corso, Parla, Conversazione, Pronuncia, AI Tutor, Progressi e Impostazioni.
+- Service Worker aggiornato per forzare il nuovo pacchetto.

@@ -860,6 +860,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 @media(max-width:600px){.path-banner{padding:13px}.path-banner .path-icon{font-size:24px}}
 </style>
 <link rel="stylesheet" href="./css/v14-compact.css">
+<link rel="stylesheet" href="./css/mobile-v15-1.css">
 <style id="v15-simplified-ui">
 /* V15: navigazione ridotta a 4 aree */
 .compact-tabs{display:none!important}
@@ -2484,7 +2485,8 @@ function oxfordRenderResults(){
   box.innerHTML=oxfordFiltered.slice(0,30).map(c=>`<button type="button" class="oxford-result" data-oid="${oxfordEsc(c.id)}"><span><strong>${oxfordEsc(c.word)}</strong><br><small>${oxfordEsc(c.pos)}</small></span><small>${oxfordEsc(c.cefr)}</small></button>`).join('') || '<div class="oxford-empty">Nessun risultato.</div>';
   box.querySelectorAll('[data-oid]').forEach(b=>b.addEventListener('click',()=>oxfordShow(b.dataset.oid)));
 }
-function oxfordShow(id){
+const oxfordEnriching=new Set();
+function oxfordShow(id,{autoEnrich=true}={}){
   const c=oxfordCards().find(x=>x.id===id); if(!c)return; oxfordCurrent=c;
   const saved=oxfordGet(c.id); const card=document.getElementById('oxfordCard');
   if(!card)return;
@@ -2492,26 +2494,38 @@ function oxfordShow(id){
   const example=saved.example||c.example||'';
   const exampleIt=saved.exampleIt||c.exampleIt||'';
   const dueText=saved.status==='learned' ? (saved.dueDate&&saved.dueDate<=todayISO()?'🔄 Da ripassare':'✓ Consolidata') : '🆕 Nuova';
-  card.innerHTML=`<div class="oxford-word">${oxfordEsc(c.word)}</div><div class="oxford-meta"><span class="oxford-pill">${oxfordEsc(c.cefr)}</span><span class="oxford-pill">${oxfordEsc(c.pos)}</span><span class="oxford-pill">${dueText}</span></div><div class="oxford-translation">${translation?oxfordEsc(translation):'Traduzione non ancora preparata'}</div>${example?`<div class="oxford-example"><strong>Esempio:</strong> ${oxfordEsc(example)}</div>`:''}${exampleIt?`<div class="oxford-example-it">${oxfordEsc(exampleIt)}</div>`:''}`;
+  const needsAI=!translation||!example;
+  card.innerHTML=`<div class="oxford-word">${oxfordEsc(c.word)}</div><div class="oxford-meta"><span class="oxford-pill">${oxfordEsc(c.cefr)}</span><span class="oxford-pill">${oxfordEsc(c.pos)}</span><span class="oxford-pill">${dueText}</span></div><div class="oxford-translation" id="oxfordTranslation">${translation?oxfordEsc(translation):'⏳ Carico la traduzione…'}</div>${example?`<div class="oxford-example"><strong>Esempio:</strong> ${oxfordEsc(example)}</div>`:''}${exampleIt?`<div class="oxford-example-it">${oxfordEsc(exampleIt)}</div>`:''}${needsAI?`<button type="button" class="ghost-btn oxford-prepare-btn" id="oxfordPrepareBtn">🤖 Prepara traduzione ed esempio</button>`:''}`;
   const add=document.getElementById('oxfordAddBtn'); if(add)add.textContent=saved.status==='learned'?'✓ Nel ripasso':'➕ Aggiungi al ripasso';
   const known=document.getElementById('oxfordKnownBtn'); if(known)known.textContent=saved.status==='learned'?'✓ Già conosciuta':'✓ La conosco';
+  document.getElementById('oxfordPrepareBtn')?.addEventListener('click',()=>oxfordEnrich(c.id));
+  if(autoEnrich && needsAI && !oxfordEnriching.has(c.id)) oxfordEnrich(c.id);
 }
-async function oxfordEnrich(){
-  if(!oxfordCurrent)return;
-  const status=document.getElementById('oxfordStatus'); const c=oxfordCurrent; const saved=oxfordGet(c.id);
-  if(saved.translation&&saved.example){ oxfordShow(c.id); if(status)status.textContent='Questa scheda è già completa.'; return; }
+async function oxfordEnrich(id){
+  const c=oxfordCards().find(x=>x.id===id)||oxfordCurrent; if(!c)return; oxfordCurrent=c;
+  if(oxfordEnriching.has(c.id))return;
+  const status=document.getElementById('oxfordStatus'); const saved=oxfordGet(c.id);
+  if(saved.translation&&saved.example){oxfordShow(c.id,{autoEnrich:false});if(status)status.textContent='✓ Traduzione già disponibile sul dispositivo.';return;}
+  oxfordEnriching.add(c.id);
+  const prepare=document.getElementById('oxfordPrepareBtn'); if(prepare){prepare.disabled=true;prepare.textContent='⏳ Preparo…';}
   if(status){status.className='oxford-status';status.textContent='🤖 Preparo traduzione ed esempio…';}
   try{
     const sys='Sei un insegnante di inglese per uno studente italiano. Per la parola inglese data, crea una traduzione italiana breve e naturale e un esempio inglese semplice, originale, adatto al livello CEFR indicato, con traduzione italiana. Non copiare definizioni o esempi da dizionari. Rispondi SOLO JSON: {"translation":"...","example":"...","exampleIt":"..."}';
     const r=await callGemini(sys,`Parola: ${c.word}\nParte del discorso: ${c.pos}\nLivello CEFR: ${c.cefr}`);
-    const n={...saved,translation:r.translation||'',example:r.example||'',exampleIt:r.exampleIt||'',status:saved.status||'new'};
-    oxfordSet(c.id,n); oxfordShow(c.id); if(status)status.textContent='✓ Scheda preparata e salvata sul dispositivo.';
-  }catch(e){if(status){status.className='oxford-status error';status.textContent=friendlyGeminiError(e.message||'Errore Gemini.');}}
+    const n={...saved,translation:String(r.translation||'').trim(),example:String(r.example||'').trim(),exampleIt:String(r.exampleIt||'').trim(),status:saved.status||'new'};
+    if(!n.translation)throw new Error('Gemini non ha restituito la traduzione.');
+    oxfordSet(c.id,n); oxfordShow(c.id,{autoEnrich:false}); if(status)status.textContent='✓ Traduzione ed esempio salvati sul dispositivo.';
+  }catch(e){
+    oxfordShow(c.id,{autoEnrich:false});
+    if(status){status.className='oxford-status error';status.textContent=friendlyGeminiError(e.message||'Errore Gemini.');}
+  }finally{
+    oxfordEnriching.delete(c.id);
+  }
 }
 async function oxfordAddCurrent(){
   if(!oxfordCurrent)return;
   let saved=oxfordGet(oxfordCurrent.id);
-  if(!saved.translation||!saved.example){await oxfordEnrich();saved=oxfordGet(oxfordCurrent.id);}
+  if(!saved.translation||!saved.example){await oxfordEnrich(oxfordCurrent.id);saved=oxfordGet(oxfordCurrent.id);}
   const firstLearn=!saved || saved.status!=='learned';
   await addVocabCard(oxfordCurrent.word,saved.translation||'',saved.example||oxfordCurrent.pos,'Oxford 3000');
   const next={...saved,status:'learned',interval:saved.interval||1,repetitions:(saved.repetitions||0)+1,dueDate:todayISO()};
