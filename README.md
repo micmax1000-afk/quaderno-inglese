@@ -48,3 +48,6 @@ V14 Final2: tema chiaro/scuro ad alto contrasto, icona bandiera UK, gestione leg
 - Conversazione, Pronuncia e AI Tutor raccolti in Parla.
 - Progressi dettagliati raggiungibili da Home.
 - Schermate interne mantenute per non perdere le funzioni esistenti, con pulsante di ritorno alla sezione principale.
+
+## V15 Theme FIX
+Tema chiaro/scuro completamente sovrascritto con una palette coerente ad alto contrasto per sfondo, schede, testo, input, pulsanti, navigazione, conversazione, corso, Oxford, tutor, pronuncia, progressi, impostazioni e messaggi Gemini. Il colore della barra del browser segue il tema.

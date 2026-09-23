@@ -1,0 +1,296 @@
+/* =========================================================
+   QUADERNO D'INGLESE V15 — COMPLETE THEME SYSTEM
+   Light + Dark: all main UI surfaces, controls, cards and text
+   ========================================================= */
+
+:root{
+  --theme-bg:#eef6ff;
+  --theme-bg-2:#e4f0ff;
+  --theme-surface:#ffffff;
+  --theme-surface-2:#f4f8ff;
+  --theme-surface-3:#eaf3ff;
+  --theme-text:#102a4d;
+  --theme-text-strong:#082f69;
+  --theme-muted:#526b88;
+  --theme-border:#cbdced;
+  --theme-accent:#0876ee;
+  --theme-accent-strong:#075ebd;
+  --theme-accent-soft:#dceeff;
+  --theme-danger:#b42318;
+  --theme-danger-soft:#fff0f1;
+  --theme-success:#087a55;
+  --theme-shadow:0 8px 24px rgba(28,74,125,.10);
+  --theme-shadow-soft:0 3px 12px rgba(28,74,125,.07);
+}
+
+/* ---------- LIGHT ---------- */
+html{background:var(--theme-bg)}
+body:not(.theme-dark){
+  background:linear-gradient(180deg,var(--theme-bg) 0%,var(--theme-bg-2) 100%) !important;
+  color:var(--theme-text) !important;
+}
+body:not(.theme-dark) .masthead,
+body:not(.theme-dark) .bottom-nav,
+body:not(.theme-dark) .setup,
+body:not(.theme-dark) .today-card,
+body:not(.theme-dark) .home-action,
+body:not(.theme-dark) .home-stat,
+body:not(.theme-dark) .notebook,
+body:not(.theme-dark) .rt-notebook,
+body:not(.theme-dark) .vocab-notebook,
+body:not(.theme-dark) .errbook,
+body:not(.theme-dark) .vocab-list,
+body:not(.theme-dark) .manual-add,
+body:not(.theme-dark) .vocab-stats,
+body:not(.theme-dark) .vocab-mode-tabs,
+body:not(.theme-dark) .course-hero,
+body:not(.theme-dark) .lesson-panel,
+body:not(.theme-dark) .lesson-card,
+body:not(.theme-dark) .quiz-box,
+body:not(.theme-dark) .progress-hero,
+body:not(.theme-dark) .progress-section,
+body:not(.theme-dark) .progress-card,
+body:not(.theme-dark) .oxford-panel,
+body:not(.theme-dark) .oxford-card,
+body:not(.theme-dark) .tutor-hero,
+body:not(.theme-dark) .tutor-memory-card,
+body:not(.theme-dark) .tutor-chat,
+body:not(.theme-dark) .tutor-composer,
+body:not(.theme-dark) .settings-hero,
+body:not(.theme-dark) .settings-card,
+body:not(.theme-dark) .talk-hero,
+body:not(.theme-dark) .speaking-box,
+body:not(.theme-dark) .rt-score,
+body:not(.theme-dark) .daily-session-card,
+body:not(.theme-dark) .hub-card,
+body:not(.theme-dark) .path-banner,
+body:not(.theme-dark) .simple-hero,
+body:not(.theme-dark) .lesson-box,
+body:not(.theme-dark) .level-modal{
+  background:var(--theme-surface) !important;
+  color:var(--theme-text) !important;
+  border-color:var(--theme-border) !important;
+  box-shadow:var(--theme-shadow-soft) !important;
+}
+
+body:not(.theme-dark) .masthead{background:rgba(255,255,255,.96)!important}
+body:not(.theme-dark) .home-hero,
+body:not(.theme-dark) .talk-hero,
+body:not(.theme-dark) .tutor-hero,
+body:not(.theme-dark) .settings-hero,
+body:not(.theme-dark) .progress-hero,
+body:not(.theme-dark) .course-hero{
+  background:linear-gradient(145deg,#e5f3ff,#d5eaff) !important;
+  color:var(--theme-text-strong)!important;
+}
+body:not(.theme-dark) .home-hero h2,
+body:not(.theme-dark) .home-hero p,
+body:not(.theme-dark) .talk-hero h2,
+body:not(.theme-dark) .talk-copy h2,
+body:not(.theme-dark) .talk-copy p,
+body:not(.theme-dark) .tutor-hero h2,
+body:not(.theme-dark) .settings-hero h2,
+body:not(.theme-dark) .progress-hero h2,
+body:not(.theme-dark) .course-hero h2,
+body:not(.theme-dark) .home-hero .eyebrow{color:var(--theme-text-strong)!important}
+body:not(.theme-dark) .home-hero .home-progress .bar{background:#c4ddf7!important}
+body:not(.theme-dark) .home-hero .home-progress .fill{background:var(--theme-accent)!important}
+
+/* Generic text */
+body:not(.theme-dark) h1,body:not(.theme-dark) h2,body:not(.theme-dark) h3,
+body:not(.theme-dark) h4,body:not(.theme-dark) strong,body:not(.theme-dark) b,
+body:not(.theme-dark) label,body:not(.theme-dark) .card-label,
+body:not(.theme-dark) .section-back,body:not(.theme-dark) .settings-section-head,
+body:not(.theme-dark) .settings-field label{color:var(--theme-text-strong)!important}
+body:not(.theme-dark) p,body:not(.theme-dark) small,body:not(.theme-dark) .muted,
+body:not(.theme-dark) .empty-state,body:not(.theme-dark) .setup-note,
+body:not(.theme-dark) .settings-help,body:not(.theme-dark) .settings-small,
+body:not(.theme-dark) .settings-local p,body:not(.theme-dark) .progress-note,
+body:not(.theme-dark) .lesson-goal,body:not(.theme-dark) .lesson-tip,
+body:not(.theme-dark) .vocab-mode-hint,body:not(.theme-dark) .oxford-sub,
+body:not(.theme-dark) .oxford-meta,body:not(.theme-dark) .talk-status small,
+body:not(.theme-dark) .tutor-memory-card small,body:not(.theme-dark) .rt-score-copy span,
+body:not(.theme-dark) .range-labels{color:var(--theme-muted)!important}
+
+/* Inputs */
+body:not(.theme-dark) input[type=text],body:not(.theme-dark) input[type=password],
+body:not(.theme-dark) input[type=number],body:not(.theme-dark) input[type=search],
+body:not(.theme-dark) select,body:not(.theme-dark) textarea{
+  background:#fff!important;color:var(--theme-text)!important;
+  border-color:var(--theme-border)!important;
+  caret-color:var(--theme-accent)!important;
+}
+body:not(.theme-dark) input::placeholder,body:not(.theme-dark) textarea::placeholder{color:#7890aa!important;opacity:1}
+body:not(.theme-dark) input:focus,body:not(.theme-dark) select:focus,body:not(.theme-dark) textarea:focus{
+  border-color:#70aeea!important;box-shadow:0 0 0 3px rgba(8,118,238,.12)!important;outline:none!important
+}
+
+/* Buttons / controls */
+body:not(.theme-dark) .theme-btn,
+body:not(.theme-dark) .settings-action,
+body:not(.theme-dark) .ghost-btn,
+body:not(.theme-dark) .conversation-tools button,
+body:not(.theme-dark) .talk-quick button,
+body:not(.theme-dark) .starter-chips button,
+body:not(.theme-dark) .quiz-option,
+body:not(.theme-dark) .lesson-card,
+body:not(.theme-dark) .vocab-mode-btn{
+  background:var(--theme-surface-2)!important;color:var(--theme-text)!important;
+  border-color:var(--theme-border)!important;
+}
+body:not(.theme-dark) .theme-btn.active,
+body:not(.theme-dark) .tab-btn.active,
+body:not(.theme-dark) .bottom-nav button.active,
+body:not(.theme-dark) .vocab-mode-btn.active{
+  background:var(--theme-accent-soft)!important;color:var(--theme-accent-strong)!important;
+  border-color:#9bc8f4!important;
+}
+body:not(.theme-dark) .primary-action,
+body:not(.theme-dark) .big-start,
+body:not(.theme-dark) .send-btn,
+body:not(.theme-dark) .mic-big,
+body:not(.theme-dark) .settings-action.primary,
+body:not(.theme-dark) .install-btn{background:var(--theme-accent)!important;color:#fff!important}
+body:not(.theme-dark) .primary-action:hover,body:not(.theme-dark) .big-start:hover,
+body:not(.theme-dark) .send-btn:hover{background:var(--theme-accent-strong)!important}
+body:not(.theme-dark) .settings-top-btn{color:var(--theme-accent-strong)!important}
+body:not(.theme-dark) .bottom-nav{background:rgba(255,255,255,.97)!important}
+body:not(.theme-dark) .bottom-nav button{color:#58718e!important}
+body:not(.theme-dark) .bottom-nav button.active{color:var(--theme-accent-strong)!important}
+
+/* Conversation / bubbles */
+body:not(.theme-dark) .thread .bubble{background:#f3f8ff!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+body:not(.theme-dark) .thread .bubble.user{background:#168cff!important;color:#fff!important;border-color:#168cff!important}
+body:not(.theme-dark) .composer,body:not(.theme-dark) .tutor-composer{background:rgba(255,255,255,.98)!important;border-color:var(--theme-border)!important}
+body:not(.theme-dark) .composer textarea,body:not(.theme-dark) .tutor-composer textarea{color:var(--theme-text)!important}
+body:not(.theme-dark) .correction,body:not(.theme-dark) .personal-note{background:#eef7ff!important;color:var(--theme-text)!important;border-color:#c5ddf4!important}
+
+/* Progress / course / Oxford */
+body:not(.theme-dark) .fill,body:not(.theme-dark) .vocab-progress-fill{background:var(--theme-accent)!important}
+body:not(.theme-dark) .oxford-word,body:not(.theme-dark) .oxford-main-word,
+body:not(.theme-dark) .oxford-title,body:not(.theme-dark) .oxford-card .word,
+body:not(.theme-dark) .lesson-word,body:not(.theme-dark) .sentence{color:var(--theme-text-strong)!important}
+body:not(.theme-dark) .oxford-translation,body:not(.theme-dark) .oxford-example-it{color:#46627f!important}
+body:not(.theme-dark) .oxford-pill,body:not(.theme-dark) .tag, body:not(.theme-dark) .level-tag{background:var(--theme-accent-soft)!important;color:var(--theme-accent-strong)!important}
+body:not(.theme-dark) .level-option{background:var(--theme-surface-2)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+body:not(.theme-dark) .level-option.selected{background:var(--theme-accent-soft)!important;border-color:#7eb4e9!important}
+body:not(.theme-dark) .level-result{background:var(--theme-surface-3)!important;color:var(--theme-text)!important}
+
+/* Settings */
+body:not(.theme-dark) .settings-local{background:#f1f7fd!important;border-color:var(--theme-border)!important}
+body:not(.theme-dark) .settings-local code{background:#dfebf7!important;color:var(--theme-text)!important}
+body:not(.theme-dark) .settings-toggle{border-color:var(--theme-border)!important}
+body:not(.theme-dark) .switch-ui{background:#cbd8e6!important}
+body:not(.theme-dark) .settings-field select#model{background:#fff!important;color:var(--theme-text)!important;border-color:#b9cce2!important}
+body:not(.theme-dark) .gemini-check-row span.ok{color:var(--theme-success)!important}
+body:not(.theme-dark) .gemini-check-row span.error{color:var(--theme-danger)!important}
+
+/* Error */
+body:not(.theme-dark) .gemini-error-card{background:var(--theme-danger-soft)!important;color:#8f1720!important;border-color:#ff9aa1!important}
+
+/* ---------- DARK ---------- */
+html:has(body.theme-dark){background:#07111f}
+body.theme-dark{
+  --theme-bg:#07111f;--theme-bg-2:#0b1a2d;--theme-surface:#101f33;
+  --theme-surface-2:#152943;--theme-surface-3:#193451;
+  --theme-text:#eaf3ff;--theme-text-strong:#f4f8ff;--theme-muted:#aebfd3;
+  --theme-border:#294360;--theme-accent:#4da3ff;--theme-accent-strong:#78bcff;
+  --theme-accent-soft:#183a5d;--theme-danger:#ff9da5;--theme-danger-soft:#421d25;
+  --theme-success:#66dfb5;--theme-shadow:0 10px 30px rgba(0,0,0,.28);--theme-shadow-soft:0 5px 18px rgba(0,0,0,.22);
+  background:linear-gradient(180deg,var(--theme-bg) 0%,var(--theme-bg-2) 100%) !important;
+  color:var(--theme-text)!important;
+}
+body.theme-dark .masthead,body.theme-dark .bottom-nav,body.theme-dark .setup,
+body.theme-dark .today-card,body.theme-dark .home-action,body.theme-dark .home-stat,
+body.theme-dark .notebook,body.theme-dark .rt-notebook,body.theme-dark .vocab-notebook,
+body.theme-dark .errbook,body.theme-dark .vocab-list,body.theme-dark .manual-add,
+body.theme-dark .vocab-stats,body.theme-dark .vocab-mode-tabs,body.theme-dark .course-hero,
+body.theme-dark .lesson-panel,body.theme-dark .lesson-card,body.theme-dark .quiz-box,
+body.theme-dark .progress-hero,body.theme-dark .progress-section,body.theme-dark .progress-card,
+body.theme-dark .oxford-panel,body.theme-dark .oxford-card,body.theme-dark .tutor-hero,
+body.theme-dark .tutor-memory-card,body.theme-dark .tutor-chat,body.theme-dark .tutor-composer,
+body.theme-dark .settings-hero,body.theme-dark .settings-card,body.theme-dark .talk-hero,
+body.theme-dark .speaking-box,body.theme-dark .rt-score,body.theme-dark .daily-session-card,
+body.theme-dark .hub-card,body.theme-dark .path-banner,body.theme-dark .simple-hero,
+body.theme-dark .lesson-box,body.theme-dark .level-modal{
+  background:var(--theme-surface)!important;color:var(--theme-text)!important;
+  border-color:var(--theme-border)!important;box-shadow:var(--theme-shadow-soft)!important;
+}
+body.theme-dark .masthead{background:rgba(16,31,51,.96)!important}
+body.theme-dark .home-hero,body.theme-dark .talk-hero,body.theme-dark .tutor-hero,
+body.theme-dark .settings-hero,body.theme-dark .progress-hero,body.theme-dark .course-hero{
+  background:linear-gradient(145deg,#102b49,#163b61)!important;color:var(--theme-text)!important;
+}
+body.theme-dark h1,body.theme-dark h2,body.theme-dark h3,body.theme-dark h4,
+body.theme-dark strong,body.theme-dark b,body.theme-dark label,
+body.theme-dark .card-label,body.theme-dark .section-back,
+body.theme-dark .settings-section-head,body.theme-dark .settings-field label,
+body.theme-dark .home-hero h2,body.theme-dark .home-hero p,
+body.theme-dark .talk-copy h2,body.theme-dark .talk-copy p,
+body.theme-dark .tutor-hero h2,body.theme-dark .settings-hero h2,
+body.theme-dark .progress-hero h2,body.theme-dark .course-hero h2,
+body.theme-dark .home-hero .eyebrow{color:var(--theme-text-strong)!important}
+body.theme-dark p,body.theme-dark small,body.theme-dark .muted,body.theme-dark .empty-state,
+body.theme-dark .setup-note,body.theme-dark .settings-help,body.theme-dark .settings-small,
+body.theme-dark .settings-local p,body.theme-dark .progress-note,body.theme-dark .lesson-goal,
+body.theme-dark .lesson-tip,body.theme-dark .vocab-mode-hint,body.theme-dark .oxford-sub,
+body.theme-dark .oxford-meta,body.theme-dark .talk-status small,body.theme-dark .tutor-memory-card small,
+body.theme-dark .rt-score-copy span,body.theme-dark .range-labels{color:var(--theme-muted)!important}
+body.theme-dark input[type=text],body.theme-dark input[type=password],body.theme-dark input[type=number],
+body.theme-dark input[type=search],body.theme-dark select,body.theme-dark textarea{
+  background:var(--theme-surface-2)!important;color:var(--theme-text)!important;
+  border-color:var(--theme-border)!important;caret-color:var(--theme-accent)!important;
+}
+body.theme-dark input::placeholder,body.theme-dark textarea::placeholder{color:#7f96ae!important;opacity:1}
+body.theme-dark input:focus,body.theme-dark select:focus,body.theme-dark textarea:focus{
+  border-color:#4d8ec8!important;box-shadow:0 0 0 3px rgba(77,163,255,.14)!important;outline:none!important
+}
+body.theme-dark .theme-btn,body.theme-dark .settings-action,body.theme-dark .ghost-btn,
+body.theme-dark .conversation-tools button,body.theme-dark .talk-quick button,
+body.theme-dark .starter-chips button,body.theme-dark .quiz-option,body.theme-dark .lesson-card,
+body.theme-dark .vocab-mode-btn{background:var(--theme-surface-2)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+body.theme-dark .theme-btn.active,body.theme-dark .tab-btn.active,body.theme-dark .bottom-nav button.active,
+body.theme-dark .vocab-mode-btn.active{background:var(--theme-accent-soft)!important;color:var(--theme-accent-strong)!important;border-color:#37658c!important}
+body.theme-dark .primary-action,body.theme-dark .big-start,body.theme-dark .send-btn,
+body.theme-dark .mic-big,body.theme-dark .settings-action.primary,body.theme-dark .install-btn{background:var(--theme-accent)!important;color:#04111f!important}
+body.theme-dark .primary-action:hover,body.theme-dark .big-start:hover,body.theme-dark .send-btn:hover{background:#78bcff!important}
+body.theme-dark .settings-top-btn{color:var(--theme-accent-strong)!important}
+body.theme-dark .bottom-nav{background:rgba(16,31,51,.98)!important}
+body.theme-dark .bottom-nav button{color:#9fb3c9!important}
+body.theme-dark .bottom-nav button.active{color:var(--theme-accent-strong)!important}
+body.theme-dark .thread .bubble{background:#152943!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+body.theme-dark .thread .bubble.user{background:#1769ad!important;color:#fff!important;border-color:#1769ad!important}
+body.theme-dark .composer,body.theme-dark .tutor-composer{background:rgba(16,31,51,.98)!important;border-color:var(--theme-border)!important}
+body.theme-dark .composer textarea,body.theme-dark .tutor-composer textarea{color:var(--theme-text)!important}
+body.theme-dark .correction,body.theme-dark .personal-note{background:#142d46!important;color:var(--theme-text)!important;border-color:#294b69!important}
+body.theme-dark .fill,body.theme-dark .vocab-progress-fill{background:var(--theme-accent)!important}
+body.theme-dark .oxford-word,body.theme-dark .oxford-main-word,body.theme-dark .oxford-title,
+body.theme-dark .oxford-card .word,body.theme-dark .lesson-word,body.theme-dark .sentence{color:var(--theme-text-strong)!important}
+body.theme-dark .oxford-translation,body.theme-dark .oxford-example-it{color:#b4c8dc!important}
+body.theme-dark .level-option{background:var(--theme-surface-2)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+body.theme-dark .level-option.selected{background:var(--theme-accent-soft)!important;border-color:#4a82b5!important}
+body.theme-dark .level-result{background:var(--theme-surface-3)!important;color:var(--theme-text)!important}
+body.theme-dark .settings-local{background:#13263c!important;border-color:var(--theme-border)!important}
+body.theme-dark .settings-local code{background:#1b3550!important;color:var(--theme-text)!important}
+body.theme-dark .settings-toggle{border-color:var(--theme-border)!important}
+body.theme-dark .switch-ui{background:#3a5068!important}
+body.theme-dark .settings-field select#model{background:#132943!important;color:#eef6ff!important;border-color:#385674!important}
+body.theme-dark .gemini-check-row span.ok{color:var(--theme-success)!important}
+body.theme-dark .gemini-check-row span.error{color:var(--theme-danger)!important}
+body.theme-dark .gemini-error-card{background:#421d25!important;color:#ffb4ba!important;border-color:#a64a55!important}
+
+/* Common badges / status elements */
+body:not(.theme-dark) .status-line,body:not(.theme-dark) .backend-status,
+body:not(.theme-dark) .settings-status,body:not(.theme-dark) .daily-session-bar,
+body:not(.theme-dark) .oxford-status{color:var(--theme-muted)!important}
+body.theme-dark .status-line,body.theme-dark .backend-status,
+body.theme-dark .settings-status,body.theme-dark .daily-session-bar,
+body.theme-dark .oxford-status{color:var(--theme-muted)!important}
+body:not(.theme-dark) .rate-btn,body:not(.theme-dark) .speak-practice-btn,
+body:not(.theme-dark) .reveal-btn,body:not(.theme-dark) .next-btn{background:var(--theme-surface-2)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+body.theme-dark .rate-btn,body.theme-dark .speak-practice-btn,
+body.theme-dark .reveal-btn,body.theme-dark .next-btn{background:var(--theme-surface-2)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+
+/* Keep scrollbars readable */
+body:not(.theme-dark) *{scrollbar-color:#b9cce2 #eaf2fb}
+body.theme-dark *{scrollbar-color:#385674 #0d1c2e}

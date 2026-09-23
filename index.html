@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F4F0E6">
+<meta name="theme-color" content="#eef6ff" id="themeColorMeta">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -3022,7 +3022,7 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
   loadSettings();ids.forEach(id=>document.getElementById(id)?.addEventListener('change',saveSettings));ids.forEach(id=>document.getElementById(id)?.addEventListener('blur',saveSettings));
 
   // Theme
-  function applyTheme(t){document.body.classList.toggle('theme-dark',t==='dark');document.documentElement.style.colorScheme=t==='dark'?'dark':'light';document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.themeChoice===t));try{localStorage.setItem(THEME_KEY,t);}catch(_){} }
+  function applyTheme(t){document.body.classList.toggle('theme-dark',t==='dark');document.documentElement.style.colorScheme=t==='dark'?'dark':'light';const meta=document.getElementById('themeColorMeta');if(meta) meta.setAttribute('content',t==='dark'?'#07111f':'#eef6ff');document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.themeChoice===t));try{localStorage.setItem(THEME_KEY,t);}catch(_){} }
   let theme='system';try{theme=localStorage.getItem(THEME_KEY)||'system';}catch(_){}
   if(theme==='system'){const mq=window.matchMedia('(prefers-color-scheme: dark)');applyTheme(mq.matches?'dark':'light');}
   else applyTheme(theme);
