@@ -1,13 +1,13 @@
 {
-  "name": "Quaderno d'Inglese Lite",
+  "name": "Quaderno d'Inglese",
   "short_name": "Quaderno Inglese",
-  "description": "Quaderno personale per imparare l'inglese con corso, ripasso, pronuncia e Gemini.",
+  "description": "Quaderno personale per imparare l'inglese con Oxford 3000, ripasso, pronuncia, corso e AI Tutor.",
   "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#F4F0E6",
-  "theme_color": "#F4F0E6",
+  "background_color": "#061A35",
+  "theme_color": "#061A35",
   "lang": "it",
   "orientation": "portrait-primary",
   "icons": [
@@ -22,6 +22,41 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Impara",
+      "short_name": "Impara",
+      "url": "./?tab=vocab",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Parla",
+      "short_name": "Parla",
+      "url": "./?tab=conv",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Ripasso",
+      "short_name": "Ripasso",
+      "url": "./?tab=vocab&mode=review",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

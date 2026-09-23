@@ -859,6 +859,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 .path-banner{margin:10px 0 14px;padding:14px 15px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,var(--surface),var(--surface-2));display:flex;gap:12px;align-items:center}.path-banner .path-icon{font-size:28px}.path-banner h3{margin:0 0 3px;font-size:15px}.path-banner p{margin:0;color:var(--ink-soft);font-size:12px;line-height:1.4}.lesson-card.personalized{border-left:5px solid var(--accent)!important}.lesson-card.recommended{outline:2px solid var(--accent-2);outline-offset:1px}.lesson-card .level-tag{display:inline-block;margin-top:6px;padding:4px 7px;border-radius:999px;background:var(--surface-2);font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}.personal-note{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:12px;color:var(--ink-soft)}
 @media(max-width:600px){.path-banner{padding:13px}.path-banner .path-icon{font-size:24px}}
 </style>
+<link rel="stylesheet" href="./css/v14-compact.css">
 </head>
 <body>
 <button class="install-btn" id="installBtn">＋ Installa app</button>
@@ -867,7 +868,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
   <header class="masthead">
     <div>
-      <div class="eyebrow">Versione 12 · percorso personale · sessione quotidiana · mobile Android</div>
+      <div class="eyebrow">Versione 14 · Compact · percorso personale · mobile Android</div>
       <h1>Quaderno d'Inglese</h1>
     </div>
     <div class="masthead-actions">
@@ -882,21 +883,21 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
   <div class="tabs">
     <button class="tab-btn active" data-tab="home">Home</button>
     <button class="tab-btn" data-tab="conv">Conversazione</button>
-    <button class="tab-btn" data-tab="tutor">🧑‍🏫 Tutor</button>
-    <button class="tab-btn" data-tab="rt">Ripeti e traduci</button>
-    <button class="tab-btn" data-tab="vocab">Vocabolario</button>
+    <button class="tab-btn" data-tab="tutor">Tutor</button>
+    <button class="tab-btn" data-tab="rt">Pronuncia</button>
+    <button class="tab-btn" data-tab="vocab">Impara</button>
     <button class="tab-btn" data-tab="progress">Progressi</button>
-    <button class="tab-btn" data-tab="course">Corso A1</button>
-    <button class="tab-btn" data-tab="settings">⚙ Impostazioni</button>
+    <button class="tab-btn" data-tab="course">Corso</button>
+    <button class="tab-btn" data-tab="settings">Impostazioni</button>
   </div>
 
   <!-- Gemini e le preferenze sono state spostate nella scheda Impostazioni. -->
   <!-- ===== HOME V6 ===== -->
   <div class="view active home-view" id="view-home">
     <section class="home-hero">
-      <div class="eyebrow">Il tuo inglese, un passo alla volta</div>
-      <h2>Continua a imparare 👋</h2>
-      <p>Fai una piccola sessione oggi. La costanza conta più della perfezione.</p>
+      <div class="eyebrow">OGNI GIORNO, UN PASSO</div>
+      <h2>Buongiorno 👋</h2>
+      <p>Continua dal punto in cui eri arrivato.</p>
       <div class="home-progress">
         <div class="home-progress-row"><span>Progresso A1</span><b id="homeCoursePct">0%</b></div>
         <div class="bar"><div class="fill" id="homeCourseFill"></div></div>
@@ -1242,6 +1243,14 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
 
 </div>
+
+
+  <nav class="bottom-nav" aria-label="Navigazione principale">
+    <button type="button" data-tab="home" class="active"><span class="navico">⌂</span><span>Home</span></button>
+    <button type="button" data-tab="vocab"><span class="navico">▤</span><span>Impara</span></button>
+    <button type="button" data-tab="conv"><span class="navico">🎤</span><span>Parla</span></button>
+    <button type="button" data-tab="settings"><span class="navico">⚙</span><span>Impostazioni</span></button>
+  </nav>
 
 <script src="./data/oxford3000.js"></script>
 
@@ -2988,5 +2997,6 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
 
 
 <script>window.addEventListener('DOMContentLoaded',()=>{try{initOxfordImporter();initOxfordV11();}catch(e){console.error(e);}});</script>
+<script src="./js/v14-ui.js"></script>
 </body>
 </html>
