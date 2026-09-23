@@ -860,6 +860,24 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 @media(max-width:600px){.path-banner{padding:13px}.path-banner .path-icon{font-size:24px}}
 </style>
 <link rel="stylesheet" href="./css/v14-compact.css">
+<style id="v15-simplified-ui">
+/* V15: navigazione ridotta a 4 aree */
+.compact-tabs{display:none!important}
+.simple-hero{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.simple-hero h2{font-family:'Fraunces',serif;font-size:27px;margin:4px 0 5px;color:var(--text)}
+.simple-hero p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.learn-continue{display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(135deg,var(--surface),var(--surface-2));border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:18px;padding:16px;margin-bottom:12px}
+.learn-continue h3{margin:3px 0;font-size:19px;color:var(--text)}
+.learn-continue p{margin:0;color:var(--muted);font-size:12px}
+.hub-kicker{font-size:9px;letter-spacing:.12em;font-weight:800;color:var(--accent);text-transform:uppercase}
+.hub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.hub-card{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:17px;min-height:125px;padding:16px 12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;gap:5px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .15s,border-color .15s}
+.hub-card:hover{transform:translateY(-1px);border-color:var(--accent)}
+.hub-card:active{transform:scale(.99)}
+.hub-card span{font-size:25px;margin-bottom:2px}.hub-card strong{font-size:14px}.hub-card small{font-size:11px;color:var(--muted);line-height:1.35}.hub-card.primary{border-color:var(--accent);background:linear-gradient(135deg,var(--surface),var(--surface-2))}
+.hub-mini-progress,.hub-tip{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px}.hub-mini-progress>div:first-child{display:flex;justify-content:space-between;font-size:12px;font-weight:700}.hub-mini-progress .bar{height:8px;margin-top:7px}.text-link,.home-progress-link{border:0;background:transparent;color:var(--accent);font-weight:800;padding:10px 0 0;cursor:pointer;font-size:12px}.home-progress-link{display:block;margin:8px auto 0}.section-back{display:inline-flex;align-items:center;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:999px;padding:8px 12px;margin:0 0 10px;cursor:pointer;font-weight:700;font-size:12px}.speak-grid .hub-card{min-height:145px}
+@media(max-width:600px){.hub-grid{grid-template-columns:1fr}.hub-card{min-height:82px;display:grid;grid-template-columns:42px 1fr;grid-template-rows:auto auto;align-items:center;padding:12px}.hub-card span{grid-row:1/3;grid-column:1;font-size:26px;margin:0;text-align:center}.hub-card strong,.hub-card small{grid-column:2}.hub-card strong{font-size:14px}.hub-card small{font-size:11px}.learn-continue{align-items:flex-start;flex-direction:column}.learn-continue .big-start{width:100%}.speak-grid .hub-card{min-height:86px}}
+</style>
 </head>
 <body>
 <button class="install-btn" id="installBtn">＋ Installa app</button>
@@ -868,7 +886,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
   <header class="masthead">
     <div>
-      <div class="eyebrow">Versione 14 · Compact · percorso personale · mobile Android</div>
+      <div class="eyebrow">Versione 15 · Semplificata · percorso personale · mobile Android</div>
       <h1>Quaderno d'Inglese</h1>
     </div>
     <div class="masthead-actions">
@@ -880,14 +898,10 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
     </div>
   </header>
 
-  <div class="tabs">
+  <div class="tabs compact-tabs" aria-label="Navigazione rapida">
     <button class="tab-btn active" data-tab="home">Home</button>
-    <button class="tab-btn" data-tab="conv">Conversazione</button>
-    <button class="tab-btn" data-tab="tutor">Tutor</button>
-    <button class="tab-btn" data-tab="rt">Pronuncia</button>
-    <button class="tab-btn" data-tab="vocab">Impara</button>
-    <button class="tab-btn" data-tab="progress">Progressi</button>
-    <button class="tab-btn" data-tab="course">Corso</button>
+    <button class="tab-btn" data-tab="learn">Impara</button>
+    <button class="tab-btn" data-tab="speak">Parla</button>
     <button class="tab-btn" data-tab="settings">Impostazioni</button>
   </div>
 
@@ -905,7 +919,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
     </section>
     <section class="daily-session-card" id="dailySessionCard">
       <div class="daily-session-head">
-        <div><div class="tag">🗓️ Sessione di oggi</div><h3>Il tuo percorso quotidiano</h3><p id="dailySessionSummary">5 attività brevi per allenare parole, ripasso, ascolto e conversazione.</p></div>
+        <div><div class="tag">🗓️ Sessione di oggi</div><h3>Il tuo percorso quotidiano</h3><p id="dailySessionSummary">3 attività brevi per parole, ripasso e conversazione.</p></div>
         <div class="daily-session-percent" id="dailySessionPercent">0%</div>
       </div>
       <div class="daily-session-bar"><i id="dailySessionFill"></i></div>
@@ -929,10 +943,49 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
       <div class="home-stat"><b id="homeWords">0</b><span>📖 parole</span></div>
       <div class="home-stat"><b id="homeCorrect">0</b><span>✅ corrette</span></div>
     </div>
+    <button class="home-progress-link" data-go="progress">Vedi tutti i progressi →</button>
+  </div>
+
+  <!-- ===== V15 HUB IMPARA ===== -->
+  <div class="view learn-view" id="view-learn">
+    <section class="simple-hero">
+      <div class="eyebrow">STUDIA IN MODO SEMPLICE</div>
+      <h2>📚 Impara</h2>
+      <p>Corso, parole nuove e ripasso in un unico posto.</p>
+    </section>
+    <section class="learn-continue" id="learnContinueCard">
+      <div><span class="hub-kicker">CONTINUA</span><h3 id="learnContinueTitle">Presentarsi</h3><p id="learnContinueMeta">10 minuti · Livello A1</p></div>
+      <button class="big-start" id="learnContinueBtn">▶ Continua</button>
+    </section>
+    <div class="hub-grid">
+      <button class="hub-card" data-go="course"><span>📖</span><strong>Corso A1</strong><small>Lezioni guidate</small></button>
+      <button class="hub-card" data-go="vocab"><span>🔄</span><strong>Ripasso</strong><small>Parole da ricordare</small></button>
+      <button class="hub-card" data-go="vocab" data-focus="oxford"><span>🇬🇧</span><strong>Oxford 3000</strong><small>Cerca e studia parole</small></button>
+    </div>
+    <section class="hub-mini-progress">
+      <div><span>Corso A1</span><b id="learnCoursePct">0%</b></div>
+      <div class="bar"><div class="fill" id="learnCourseFill"></div></div>
+      <button class="text-link" data-go="progress">Vedi il progresso completo →</button>
+    </section>
+  </div>
+
+  <!-- ===== V15 HUB PARLA ===== -->
+  <div class="view speak-view" id="view-speak">
+    <section class="simple-hero">
+      <div class="eyebrow">PARLA E ASCOLTA</div>
+      <h2>🎤 Parla</h2>
+      <p>Scegli come vuoi allenarti. Tutto il resto è dentro queste tre attività.</p>
+    </section>
+    <div class="hub-grid speak-grid">
+      <button class="hub-card primary" data-go="conv"><span>💬</span><strong>Conversazione</strong><small>Parla liberamente con Gemini</small></button>
+      <button class="hub-card" data-go="rt"><span>🎤</span><strong>Pronuncia</strong><small>Ascolta, ripeti e ricevi un feedback</small></button>
+      <button class="hub-card" data-go="tutor"><span>🧑‍🏫</span><strong>AI Tutor</strong><small>Allenamento personalizzato</small></button>
+    </div>
+    <section class="hub-tip">💡 <strong>Consiglio:</strong> se vuoi semplicemente parlare, scegli <b>Conversazione</b>. Se vuoi esercizi guidati, usa <b>AI Tutor</b>.</section>
   </div>
 
   <!-- ===== V8.8 AI TUTOR VOCALE ===== -->
-  <div class="view" id="view-tutor">
+  <div class="view" id="view-tutor"><button class="section-back" data-go="speak">← Parla</button>
     <section class="tutor-hero">
       <div class="tutor-hero-icon">🧑‍🏫</div>
       <div><div class="eyebrow">IL TUO INSEGNANTE PERSONALE</div><h2>AI Tutor</h2><p id="tutorGreeting">Ti aiuto a migliorare partendo dai tuoi errori e dal tuo livello.</p></div>
@@ -967,7 +1020,16 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
   </div>
 
   <!-- ===== VISTA CONVERSAZIONE ===== -->
-  <div class="view" id="view-conv">
+  <div class="view" id="view-conv"><button class="section-back" data-go="speak">← Parla</button>
+    <section class="talk-hero">
+      <div class="talk-avatar">🤖</div>
+      <div class="talk-copy"><div class="eyebrow">AI TUTOR</div><h2>Parla</h2><p>Conversazione in inglese con correzioni semplici e immediate.</p></div>
+      <div class="talk-status"><span id="talkStatusDot"></span><small id="talkStatusText">Gemini</small></div>
+    </section>
+    <div class="talk-quick">
+      <button type="button" data-go="rt">🎤 Pronuncia</button>
+      <button type="button" id="talkClearTop">🧹 Nuova chat</button>
+    </div>
     <div class="notebook" id="notebook">
       <div class="thread" id="thread"></div>
       <div class="empty-state" id="emptyState">Scrivi (o detta) la tua prima frase in inglese qui sotto per iniziare. L'insegnante corregge solo dopo aver letto la frase intera.</div>
@@ -985,7 +1047,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
   </div>
 
   <!-- ===== VISTA RIPETI E TRADUCI ===== -->
-  <div class="view" id="view-rt">
+  <div class="view" id="view-rt"><button class="section-back" data-go="speak">← Parla</button>
     <div class="rt-difficulty" id="rtDifficultyInline">Difficoltà: 1/10</div>
     <div class="rt-notebook">
       <div class="sentence-label">Ripeti questa frase ad alta voce</div>
@@ -1011,7 +1073,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
   </div>
 
   <!-- ===== VISTA VOCABOLARIO ===== -->
-  <div class="view" id="view-vocab">
+  <div class="view" id="view-vocab"><button class="section-back" data-go="learn">← Impara</button>
     <div class="vocab-stats">
       <div><b id="dueCount">0</b> da ripassare oggi</div>
       <div><b id="totalCount">0</b> parole totali</div>
@@ -1118,7 +1180,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
   </div>
 
   <!-- ===== VISTA CORSO A1 ===== -->
-  <div class="view" id="view-course">
+  <div class="view" id="view-course"><button class="section-back" data-go="learn">← Impara</button>
     <div class="course-hero">
       <div>
         <div class="eyebrow">Percorso guidato</div>
@@ -1145,7 +1207,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
   </div>
 
   <!-- ===== VISTA PROGRESSI ===== -->
-  <div class="view" id="view-progress">
+  <div class="view" id="view-progress"><button class="section-back" data-go="home">← Home</button>
     <div class="progress-hero">
       <div>
         <div class="eyebrow">Il tuo percorso</div>
@@ -1208,10 +1270,11 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
         <small class="field-help">⚠️ La chiave viene salvata solo nel browser di questo dispositivo. Usala solo per uso personale.</small>
       </div>
       <div class="settings-grid">
-        <div class="settings-field"><label for="model">Modello Gemini</label><input type="text" id="model" value="gemini-3.6-flash"></div>
+        <div class="settings-field"><label for="model">Modello Gemini</label><select id="model" aria-label="Modello Gemini"><option value="gemini-3.8-flash">Gemini 3.8 Flash</option><option value="gemini-3.7-flash">Gemini 3.7 Flash</option><option value="gemini-3.6-flash" selected>Gemini 3.6 Flash</option><option value="gemini-3.5-flash">Gemini 3.5 Flash</option><option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite</option><option value="gemini-3.1-flash-lite">Gemini 3.1 Flash-Lite</option></select></div>
         <div class="settings-field"><label for="level">Livello inglese</label><select id="level"><option value="base" selected>Base</option><option value="intermedio">Intermedio</option><option value="avanzato">Avanzato</option></select></div>
       </div>
       <div class="settings-field"><label for="topic">Argomento conversazione <span class="optional">facoltativo</span></label><input type="text" id="topic" placeholder="es. la spesa, il lavoro, un viaggio..."></div>
+      <div class="gemini-check-row"><button type="button" class="settings-action primary-action" id="verifyGeminiBtn">✓ Verifica Gemini</button><span id="geminiVerifyStatus" aria-live="polite">Non verificato</span></div>
     </section>
     <section class="settings-card">
       <div class="settings-section-head"><div><span class="settings-kicker">AUDIO</span><h3>Ascolto e lettura</h3></div><span class="settings-badge">🔊</span></div>
@@ -1245,11 +1308,11 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 </div>
 
 
-  <nav class="bottom-nav" aria-label="Navigazione principale">
-    <button type="button" data-tab="home" class="active"><span class="navico">⌂</span><span>Home</span></button>
-    <button type="button" data-tab="vocab"><span class="navico">▤</span><span>Impara</span></button>
-    <button type="button" data-tab="conv"><span class="navico">🎤</span><span>Parla</span></button>
-    <button type="button" data-tab="settings"><span class="navico">⚙</span><span>Impostazioni</span></button>
+  <nav class="bottom-nav" id="bottomNav" aria-label="Navigazione principale">
+    <button type="button" data-tab="home" data-go="home" class="active"><span class="navico">⌂</span><span>Home</span></button>
+    <button type="button" data-tab="vocab" data-go="vocab"><span class="navico">📚</span><span>Impara</span></button>
+    <button type="button" data-tab="conv" data-go="conv"><span class="navico">🎤</span><span>Parla</span></button>
+    <button type="button" data-tab="settings" data-go="settings"><span class="navico">⚙</span><span>Impostazioni</span></button>
   </nav>
 
 <script src="./data/oxford3000.js"></script>
@@ -1257,11 +1320,11 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 <script>
 window.addEventListener('error', function(e){
   var b = document.getElementById('globalErrorBanner');
-  if(b){ b.style.display = 'block'; b.textContent = 'Errore: ' + e.message + ' (riga ' + e.lineno + ')'; }
+  if(b){ b.style.display = 'block'; b.textContent = 'Si è verificato un errore nell’app. Ricarica la pagina e riprova.'; }
 });
 window.addEventListener('unhandledrejection', function(e){
   var b = document.getElementById('globalErrorBanner');
-  if(b){ b.style.display = 'block'; b.textContent = 'Errore: ' + (e.reason && e.reason.message ? e.reason.message : e.reason); }
+  if(b){ b.style.display = 'block'; b.textContent = 'Si è verificato un errore nell’app. Ricarica la pagina e riprova.'; }
 });
 
 /* ============ STATO CONDIVISO ============ */
@@ -1450,31 +1513,131 @@ function speakEnThenIt(enText, itText){
 function getMobileApiKey(){ try{return localStorage.getItem('quaderno_gemini_key')||'';}catch(_){return '';} }
 function saveMobileApiKey(){ const el=document.getElementById('mobileApiKey'); if(!el)return; const v=el.value.trim(); try{ if(v)localStorage.setItem('quaderno_gemini_key',v); else localStorage.removeItem('quaderno_gemini_key'); }catch(_){} updateConnectionStatus(); }
 function clearMobileApiKey(){ try{localStorage.removeItem('quaderno_gemini_key');}catch(_){} const el=document.getElementById('mobileApiKey'); if(el)el.value=''; updateConnectionStatus(); }
+const GEMINI_FALLBACK_MODELS = [
+  'gemini-3.8-flash',
+  'gemini-3.7-flash',
+  'gemini-3.5-flash',
+  'gemini-3.5-flash-lite',
+  'gemini-3.1-flash-lite'
+];
+
+function sleep(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
+
+function isRetryableGeminiError(msg, status){
+  const m=String(msg||'').toLowerCase();
+  return status===429 || status===500 || status===502 || status===503 || status===504 ||
+    m.includes('high demand') || m.includes('resource_exhausted') ||
+    m.includes('temporarily unavailable') || m.includes('unavailable') ||
+    m.includes('overloaded') || m.includes('try again later') ||
+    m.includes('rate limit') || m.includes('too many requests');
+}
+
+function friendlyGeminiError(msg){
+  const m=String(msg||'').toLowerCase();
+  if(m.includes('high demand') || m.includes('overloaded') || m.includes('try again later') || m.includes('temporarily unavailable'))
+    return 'Gemini è momentaneamente sovraccarico. Ho provato automaticamente i modelli disponibili. Riprova tra poco.';
+  if(m.includes('resource_exhausted') || m.includes('rate limit') || m.includes('429'))
+    return 'Limite di richieste raggiunto. Ho provato automaticamente un modello alternativo. Attendi un attimo e riprova.';
+  return String(msg||'Gemini non disponibile. Riprova tra poco.');
+}
+
+function extractGeminiJson(raw){
+  const text=String(raw||'').trim();
+  if(!text) throw new Error('Risposta vuota da Gemini.');
+  try{return JSON.parse(text);}catch(_){ }
+  const fenced=text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if(fenced){ try{return JSON.parse(fenced[1]);}catch(_){ } }
+  const first=text.indexOf('{'), last=text.lastIndexOf('}');
+  if(first>=0 && last>first){ try{return JSON.parse(text.slice(first,last+1));}catch(_){ } }
+  throw new Error('Gemini non ha restituito JSON valido.');
+}
+
 async function callGemini(systemPrompt, userText, history){
   const localKey=getMobileApiKey();
   if(!localKey) throw new Error('Gemini non configurato. Inserisci la tua API key nelle Impostazioni.');
+
   const contents=(history||[]).map(h=>({
     role:h.role==='user'?'user':'model',
     parts:[{text:String(h.text||'')}]
   }));
   contents.push({role:'user',parts:[{text:String(userText||'')}]});
-  const endpoint='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model())+':generateContent?key='+encodeURIComponent(localKey);
-  const r=await fetch(endpoint,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      contents,
-      systemInstruction:{parts:[{text:String(systemPrompt||'')}]},
-      generationConfig:{responseMimeType:'application/json'}
-    })
-  });
-  const d=await r.json().catch(()=>({}));
-  if(!r.ok) throw new Error((d.error&&d.error.message)||('Gemini ('+r.status+')'));
-  const raw=d.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';
-  if(!raw) throw new Error('Risposta vuota da Gemini.');
-  try{return JSON.parse(raw);}
-  catch(_){throw new Error('Gemini non ha restituito JSON valido.');}
+
+  const preferred=model();
+  const modelsToTry=[preferred,...GEMINI_FALLBACK_MODELS.filter(m=>m!==preferred)];
+  let lastError=null;
+
+  for(let mi=0;mi<modelsToTry.length;mi++){
+    const currentModel=modelsToTry[mi];
+    const endpoint='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(currentModel)+':generateContent?key='+encodeURIComponent(localKey);
+    let modelFailed=false;
+
+    for(let attempt=0;attempt<3;attempt++){
+      try{
+        const r=await fetch(endpoint,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            contents,
+            systemInstruction:{parts:[{text:String(systemPrompt||'')}]},
+            generationConfig:{responseMimeType:'application/json'}
+          })
+        });
+        const d=await r.json().catch(()=>({}));
+        const errMsg=String(d.error?.message||('Gemini ('+r.status+')'));
+
+        if(r.ok){
+          if(d.promptFeedback?.blockReason){
+            throw new Error('Richiesta bloccata da Gemini (safety): '+d.promptFeedback.blockReason);
+          }
+          const raw=d.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('')||'';
+          if(!raw) throw new Error('Risposta vuota da Gemini.');
+          const result=extractGeminiJson(raw);
+          window.__quadernoGeminiLastModel=currentModel;
+          window.dispatchEvent(new CustomEvent('gemini:model-used',{detail:{model:currentModel,preferred:preferred}}));
+          return result;
+        }
+
+        if(r.status===401 || r.status===403){
+          throw new Error('API Key Gemini non valida o non autorizzata. Controllala nelle Impostazioni.');
+        }
+        if(isRetryableGeminiError(errMsg,r.status)){
+          lastError=new Error(errMsg);
+          if(attempt<2){ await sleep(800*Math.pow(2,attempt)); continue; }
+          modelFailed=true;
+          break;
+        }
+        if(r.status===404 || r.status===400){
+          lastError=new Error(errMsg);
+          modelFailed=true;
+          break;
+        }
+        lastError=new Error(errMsg);
+        modelFailed=true;
+        break;
+      }catch(e){
+        lastError=e;
+        const msg=e?.message||String(e);
+        // Errori di rete senza risposta HTTP: ritenta sullo stesso modello.
+        if(!e?.name || e.name==='TypeError' || /network|failed to fetch|fetch/i.test(msg)){
+          if(attempt<2){ await sleep(800*Math.pow(2,attempt)); continue; }
+          modelFailed=true;
+          break;
+        }
+        // Safety, API key o altri errori non recuperabili: non martellare altri modelli.
+        if(/API Key Gemini non valida|safety/i.test(msg)) throw e;
+        modelFailed=true;
+        break;
+      }
+    }
+
+    // Questo modello ha fallito: prova il successivo.
+    if(!modelFailed && lastError) modelFailed=true;
+    if(modelFailed) continue;
+  }
+
+  throw lastError || new Error('Gemini non disponibile. Riprova tra poco.');
 }
+
 function updateConnectionStatus(){
   const el=document.getElementById('backendStatus');
   if(!el)return;
@@ -1679,7 +1842,7 @@ renderProgress();
       if(autoSpeakEnabled() && result.reply) speak(result.reply);
       setStatus('');
     } catch(err){
-      setStatus(err.message || 'Errore imprevisto.', true);
+      setStatus(friendlyGeminiError(err.message || 'Errore imprevisto.'), true);
     } finally {
       sendBtn.disabled = false;
       composerInput.disabled = false;
@@ -1789,7 +1952,7 @@ renderProgress();
         }
       });
     } catch(err){
-      setStatus(err.message, true);
+      setStatus(friendlyGeminiError(err.message), true);
       sentenceText.textContent = '—';
     } finally {
       genBtn.disabled = false; micBtn.disabled = false;
@@ -1875,7 +2038,7 @@ renderProgress();
         addStudyMinutes(2);
         setStatus('');
       } catch(err){
-        setStatus(err.message, true);
+        setStatus(friendlyGeminiError(err.message), true);
       }
     };
     recognition.onerror = () => {
@@ -2238,34 +2401,26 @@ async function importOxfordDeckFile(file){
 
 
 /* ===== V12 — Sessione quotidiana personale ===== */
-const DAILY_SESSION_KEY='quaderno_daily_session_v12';
+const DAILY_SESSION_KEY='quaderno_daily_session_v14';
 const DAILY_SESSION_TASKS=[
   {id:'review',icon:'🔄',title:'Ripasso',desc:'Ripassa le parole che sono già scadute.',go:'vocab'},
-  {id:'newwords',icon:'📚',title:'5 parole nuove',desc:'Studia nuove parole del percorso Oxford 3000.',go:'vocab'},
-  {id:'pronunciation',icon:'🎤',title:'Pronuncia',desc:'Ascolta una frase e ripetila al microfono.',go:'rt'},
-  {id:'conversation',icon:'💬',title:'Mini conversazione',desc:'Fai qualche scambio in inglese con Gemini.',go:'conv'},
-  {id:'course',icon:'🎓',title:'Corso A1',desc:'Continua la prossima lezione guidata.',go:'course'}
+  {id:'newwords',icon:'📚',title:'5 parole nuove',desc:'Studia nuove parole Oxford 3000.',go:'vocab'},
+  {id:'conversation',icon:'💬',title:'Mini conversazione',desc:'Parla qualche minuto con l’AI Tutor.',go:'conv'}
 ];
 function dailySessionKey(){return DAILY_SESSION_KEY+'_'+todayISO();}
-function dailySessionLoad(){
-  try{const x=JSON.parse(localStorage.getItem(dailySessionKey())||'{}');return x&&typeof x==='object'?x:{}}catch(_){return {}}
-}
+function dailySessionLoad(){try{const x=JSON.parse(localStorage.getItem(dailySessionKey())||'{}');return x&&typeof x==='object'?x:{}}catch(_){return {}}}
 function dailySessionSave(x){try{localStorage.setItem(dailySessionKey(),JSON.stringify(x));}catch(_){} }
 function dailySessionDoneCount(){const x=dailySessionLoad();return DAILY_SESSION_TASKS.filter(t=>x[t.id]).length;}
 function dailySessionComplete(id){const x=dailySessionLoad();x[id]=true;dailySessionSave(x);renderDailySession();}
-function dailySessionGo(id){
-  const task=DAILY_SESSION_TASKS.find(t=>t.id===id); if(!task)return;
-  const tab=document.querySelector('.tab-btn[data-tab="'+task.go+'"]');
-  if(tab)tab.click();
-}
+function dailySessionGo(id){const task=DAILY_SESSION_TASKS.find(t=>t.id===id);if(!task)return;const tab=document.querySelector('.tab-btn[data-tab="'+task.go+'"]');if(tab)tab.click();}
 function renderDailySession(){
-  const box=document.getElementById('dailySessionList'); if(!box)return;
-  const state=dailySessionLoad(), done=dailySessionDoneCount(), total=DAILY_SESSION_TASKS.length, pct=Math.round(done/total*100);
+  const box=document.getElementById('dailySessionList');if(!box)return;
+  const state=dailySessionLoad(),done=dailySessionDoneCount(),total=DAILY_SESSION_TASKS.length,pct=Math.round(done/total*100);
   const p=document.getElementById('dailySessionPercent'),fill=document.getElementById('dailySessionFill'),sum=document.getElementById('dailySessionSummary');
-  if(p)p.textContent=pct+'%'; if(fill)fill.style.width=pct+'%';
-  if(sum)sum.textContent=done===total?'Sessione completata. Puoi continuare liberamente con il ripasso.':done+' di '+total+' attività completate oggi.';
-  box.innerHTML=DAILY_SESSION_TASKS.map(t=>{const ok=!!state[t.id];return `<div class="daily-session-item ${ok?'done':''}"><div class="daily-session-icon">${t.icon}</div><div><strong>${ok?'✓ ':''}${t.title}</strong><small>${t.desc}</small></div><button type="button" data-session-go="${t.id}">${ok?'Completata':'Inizia'}</button></div>`;}).join('');
-  box.querySelectorAll('[data-session-go]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.sessionGo;if(dailySessionLoad()[id])return;dailySessionComplete(id);dailySessionGo(id);}));
+  if(p)p.textContent=pct+'%';if(fill)fill.style.width=pct+'%';
+  if(sum)sum.textContent=done===total?'Sessione completata. Puoi continuare liberamente.':done+' di '+total+' attività completate oggi.';
+  box.innerHTML=DAILY_SESSION_TASKS.map(t=>{const ok=!!state[t.id];return `<div class="daily-session-item ${ok?'done':''}"><div class="daily-session-icon">${t.icon}</div><div><strong>${ok?'✓ ':''}${t.title}</strong><small>${t.desc}</small></div><button type="button" data-session-go="${t.id}">${ok?'Completata':'Inizia'}</button></div>`}).join('');
+  box.querySelectorAll('[data-session-go]').forEach(btn=>btn.addEventListener('click',()=>{const id=btn.dataset.sessionGo;if(dailySessionLoad()[id])return;dailySessionGo(id);}));
 }
 window.addEventListener('storage',renderDailySession);
 renderDailySession();
@@ -2351,7 +2506,7 @@ async function oxfordEnrich(){
     const r=await callGemini(sys,`Parola: ${c.word}\nParte del discorso: ${c.pos}\nLivello CEFR: ${c.cefr}`);
     const n={...saved,translation:r.translation||'',example:r.example||'',exampleIt:r.exampleIt||'',status:saved.status||'new'};
     oxfordSet(c.id,n); oxfordShow(c.id); if(status)status.textContent='✓ Scheda preparata e salvata sul dispositivo.';
-  }catch(e){if(status){status.className='oxford-status error';status.textContent=e.message||'Errore Gemini.';}}
+  }catch(e){if(status){status.className='oxford-status error';status.textContent=friendlyGeminiError(e.message||'Errore Gemini.');}}
 }
 async function oxfordAddCurrent(){
   if(!oxfordCurrent)return;
@@ -2639,14 +2794,21 @@ openVocabDb().then(db => {
   const views=[...document.querySelectorAll('.view')];
   const tabs=[...document.querySelectorAll('.tab-btn')];
   const nav=[...document.querySelectorAll('.bottom-nav button')];
+  function navGroup(tab){
+    if(tab==='course'||tab==='vocab') return 'learn';
+    if(tab==='conv'||tab==='tutor'||tab==='rt') return 'speak';
+    return tab;
+  }
   function go(tab){
     views.forEach(v=>v.classList.toggle('active',v.id==='view-'+tab));
-    tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-    nav.forEach(b=>b.classList.toggle('active',b.dataset.go===tab));
+    const group=navGroup(tab);
+    tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===group));
+    nav.forEach(b=>b.classList.toggle('active',b.dataset.go===group));
     window.scrollTo({top:0,behavior:'smooth'});
     updateHome();
+    updateLearnHub();
   }
-  [...document.querySelectorAll('[data-go]')].forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+  [...document.querySelectorAll('[data-go]')].forEach(b=>b.addEventListener('click',()=>{go(b.dataset.go); if(b.dataset.focus==='oxford'){setTimeout(()=>document.getElementById('oxfordPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),180);}}));
   // Replace legacy tab handler visually/functionally by intercepting clicks.
   tabs.forEach(b=>b.addEventListener('click',e=>{e.preventDefault();go(b.dataset.tab)}));
   function updateHome(){
@@ -2659,6 +2821,20 @@ openVocabDb().then(db => {
       if(st)st.textContent=document.getElementById('streakVal')?.textContent||'0';
       if(correct)correct.textContent=localStorage.getItem('quaderno_correct_count')||'0';
       if(words)words.textContent=localStorage.getItem('quaderno_vocab_count')||'0';
+      updateLearnHub();
+    }catch(e){}
+  }
+  function updateLearnHub(){
+    try{
+      const done=JSON.parse(localStorage.getItem('quaderno_course_a1_v3')||'{}').done||[];
+      const pct=Math.round(done.length/7*100);
+      const fill=document.getElementById('learnCourseFill'), txt=document.getElementById('learnCoursePct');
+      if(fill)fill.style.width=pct+'%'; if(txt)txt.textContent=pct+'%';
+      const titles=['Presentarsi','La routine','La famiglia','Al ristorante','Fare acquisti','Parlare del passato','Ripasso e conversazione'];
+      const i=Math.min(done.length,titles.length-1); const title=document.getElementById('learnContinueTitle'),meta=document.getElementById('learnContinueMeta'),btn=document.getElementById('learnContinueBtn');
+      if(title)title.textContent=done.length>=titles.length?'Corso A1 completato!':titles[i];
+      if(meta)meta.textContent=done.length>=titles.length?'Ora puoi ripassare e parlare':'10 minuti · Livello A1';
+      if(btn){btn.textContent=done.length>=titles.length?'↻ Ripassa':'▶ Continua';btn.onclick=()=>{go('course');setTimeout(()=>document.querySelector('.lesson-card[data-i="'+i+'"]')?.click(),120);};}
     }catch(e){}
   }
   updateHome();
@@ -2692,35 +2868,7 @@ openVocabDb().then(db => {
 @media(max-width:600px){.level-overlay{padding:0;align-items:flex-end}.level-modal{border-radius:26px 26px 0 0;padding:21px 16px calc(20px + env(safe-area-inset-bottom));max-height:94vh}.level-modal h2{font-size:24px}.level-options{gap:8px}.level-option{min-height:50px;padding:13px}.level-actions{position:sticky;bottom:0;background:var(--surface,#fff);padding-top:10px}}
 </style>
 
-<div class="bottom-nav" id="bottomNav">
-  <button data-go="home" class="active"><span class="navico">🏠</span><span>Home</span></button>
-  <button data-go="course"><span class="navico">📚</span><span>Corso</span></button>
-  <button data-go="tutor"><span class="navico">🧑‍🏫</span><span>Tutor</span></button>
-  <button data-go="vocab"><span class="navico">🧠</span><span>Ripasso</span></button>
-  <button data-go="progress"><span class="navico">📊</span><span>Progressi</span></button>
-  <button data-go="settings"><span class="navico">⚙️</span><span>Impostazioni</span></button>
-</div>
 
-<!-- V8.1: la barra inferiore viene dichiarata dopo lo script principale, quindi colleghiamo i suoi pulsanti qui. -->
-<script>
-(function(){
-  const bottomNav = document.getElementById('bottomNav');
-  if(!bottomNav) return;
-  bottomNav.addEventListener('click', function(e){
-    const btn = e.target.closest('button[data-go]');
-    if(!btn) return;
-    const target = btn.dataset.go;
-    const tab = document.querySelector('.tab-btn[data-tab="'+target+'"]');
-    if(tab){
-      tab.click();
-    } else {
-      document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-'+target));
-      bottomNav.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
-      window.scrollTo({top:0, behavior:'smooth'});
-    }
-  });
-})();
-</script>
 
 
 
@@ -2802,7 +2950,7 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
       state.sessions=(state.sessions||0)+1; state.lastFocus=result.nextExercise||''; save();
       if(result.nextExercise){const f=document.getElementById('tutorFocus');if(f)f.textContent='🎯 Prossimo passo: '+result.nextExercise;}
       if(status)status.textContent='';
-    }catch(e){if(status)status.textContent='⚠️ '+(e.message||'Errore Gemini');}
+    }catch(e){if(status)status.textContent='⚠️ '+friendlyGeminiError(e.message||'Errore Gemini');}
   }
   function start(){
     renderMemory();
@@ -2997,6 +3145,46 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
 
 
 <script>window.addEventListener('DOMContentLoaded',()=>{try{initOxfordImporter();initOxfordV11();}catch(e){console.error(e);}});</script>
+<script>
+/* V14 — verifica reale del modello tramite models.list */
+(function(){
+  const btn=document.getElementById('verifyGeminiBtn'),status=document.getElementById('geminiVerifyStatus');
+  if(!btn)return;
+  btn.addEventListener('click',async()=>{
+    const key=(window.getMobileApiKey?window.getMobileApiKey():localStorage.getItem('quaderno_gemini_key')||'').trim();
+    const wanted=(document.getElementById('model')?.value||'gemini-3.6-flash').trim();
+    if(!key){status.textContent='Inserisci prima la API key';status.className='error';return;}
+    btn.disabled=true;status.textContent='Verifica in corso…';status.className='';
+    try{
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?key='+encodeURIComponent(key));
+      const d=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(d.error?.message||('Errore '+r.status));
+      const models=Array.isArray(d.models)?d.models:[];
+      const found=models.find(m=>m.baseModelId===wanted||m.name==='models/'+wanted||String(m.name||'').endsWith('/'+wanted));
+      if(!found)throw new Error(wanted+' non risulta disponibile per questa API key.');
+      const methods=found.supportedGenerationMethods||[];
+      if(!methods.includes('generateContent'))throw new Error(wanted+' è presente, ma non espone generateContent per questa API key.');
+      status.textContent='✓ '+wanted+' disponibile';status.className='ok';
+    }catch(err){status.textContent='⚠ '+(err.message||'Verifica fallita');status.className='error';}
+    finally{btn.disabled=false;}
+  });
+})();
+</script>
+<script>
+/* V14 FINAL3 — mostra quale modello ha risposto davvero */
+window.addEventListener('gemini:model-used',function(ev){
+  const used=ev.detail?.model||'';
+  const preferred=ev.detail?.preferred||'';
+  const status=document.getElementById('geminiVerifyStatus');
+  if(!status||!used)return;
+  if(used===preferred){
+    status.textContent='✓ '+used+' attivo';
+  }else{
+    status.textContent='✓ Risposta ottenuta con '+used+' (fallback automatico)';
+  }
+  status.className='ok';
+});
+</script>
 <script src="./js/v14-ui.js"></script>
 </body>
 </html>

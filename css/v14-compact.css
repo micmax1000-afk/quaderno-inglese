@@ -38,3 +38,127 @@ body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",san
 .bottom-nav button{background:transparent!important;border:0!important;color:#9db5d0!important;min-height:52px!important;border-radius:13px!important}.bottom-nav button.active{background:#0d376d!important;color:#23a6ff!important}.bottom-nav .navico{font-size:20px!important;display:block!important}.bottom-nav button span:last-child{font-size:10px!important}
 .install-btn{position:fixed!important;top:72px!important;right:12px!important;z-index:60!important;background:#159cff!important;color:#fff!important;border:0!important;border-radius:999px!important;padding:9px 12px!important;font-weight:800!important}
 @media(max-width:380px){.page{padding-left:8px!important;padding-right:8px!important}.masthead{margin-left:-8px!important;margin-right:-8px!important}.home-grid{grid-template-columns:1fr 1fr!important}.oxford-controls{grid-template-columns:1fr!important}.install-btn{display:none!important}}
+
+/* V14 Compact FINAL polish */
+.masthead>div:first-child:before{display:none}
+.masthead>div:first-child:after{content:"";display:block;width:40px;height:40px;border-radius:12px;background:url("../icons/icon-192.png") center/cover no-repeat;order:-1;flex:0 0 40px}
+.talk-hero{display:flex;align-items:center;gap:11px;margin-bottom:9px;padding:14px 15px;border-radius:20px;background:linear-gradient(145deg,#0d3d79,#08264c);border:1px solid rgba(42,160,255,.25);box-shadow:var(--v14-shadow)}
+.talk-avatar{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:#1264b9;font-size:22px;flex:0 0 43px}.talk-copy{min-width:0}.talk-copy .eyebrow{display:block;color:#57c8ff;font-size:9px;letter-spacing:.12em}.talk-copy h2{margin:1px 0;font-size:21px;color:#fff}.talk-copy p{margin:0;color:var(--v14-muted);font-size:11px;line-height:1.35}.talk-status{margin-left:auto;text-align:right;white-space:nowrap}.talk-status span{display:inline-block;width:8px;height:8px;border-radius:50%;background:#9fb1c3;margin-right:5px}.talk-status span.ok{background:#19d5a0;box-shadow:0 0 0 4px rgba(25,213,160,.10)}.talk-status small{color:#cfe2f6;font-size:10px}
+.talk-quick{display:flex;gap:7px;margin:0 0 9px}.talk-quick button{flex:1;min-height:38px;border:1px solid var(--v14-line);border-radius:11px;background:#0b2b56;color:#dcecff;font-weight:700;font-size:11px}
+#view-conv .notebook{min-height:430px;display:flex;flex-direction:column}#view-conv .thread{flex:1;min-height:280px}#view-conv .composer{position:sticky;bottom:76px;z-index:4}
+.gemini-check-row{display:flex;align-items:center;gap:9px;margin-top:10px}.gemini-check-row .settings-action{flex:0 0 auto}.gemini-check-row span{font-size:11px;color:var(--v14-muted)}.gemini-check-row span.ok{color:#19d5a0}.gemini-check-row span.error{color:#ff8e8e}.primary-action{background:linear-gradient(135deg,#159cff,#0878ef)!important;color:#fff!important;border:0!important}
+.settings-field input[list]{padding-right:10px}
+#view-vocab .oxford-card{min-height:330px!important}.oxford-word,.oxford-main-word{color:#fff!important}.oxford-card .word{font-size:clamp(34px,10vw,52px)!important}
+.daily-session-item.done{opacity:.72}.daily-session-item.done button{background:#12406e!important;color:#bde9ff!important}
+@media(max-width:600px){.page{padding-bottom:86px!important}.masthead{padding-top:10px!important;padding-bottom:10px!important}.masthead h1{font-size:16px!important}.home-hero{padding:17px!important}.home-hero h2{font-size:23px!important}.daily-session-item{min-height:56px}.talk-hero{padding:12px}.talk-copy p{font-size:10px}.talk-quick button{font-size:10px}.settings-card{padding:13px!important}}
+
+
+/* ===== V14 FINAL — tema chiaro ad alto contrasto ===== */
+body:not(.theme-dark){
+  --v14-bg:#eef6ff;--v14-panel:#ffffff;--v14-panel2:#e4f1ff;--v14-text:#0b2e63;
+  --v14-muted:#4b6482;--v14-line:rgba(10,72,145,.16);--v14-shadow:0 12px 30px rgba(28,74,125,.12);
+  background:#eef6ff!important;color:#0b2e63!important;
+}
+body:not(.theme-dark) .masthead{
+  background:rgba(238,246,255,.96)!important;border-color:rgba(10,72,145,.18)!important;color:#0b2e63!important;
+}
+body:not(.theme-dark) .masthead h1{color:#0b2e63!important}
+body:not(.theme-dark) .masthead>div:first-child:after{
+  background:url("../icons/icon-192.png") center/cover no-repeat!important;
+  box-shadow:0 0 0 1px rgba(10,72,145,.14)!important;
+}
+body:not(.theme-dark) .settings-top-btn{color:#075ebd!important}
+body:not(.theme-dark) .home-hero,
+body:not(.theme-dark) .today-card,
+body:not(.theme-dark) .oxford-panel,
+body:not(.theme-dark) .oxford-card,
+body:not(.theme-dark) .notebook,
+body:not(.theme-dark) .tutor-hero,
+body:not(.theme-dark) .tutor-memory-card,
+body:not(.theme-dark) .tutor-chat,
+body:not(.theme-dark) .tutor-composer,
+body:not(.theme-dark) .settings-card,
+body:not(.theme-dark) .settings-hero,
+body:not(.theme-dark) .progress-hero,
+body:not(.theme-dark) .progress-section,
+body:not(.theme-dark) .progress-card,
+body:not(.theme-dark) .course-hero,
+body:not(.theme-dark) .path-banner,
+body:not(.theme-dark) .lesson-panel,
+body:not(.theme-dark) .lesson-card,
+body:not(.theme-dark) .rt-notebook{
+  background:linear-gradient(145deg,#ffffff,#eaf4ff)!important;
+  border-color:rgba(16,105,190,.16)!important;color:#0b2e63!important;
+  box-shadow:0 10px 28px rgba(28,74,125,.10)!important;
+}
+body:not(.theme-dark) .home-hero{background:linear-gradient(145deg,#e7f3ff,#d8ebff)!important}
+body:not(.theme-dark) .home-hero h2,
+body:not(.theme-dark) .today-card h3,
+body:not(.theme-dark) .daily-session-head h3,
+body:not(.theme-dark) .settings-card h3,
+body:not(.theme-dark) .settings-hero h2,
+body:not(.theme-dark) .tutor-hero h2,
+body:not(.theme-dark) .progress-hero h2,
+body:not(.theme-dark) .course-hero h2,
+body:not(.theme-dark) .talk-copy h2,
+body:not(.theme-dark) .oxford-title,
+body:not(.theme-dark) .oxford-word,
+body:not(.theme-dark) .oxford-main-word,
+body:not(.theme-dark) .oxford-card .word{color:#082f69!important}
+body:not(.theme-dark) .home-hero p,
+body:not(.theme-dark) .today-card p,
+body:not(.theme-dark) .daily-session-head p,
+body:not(.theme-dark) .daily-session-item small,
+body:not(.theme-dark) .oxford-sub,
+body:not(.theme-dark) .empty-state,
+body:not(.theme-dark) .settings-help,
+body:not(.theme-dark) .settings-local p,
+body:not(.theme-dark) .progress-note,
+body:not(.theme-dark) .lesson-goal,
+body:not(.theme-dark) .course-hero p,
+body:not(.theme-dark) .talk-copy p{color:#4b6482!important}
+body:not(.theme-dark) .daily-session-item,
+body:not(.theme-dark) .home-action,
+body:not(.theme-dark) .thread .bubble,
+body:not(.theme-dark) .theme-btn,
+body:not(.theme-dark) .ghost-btn,
+body:not(.theme-dark) .talk-quick button{
+  background:#f3f8ff!important;border-color:rgba(16,105,190,.16)!important;color:#0b3d79!important;
+}
+body:not(.theme-dark) .home-action strong,
+body:not(.theme-dark) .home-action span:last-child{color:#0b3d79!important}
+body:not(.theme-dark) .thread .bubble.user{background:#168cff!important;color:#fff!important}
+body:not(.theme-dark) .composer,
+body:not(.theme-dark) .tutor-composer{background:rgba(255,255,255,.96)!important;border-color:rgba(16,105,190,.16)!important}
+body:not(.theme-dark) .composer textarea,
+body:not(.theme-dark) .tutor-composer textarea,
+body:not(.theme-dark) .settings-field input,
+body:not(.theme-dark) .settings-field select{background:#fff!important;color:#0b2e63!important;border-color:rgba(16,105,190,.20)!important}
+body:not(.theme-dark) .bottom-nav{
+  background:rgba(255,255,255,.96)!important;border-color:rgba(16,105,190,.16)!important;box-shadow:0 -8px 25px rgba(28,74,125,.08)!important;
+}
+body:not(.theme-dark) .bottom-nav button{color:#536b88!important}
+body:not(.theme-dark) .bottom-nav button.active{background:#dceeff!important;color:#086bd0!important}
+body:not(.theme-dark) .install-btn{background:#0876ee!important}
+body:not(.theme-dark) .settings-action,
+body:not(.theme-dark) .primary-action{color:#fff!important}
+body:not(.theme-dark) .talk-hero{background:linear-gradient(145deg,#e8f4ff,#d9edff)!important;border-color:rgba(16,105,190,.16)!important}
+body:not(.theme-dark) .talk-copy .eyebrow{color:#0876ee!important}
+body:not(.theme-dark) .talk-status small{color:#4b6482!important}
+body:not(.theme-dark) .gemini-check-row span{color:#4b6482!important}
+
+/* Gemini: messaggi di errore leggibili in entrambi i temi */
+.gemini-error-card{margin:10px 0;padding:12px 14px;border-radius:14px;border:1px solid #ff6b73;background:linear-gradient(135deg,rgba(255,55,70,.16),rgba(255,225,228,.10));color:#ff9ca3;font-size:12px;line-height:1.5;font-weight:600}
+body:not(.theme-dark) .gemini-error-card{background:#fff0f1!important;color:#8f1720!important;border-color:#ff9aa1!important}
+body:not(.theme-dark) .gemini-error-card strong{color:#7f1119!important}
+body.theme-dark .gemini-error-card{color:#ffb4ba!important;background:rgba(92,17,27,.38)!important}
+
+/* ===== V14 FINAL3 — Gemini fallback / model selector ===== */
+.settings-field select#model{font-weight:700;cursor:pointer}
+.gemini-check-row span.ok{color:#16845f!important}
+.gemini-check-row span.error{color:#b42318!important}
+body.theme-dark .gemini-check-row span.ok{color:#55e0b2!important}
+body.theme-dark .gemini-check-row span.error{color:#ff9a9a!important}
+body.theme-dark .settings-field select#model{background:#13233a!important;color:#eef6ff!important;border-color:#304a6c!important}
+body:not(.theme-dark) .settings-field select#model{background:#fff!important;color:#102a4d!important;border-color:#b9cce2!important}
+@media(max-width:600px){.gemini-check-row{align-items:stretch;flex-direction:column}.gemini-check-row .settings-action{width:100%}.gemini-check-row span{text-align:center;min-height:18px}}

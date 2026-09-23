@@ -1,4 +1,4 @@
-# Quaderno d'Inglese — V14 Compact
+# Quaderno d'Inglese — V14 Compact Final
 
 Versione personale PWA costruita a partire dalla V13.
 
@@ -22,3 +22,29 @@ Versione personale PWA costruita a partire dalla V13.
 - `icons/` — icone PWA.
 
 La nuova UI è un livello sopra la logica V13: l'obiettivo è ridurre il rischio di rompere corso, tutor, vocabolario, Gemini e backup mentre si cambia la presentazione.
+
+
+## V14 Compact Final
+
+Interfaccia mobile compatta ispirata al mockup approvato: Home, Impara, Parla e Impostazioni. La logica V13 viene mantenuta e collegata alla nuova navigazione. La verifica Gemini interroga anche `models.list` per controllare che il modello scelto sia realmente disponibile per la chiave API.
+
+
+V14 Final2: tema chiaro/scuro ad alto contrasto, icona bandiera UK, gestione leggibile degli errori Gemini e retry con backoff per errori temporanei 429/503.
+
+
+## V14 Compact FINAL3
+- Selettore modello Gemini a tendina.
+- Modello preferito seguito da fallback automatici.
+- Retry automatico fino a 3 tentativi per modello con exponential backoff.
+- Fallback su errori 429/500/502/503/504, modello non disponibile (404/400) ed errori di rete.
+- 401/403 e blocchi safety vengono mostrati senza martellare altri modelli.
+- Indicazione del modello che ha effettivamente risposto.
+- Messaggi Gemini ad alta richiesta tradotti in italiano.
+
+
+## V15 Semplificata
+- Navigazione principale ridotta a Home / Impara / Parla / Impostazioni.
+- Corso A1, Ripasso e Oxford 3000 raccolti in Impara.
+- Conversazione, Pronuncia e AI Tutor raccolti in Parla.
+- Progressi dettagliati raggiungibili da Home.
+- Schermate interne mantenute per non perdere le funzioni esistenti, con pulsante di ritorno alla sezione principale.
