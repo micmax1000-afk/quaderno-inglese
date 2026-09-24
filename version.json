@@ -1,12 +1,15 @@
 {
-  "version": "15.7",
+  "version": "16.0",
   "date": "2026-09-24",
-  "title": "È disponibile Quaderno d'Inglese V15.7",
+  "title": "È disponibile Quaderno d'Inglese V16",
   "changes": [
-    "Nuovo sistema di aggiornamento automatico della PWA",
-    "Popup con i nuovi aggiornamenti e pulsanti Aggiorna / Più tardi",
-    "Controllo manuale della versione nelle Impostazioni",
-    "Service Worker aggiornato e attivazione automatica della nuova versione",
-    "Impostazioni e progressi locali mantenuti durante l'aggiornamento"
+    "Tutor AI semplificato e ottimizzato per smartphone",
+    "Conversazione guidata in 5 turni",
+    "Domande e risposte con traduzione italiana",
+    "Modalità Tutor fa la domanda / Io faccio la domanda",
+    "Correzione dopo la pronuncia",
+    "Suggerimenti in italiano",
+    "Cache locale delle conversazioni Tutor",
+    "Interfaccia Tutor più compatta"
   ]
 }

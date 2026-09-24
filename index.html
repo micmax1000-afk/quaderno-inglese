@@ -853,6 +853,10 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
 /* ===== V8.4 CORSO A1 UX ===== */
 .lesson-stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0}.lesson-stepper span{font-size:10px;text-align:center;padding:8px 4px;border-radius:999px;background:var(--surface-2,#f4f6f5);color:var(--ink-soft);font-weight:700}.lesson-stepper span.active{background:var(--accent,#2f6f61);color:#fff}.lesson-tip{font-size:12px;color:var(--ink-soft);margin:-4px 0 10px}.lesson-word{display:flex!important;flex-direction:column;align-items:flex-start;gap:2px;cursor:pointer}.lesson-word small{font-size:10px;color:var(--ink-soft)}.lesson-phrase{width:100%;display:grid;grid-template-columns:1fr auto;text-align:left;gap:3px 8px;cursor:pointer;background:var(--paper,#fff)}.lesson-phrase small{grid-column:1;color:var(--ink-soft)}.lesson-phrase span{grid-column:2;grid-row:1/3;align-self:center}.lesson-card.locked{opacity:.58;cursor:not-allowed}.lesson-card.locked:active{transform:none}.speaking-box{background:linear-gradient(180deg,var(--surface-2,#f5f7f6),var(--paper,#fff))}.speak-practice-btn{width:100%;min-height:54px;border:0;border-radius:16px;background:var(--ink,#17342f);color:#fff;font-size:16px;font-weight:800;cursor:pointer}.speak-practice-btn:active{transform:scale(.99)}.lesson-actions .next-btn:disabled{opacity:.45;cursor:not-allowed}@media(max-width:600px){.lesson-stepper span{font-size:9px;padding:7px 2px}.lesson-box{margin-top:12px}.lesson-word{min-height:48px!important}.lesson-phrase{min-height:58px!important;padding:12px!important}.speaking-box{padding:15px!important}}
+
+.tutor-session-tip{margin-top:8px;padding:9px 10px;border-radius:11px;background:var(--surface-2);color:var(--muted);font-size:12px;line-height:1.4;display:none}.tutor-session-tip.show{display:block}.tutor-dialogue-card .tutor-dialogue-tools{margin-bottom:10px}.tutor-dialogue-card select{font-weight:700}.tutor-dialogue-actions button:disabled{opacity:.5}.tutor-session-complete{padding:14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);text-align:center;margin-top:10px}.tutor-session-complete strong{display:block;font-size:18px;margin-bottom:6px}
+
+.tutor-quick{display:none!important}.tutor-memory-card{margin-bottom:10px}.tutor-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}@media(max-width:600px){.tutor-actions{grid-template-columns:1fr 1fr}.tutor-actions button{min-height:44px}}
 </style>
 
 <style id="v86-personalized-css">
@@ -1048,7 +1052,7 @@ body.oxford-focus #oxfordPanel{margin-top:4px}
           <option value="user-asks">Io faccio la domanda</option>
         </select>
       </div>
-      <div class="tutor-turn-badge" id="tutorTurnBadge">TURNO 1</div>
+      <div class="tutor-turn-badge" id="tutorTurnBadge">TURNO 1 / 5</div>
       <div class="tutor-dialogue-line">
         <div class="tutor-question-label" id="tutorLineLabel">Tutor</div>
         <div class="tutor-question" id="tutorQuestion"></div>
@@ -1063,20 +1067,10 @@ body.oxford-focus #oxfordPanel{margin-top:4px}
         <button type="button" class="ghost-btn" id="tutorNextQuestion">➡️ Continua</button>
       </div>
       <div class="tutor-read-result" id="tutorReadResult"></div>
+      <div class="tutor-session-tip" id="tutorSessionTip"></div>
       <div class="tutor-correction-box" id="tutorCorrectionBox" style="display:none;"></div>
     </section>
-
-    <div class="tutor-composer">
-      <textarea id="tutorInput" placeholder="Scrivi oppure parla…"></textarea>
-      <button class="icon-btn mic" id="tutorMic" aria-label="Parla con il tutor">🎤</button>
-      <button class="send-btn" id="tutorSend">Invia</button>
-    </div>
-    <div class="tutor-voice-bar">
-      <button type="button" id="tutorVoiceMode">🎙️ Modalità vocale</button>
-      <button type="button" id="tutorListen" disabled>🔊 Ascolta</button>
-      <span id="tutorVoiceStatus">Voce disattivata</span>
-    </div>
-    <div class="tutor-actions"><button class="big-start" id="tutorStart">▶ Inizia sessione</button><button class="ghost-btn" id="tutorReset">🧹 Nuova sessione</button></div>
+    <div class="tutor-actions"><button class="big-start" id="tutorStart">▶ Inizia conversazione</button><button class="ghost-btn" id="tutorReset">🧹 Ricomincia</button></div>
     <div class="status-line" id="tutorStatus"></div>
   </div>
 
@@ -3136,9 +3130,10 @@ openVocabDb().then(db => {
     const g=document.getElementById('tutorGreeting'); if(g)g.textContent='Livello '+String(l).replace('Base','A1')+'. Ricordo i tuoi progressi direttamente su questo dispositivo.';
   }
   function add(role,text,why){
+    const tip=document.getElementById('tutorSessionTip');if(tip){tip.textContent='';tip.classList.remove('show');}
     const box=document.getElementById('tutorChat'); if(!box)return; const empty=document.getElementById('tutorEmpty'); if(empty)empty.remove();
     const d=document.createElement('div'); d.className='tutor-msg '+role; d.textContent=text||'';
-    if(role==='ai'){ const sp=document.createElement('button'); sp.className='tutor-speak-inline'; sp.type='button'; sp.textContent='🔊'; sp.title='Ascolta'; sp.onclick=()=>speak(text); d.appendChild(sp); lastReply=text||''; document.getElementById('tutorListen')?.removeAttribute('disabled'); }
+    if(role==='ai'){ const sp=document.createElement('button'); sp.className='tutor-speak-inline'; sp.type='button'; sp.textContent='🔊'; sp.title='Ascolta'; sp.onclick=()=>speak(text); d.appendChild(sp); lastReply=text||''; }
     if(why){const w=document.createElement('div');w.className='why';w.textContent='💡 '+why;d.appendChild(w);}
     box.appendChild(d);box.scrollTop=box.scrollHeight;
   }
@@ -3179,30 +3174,46 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
     if(q)q.textContent=question||''; if(a)a.textContent=answer||'';
     if(qi)qi.textContent=questionIt||''; if(ai)ai.textContent=answerIt||'';
     if(ll)ll.textContent=lineLabel||'Tutor'; if(al)al.textContent=answerLabel||'La tua risposta';
-    if(badge)badge.textContent='TURNO '+tutorTurn;
+    if(badge)badge.textContent='TURNO '+Math.min(tutorTurn,5)+' / 5';
     tutorExpected=String(answer||''); tutorCurrentLine=String(question||'');
     const box=document.getElementById('tutorCorrectionBox'); if(box){box.style.display='none';box.innerHTML='';}
   }
+  function tutorCacheKey(role,scenario,level,turn,prior){
+    return 'quaderno_tutor_cache_v16_'+btoa(unescape(encodeURIComponent([role,scenario,level,turn,prior].join('|')))).replace(/[^a-zA-Z0-9]/g,'').slice(0,180);
+  }
+  function tutorCacheGet(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch(_){return null}}
+  function tutorCachePut(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(_){} }
+
   async function guidedQuestion(){
     renderMemory();
     const res=document.getElementById('tutorReadResult'); if(res)res.textContent='🤖 Preparo il prossimo scambio…';
     const card=document.getElementById('tutorReadingCard'); if(card)card.style.display='block';
     try{
+      if(tutorTurn>5){
+        if(res)res.textContent='';
+        const card=document.getElementById('tutorReadingCard');
+        if(card){const box=document.getElementById('tutorCorrectionBox'); if(box){box.style.display='block';box.innerHTML='<div class=\"tutor-session-complete\"><strong>🎉 Sessione completata</strong>Hai completato 5 esercizi. Premi “Ricomincia” per iniziare una nuova conversazione.</div>';}}
+        return;
+      }
       const l=String(level()).replace('Base','A1'), sc=scenarioLabel(), role=tutorRole();
       const prior=tutorConversation.slice(-6).map(x=>x.role+': '+x.text).join(' | ');
+      const cacheKey=tutorCacheKey(role,sc,l,tutorTurn,prior);
+      const cached=tutorCacheGet(cacheKey);
       let prompt;
       if(role==='user-asks'){
         prompt=`Crea il prossimo turno di una conversazione in inglese per uno studente italiano di livello ${l}, scenario ${sc}. Questa volta LO STUDENTE deve fare una domanda e poi pronunciarla. Genera una domanda breve e naturale che lo studente può leggere/pronunciare e una risposta breve del tutor che mostri come continua la conversazione. Conversazione precedente: ${prior||'nessuna'}. Rispondi SOLO JSON: {"lineToRead":"domanda che deve pronunciare lo studente","lineToReadIt":"traduzione italiana della domanda","tutorReply":"risposta breve del tutor","tutorReplyIt":"traduzione italiana della risposta","tip":"spiegazione breve in italiano"}`;
-        const r=await callGemini('Sei un tutor di inglese. Costruisci dialoghi pratici e correggibili, adatti al livello dello studente.',prompt);
+        const r=cached||await callGemini('Sei un tutor di inglese. Costruisci dialoghi pratici e correggibili, adatti al livello dello studente.',prompt);
+        if(!cached)tutorCachePut(cacheKey,r);
         renderTutorTurn(String(r.lineToRead||'Can I ask you a question?'),String(r.tutorReply||'Of course. What would you like to know?'),'La tua domanda','Risposta del tutor',String(r.lineToReadIt||'Posso farti una domanda?'),String(r.tutorReplyIt||'Certo. Cosa vuoi sapere?'));
         tutorConversation.push({role:'student',text:String(r.lineToRead||'')},{role:'tutor',text:String(r.tutorReply||'')});
-        if(res)res.textContent=r.tip?'💡 '+String(r.tip):'Pronuncia la domanda mostrata sopra.';
+        if(res)res.textContent=''; const tipBox=document.getElementById('tutorSessionTip');if(tipBox){tipBox.textContent=r.tip?'💡 '+String(r.tip):'';tipBox.classList.toggle('show',!!r.tip);}
       } else {
         prompt=`Crea il prossimo turno di una conversazione in inglese per uno studente italiano di livello ${l}, scenario ${sc}. Il tutor deve fare una domanda breve e naturale; poi prepara UNA risposta modello breve (1-2 frasi) che lo studente deve pronunciare ad alta voce. La risposta deve essere facile da pronunciare. Conversazione precedente: ${prior||'nessuna'}. Rispondi SOLO JSON: {"tutorQuestion":"domanda del tutor","tutorQuestionIt":"traduzione italiana della domanda","studentAnswer":"risposta che deve pronunciare lo studente","studentAnswerIt":"traduzione italiana della risposta","tip":"spiegazione breve in italiano"}`;
-        const r=await callGemini('Sei un tutor di inglese. Costruisci dialoghi pratici e correggibili, adatti al livello dello studente.',prompt);
+        const r=cached||await callGemini('Sei un tutor di inglese. Costruisci dialoghi pratici e correggibili, adatti al livello dello studente.',prompt);
+        if(!cached)tutorCachePut(cacheKey,r);
         renderTutorTurn(String(r.tutorQuestion||'How are you today?'),String(r.studentAnswer||'I am fine, thank you.'),'Tutor','La tua risposta',String(r.tutorQuestionIt||'Come stai oggi?'),String(r.studentAnswerIt||'Sto bene, grazie.'));
         tutorConversation.push({role:'tutor',text:String(r.tutorQuestion||'')},{role:'student',text:String(r.studentAnswer||'')});
-        if(res)res.textContent=r.tip?'💡 '+String(r.tip):'Pronuncia la risposta mostrata sopra.';
+        if(res)res.textContent=''; const tipBox=document.getElementById('tutorSessionTip');if(tipBox){tipBox.textContent=r.tip?'💡 '+String(r.tip):'';tipBox.classList.toggle('show',!!r.tip);}
       }
       tutorTurn++;
       state.lastFocus='Conversazione guidata · '+scenarioLabel(); save();
@@ -3242,29 +3253,14 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
   document.getElementById('tutorReadListen')?.addEventListener('click',listenGuidedAnswer);
   document.getElementById('tutorReadMic')?.addEventListener('click',readGuidedAnswer);
   document.getElementById('tutorNextQuestion')?.addEventListener('click',guidedQuestion);
-  document.getElementById('tutorSend')?.addEventListener('click',()=>ask(document.getElementById('tutorInput')?.value.trim()));
-  document.getElementById('tutorInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('tutorSend')?.click();}});
-  document.querySelectorAll('[data-tutor-prompt]').forEach(b=>b.addEventListener('click',()=>{ const p=b.dataset.tutorPrompt||''; if(/domanda|risposta|leggo|A1/i.test(p)) guidedQuestion(); else ask(p); }));
-  document.getElementById('tutorReset')?.addEventListener('click',()=>{state.messages=[];state.lastFocus='';tutorTurn=1;tutorConversation=[];tutorExpected='';save();const box=document.getElementById('tutorChat');if(box)box.innerHTML='<div class="tutor-empty" id="tutorEmpty">Premi <b>Inizia sessione</b> e il tutor analizzerà il tuo percorso.</div>';const s=document.getElementById('tutorStatus');if(s)s.textContent='';renderMemory();});
-  function speak(text,autoListen=false){
-    if(!text||!('speechSynthesis' in window))return;
-    speechSynthesis.cancel(); speaking=true;
-    const u=new SpeechSynthesisUtterance(text);
-    u.lang='en-US'; u.rate=.9; u.pitch=1;
-    const status=document.getElementById('tutorVoiceStatus'); if(status)status.textContent='🔊 Il tutor sta parlando…';
-    u.onend=()=>{speaking=false;if(status)status.textContent=voiceMode?'🎙️ Tocca il microfono e rispondi':'Voce attiva'; if(autoListen&&voiceMode)listen();};
-    u.onerror=()=>{speaking=false;if(status)status.textContent='Voce non disponibile';};
-    speechSynthesis.speak(u);
-  }
-  function listen(){
-    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!SR){const s=document.getElementById('tutorVoiceStatus');if(s)s.textContent='⚠️ Riconoscimento vocale non disponibile';return;}
-    const status=document.getElementById('tutorVoiceStatus'); if(status)status.textContent='🎤 Ascolto… parla in inglese';
-    const r=new SR(); r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1; r.onresult=e=>{const t=e.results?.[0]?.[0]?.transcript||'';const i=document.getElementById('tutorInput');if(i)i.value=t; if(t)ask(t);}; r.onerror=()=>{if(status)status.textContent='🎙️ Tocca il microfono e riprova';}; r.onend=()=>{if(!speaking&&voiceMode&&status&&status.textContent==='🎤 Ascolto… parla in inglese')status.textContent='🎙️ Pronto';}; r.start();
-  }
-  document.getElementById('tutorMic')?.addEventListener('click',()=>voiceMode?listen():(()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Il riconoscimento vocale non è disponibile in questo browser.');return;}const r=new SR();r.lang='en-US';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{const t=e.results?.[0]?.[0]?.transcript||'';const i=document.getElementById('tutorInput');if(i)i.value=t;};r.start();})());
-  document.getElementById('tutorVoiceMode')?.addEventListener('click',()=>{voiceMode=!voiceMode;const b=document.getElementById('tutorVoiceMode'),s=document.getElementById('tutorVoiceStatus');b?.classList.toggle('active',voiceMode);if(s)s.textContent=voiceMode?'🎙️ Modalità vocale attiva':'Voce disattivata';});
-  document.getElementById('tutorListen')?.addEventListener('click',()=>speak(lastReply));
+  document.getElementById('tutorReset')?.addEventListener('click',()=>{
+    state.messages=[]; state.lastFocus=''; tutorTurn=1; tutorConversation=[]; tutorExpected=''; save();
+    const tip=document.getElementById('tutorSessionTip'); if(tip){tip.textContent='';tip.classList.remove('show');}
+    const box=document.getElementById('tutorCorrectionBox'); if(box){box.style.display='none';box.innerHTML='';}
+    const res=document.getElementById('tutorReadResult'); if(res)res.textContent='';
+    const card=document.getElementById('tutorReadingCard'); if(card)card.style.display='none';
+    renderMemory();
+  });
   window.addEventListener('storage',renderMemory);
   renderMemory();
 })();
