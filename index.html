@@ -879,6 +879,21 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 .hub-mini-progress,.hub-tip{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:13px}.hub-mini-progress>div:first-child{display:flex;justify-content:space-between;font-size:12px;font-weight:700}.hub-mini-progress .bar{height:8px;margin-top:7px}.text-link,.home-progress-link{border:0;background:transparent;color:var(--accent);font-weight:800;padding:10px 0 0;cursor:pointer;font-size:12px}.home-progress-link{display:block;margin:8px auto 0}.section-back{display:inline-flex;align-items:center;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:999px;padding:8px 12px;margin:0 0 10px;cursor:pointer;font-weight:700;font-size:12px}.speak-grid .hub-card{min-height:145px}
 @media(max-width:600px){.hub-grid{grid-template-columns:1fr}.hub-card{min-height:82px;display:grid;grid-template-columns:42px 1fr;grid-template-rows:auto auto;align-items:center;padding:12px}.hub-card span{grid-row:1/3;grid-column:1;font-size:26px;margin:0;text-align:center}.hub-card strong,.hub-card small{grid-column:2}.hub-card strong{font-size:14px}.hub-card small{font-size:11px}.learn-continue{align-items:flex-start;flex-direction:column}.learn-continue .big-start{width:100%}.speak-grid .hub-card{min-height:86px}}
 </style>
+
+<style>
+/* V15.2 Tutor guided reading */
+.tutor-reading-card{margin:12px 0;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow-card)}
+.tutor-reading-kicker,.tutor-question-label,.tutor-answer-label{font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.tutor-question{font-size:18px;font-weight:800;line-height:1.35;margin-bottom:14px}
+.tutor-answer{font-size:18px;line-height:1.5;padding:13px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);margin-bottom:12px}
+.tutor-reading-actions{display:grid;grid-template-columns:1fr;gap:8px}.tutor-reading-actions button{min-height:46px;width:100%}
+.tutor-read-result{min-height:20px;margin-top:9px;font-size:12px;color:var(--muted);line-height:1.4}
+body.oxford-focus #vocabNotebook,body.oxford-focus .vocab-stats,body.oxford-focus .vocab-progress,body.oxford-focus .vocab-quick,body.oxford-focus .vocab-mode-tabs,body.oxford-focus #vocabModeHint,body.oxford-focus .manual-add,body.oxford-focus #vocabSearch,body.oxford-focus .vocab-list{display:none!important}
+body.oxford-focus #oxfordPanel{margin-top:4px}
+.oxford-card{min-height:0}
+.oxford-translation.loading{opacity:.65}
+@media(max-width:600px){.tutor-question{font-size:17px}.tutor-answer{font-size:17px;padding:12px}.tutor-reading-card{padding:14px}.oxford-head{flex-direction:column}.oxford-count{align-items:flex-start}.oxford-dashboard{gap:6px}}
+</style>
 </head>
 <body>
 <button class="install-btn" id="installBtn">＋ Installa app</button>
@@ -989,7 +1004,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
   <div class="view" id="view-tutor"><button class="section-back" data-go="speak">← Parla</button>
     <section class="tutor-hero">
       <div class="tutor-hero-icon">🧑‍🏫</div>
-      <div><div class="eyebrow">IL TUO INSEGNANTE PERSONALE</div><h2>AI Tutor</h2><p id="tutorGreeting">Ti aiuto a migliorare partendo dai tuoi errori e dal tuo livello.</p></div>
+      <div><div class="eyebrow">IL TUO INSEGNANTE PERSONALE</div><h2>AI Tutor</h2><p id="tutorGreeting">Ti faccio domande semplici e ti preparo una risposta da leggere ad alta voce.</p></div>
     </section>
     <section class="tutor-memory-card">
       <div class="tutor-memory-head"><div><span class="settings-kicker">MEMORIA</span><h3>Il tuo percorso</h3></div><span id="tutorLevelBadge" class="tutor-badge">A1</span></div>
@@ -999,13 +1014,27 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
       <div id="tutorFocus" class="tutor-focus">🎯 Prepariamo una sessione personalizzata.</div>
     </section>
     <section class="tutor-chat" id="tutorChat">
-      <div class="tutor-empty" id="tutorEmpty">Premi <b>Inizia sessione</b> e il tutor analizzerà il tuo livello, le lezioni completate e gli errori recenti.</div>
+      <div class="tutor-empty" id="tutorEmpty">Premi <b>Inizia sessione</b>: il tutor ti farà una domanda in inglese e preparerà una risposta breve da leggere ad alta voce.</div>
     </section>
     <div class="tutor-quick">
-      <button type="button" data-tutor-prompt="Facciamo una breve conversazione in inglese adatta al mio livello.">🗣️ Conversazione</button>
-      <button type="button" data-tutor-prompt="Fammi 5 esercizi sugli errori che commetto più spesso.">🧩 5 esercizi</button>
-      <button type="button" data-tutor-prompt="Fammi ripassare 5 parole che devo ancora imparare.">🧠 Ripasso</button>
+      <button type="button" data-tutor-prompt="Fammi una domanda semplice in inglese e prepara subito una risposta breve che io possa leggere ad alta voce.">❓ Domanda + risposta</button>
+      <button type="button" data-tutor-prompt="Fammi una domanda alla volta e prepara una risposta breve da leggere ad alta voce.">📖 Leggo e ripeto</button>
+      <button type="button" data-tutor-prompt="Fammi una domanda A1 e prepara una risposta modello di 1 o 2 frasi da leggere.">🗣️ Inglese A1</button>
     </div>
+    <section class="tutor-reading-card" id="tutorReadingCard" style="display:none;">
+      <div class="tutor-reading-kicker">ESERCIZIO GUIDATO</div>
+      <div class="tutor-question-label">Domanda</div>
+      <div class="tutor-question" id="tutorQuestion"></div>
+      <div class="tutor-answer-label">Risposta da leggere</div>
+      <div class="tutor-answer" id="tutorAnswer"></div>
+      <div class="tutor-reading-actions">
+        <button type="button" class="send-btn" id="tutorReadListen">🔊 Ascolta</button>
+        <button type="button" class="ghost-btn" id="tutorReadMic">🎤 Leggo la risposta</button>
+        <button type="button" class="ghost-btn" id="tutorNextQuestion">➡️ Domanda successiva</button>
+      </div>
+      <div class="tutor-read-result" id="tutorReadResult"></div>
+    </section>
+
     <div class="tutor-composer">
       <textarea id="tutorInput" placeholder="Scrivi oppure parla…"></textarea>
       <button class="icon-btn mic" id="tutorMic" aria-label="Parla con il tutor">🎤</button>
@@ -1511,7 +1540,23 @@ function speakEnThenIt(enText, itText){
   }
 })();
 
-function getMobileApiKey(){ try{return localStorage.getItem('quaderno_gemini_key')||'';}catch(_){return '';} }
+function getMobileApiKey(){
+  try{
+    const stored=(localStorage.getItem('quaderno_gemini_key')||'').trim();
+    if(stored) return stored;
+    const el=document.getElementById('mobileApiKey');
+    const typed=(el?.value||'').trim();
+    if(typed) return typed;
+    const legacyKeys=['gemini_api_key','geminiApiKey','apiKey','quaderno_api_key'];
+    for(const k of legacyKeys){
+      const v=(localStorage.getItem(k)||'').trim();
+      if(v){ try{localStorage.setItem('quaderno_gemini_key',v);}catch(_){} return v; }
+    }
+    return '';
+  }catch(_){
+    try{return (document.getElementById('mobileApiKey')?.value||'').trim();}catch(__){return '';}
+  }
+}
 function saveMobileApiKey(){ const el=document.getElementById('mobileApiKey'); if(!el)return; const v=el.value.trim(); try{ if(v)localStorage.setItem('quaderno_gemini_key',v); else localStorage.removeItem('quaderno_gemini_key'); }catch(_){} updateConnectionStatus(); }
 function clearMobileApiKey(){ try{localStorage.removeItem('quaderno_gemini_key');}catch(_){} const el=document.getElementById('mobileApiKey'); if(el)el.value=''; updateConnectionStatus(); }
 const GEMINI_FALLBACK_MODELS = [
@@ -1651,6 +1696,7 @@ function updateConnectionStatus(){
 (function initMobileKey(){
   const el=document.getElementById('mobileApiKey');
   if(el)el.value=getMobileApiKey();
+  el?.addEventListener('input',updateConnectionStatus);
   document.getElementById('saveApiKey')?.addEventListener('click',()=>{
     saveMobileApiKey();
     updateConnectionStatus();
@@ -2501,6 +2547,15 @@ function oxfordShow(id,{autoEnrich=true}={}){
   document.getElementById('oxfordPrepareBtn')?.addEventListener('click',()=>oxfordEnrich(c.id));
   if(autoEnrich && needsAI && !oxfordEnriching.has(c.id)) oxfordEnrich(c.id);
 }
+async function oxfordTranslateFallback(word){
+  const url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(word)+'&langpair=en|it';
+  const r=await fetch(url,{headers:{Accept:'application/json'}});
+  if(!r.ok) throw new Error('Servizio traduzione non disponibile.');
+  const d=await r.json();
+  const t=String(d?.responseData?.translatedText||'').trim();
+  if(!t) throw new Error('Traduzione vuota.');
+  return t;
+}
 async function oxfordEnrich(id){
   const c=oxfordCards().find(x=>x.id===id)||oxfordCurrent; if(!c)return; oxfordCurrent=c;
   if(oxfordEnriching.has(c.id))return;
@@ -2508,16 +2563,27 @@ async function oxfordEnrich(id){
   if(saved.translation&&saved.example){oxfordShow(c.id,{autoEnrich:false});if(status)status.textContent='✓ Traduzione già disponibile sul dispositivo.';return;}
   oxfordEnriching.add(c.id);
   const prepare=document.getElementById('oxfordPrepareBtn'); if(prepare){prepare.disabled=true;prepare.textContent='⏳ Preparo…';}
-  if(status){status.className='oxford-status';status.textContent='🤖 Preparo traduzione ed esempio…';}
+  if(status){status.className='oxford-status';status.textContent='⏳ Carico la traduzione…';}
+  let translation=String(saved.translation||'').trim();
+  let example=String(saved.example||'').trim();
+  let exampleIt=String(saved.exampleIt||'').trim();
   try{
-    const sys='Sei un insegnante di inglese per uno studente italiano. Per la parola inglese data, crea una traduzione italiana breve e naturale e un esempio inglese semplice, originale, adatto al livello CEFR indicato, con traduzione italiana. Non copiare definizioni o esempi da dizionari. Rispondi SOLO JSON: {"translation":"...","example":"...","exampleIt":"..."}';
-    const r=await callGemini(sys,`Parola: ${c.word}\nParte del discorso: ${c.pos}\nLivello CEFR: ${c.cefr}`);
-    const n={...saved,translation:String(r.translation||'').trim(),example:String(r.example||'').trim(),exampleIt:String(r.exampleIt||'').trim(),status:saved.status||'new'};
-    if(!n.translation)throw new Error('Gemini non ha restituito la traduzione.');
-    oxfordSet(c.id,n); oxfordShow(c.id,{autoEnrich:false}); if(status)status.textContent='✓ Traduzione ed esempio salvati sul dispositivo.';
+    // Prima tentiamo Gemini per avere traduzione + esempio coerenti.
+    try{
+      const sys='Sei un insegnante di inglese per uno studente italiano. Crea una traduzione italiana breve e naturale e un esempio inglese semplice, originale, adatto al livello CEFR indicato, con traduzione italiana. Non copiare definizioni o esempi da dizionari. Rispondi SOLO JSON: {"translation":"...","example":"...","exampleIt":"..."}';
+      const r=await callGemini(sys,`Parola: ${c.word}\nParte del discorso: ${c.pos}\nLivello CEFR: ${c.cefr}`);
+      translation=String(r.translation||'').trim(); example=String(r.example||'').trim(); exampleIt=String(r.exampleIt||'').trim();
+    }catch(_){
+      // Se Gemini è sovraccarico, almeno la traduzione continua a funzionare.
+      if(!translation) translation=await oxfordTranslateFallback(c.word);
+    }
+    if(!translation) translation=await oxfordTranslateFallback(c.word);
+    const n={...saved,translation,example,exampleIt,status:saved.status||'new'};
+    oxfordSet(c.id,n); oxfordShow(c.id,{autoEnrich:false});
+    if(status)status.textContent=example?'✓ Traduzione ed esempio salvati sul dispositivo.':'✓ Traduzione caricata. Esempio non disponibile al momento.';
   }catch(e){
     oxfordShow(c.id,{autoEnrich:false});
-    if(status){status.className='oxford-status error';status.textContent=friendlyGeminiError(e.message||'Errore Gemini.');}
+    if(status){status.className='oxford-status error';status.textContent='⚠️ Non riesco a caricare la traduzione. Tocca “Prepara” per riprovare.';}
   }finally{
     oxfordEnriching.delete(c.id);
   }
@@ -2818,11 +2884,12 @@ openVocabDb().then(db => {
     const group=navGroup(tab);
     tabs.forEach(b=>b.classList.toggle('active',b.dataset.tab===group));
     nav.forEach(b=>b.classList.toggle('active',b.dataset.go===group));
+    if(tab!=='vocab') document.body.classList.remove('oxford-focus');
     window.scrollTo({top:0,behavior:'smooth'});
     updateHome();
     updateLearnHub();
   }
-  [...document.querySelectorAll('[data-go]')].forEach(b=>b.addEventListener('click',()=>{go(b.dataset.go); if(b.dataset.focus==='oxford'){setTimeout(()=>document.getElementById('oxfordPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),180);}}));
+  [...document.querySelectorAll('[data-go]')].forEach(b=>b.addEventListener('click',()=>{const isOxford=b.dataset.focus==='oxford';document.body.classList.toggle('oxford-focus',isOxford);go(b.dataset.go); if(isOxford){setTimeout(()=>document.getElementById('oxfordPanel')?.scrollIntoView({behavior:'smooth',block:'start'}),180);}}));
   // Replace legacy tab handler visually/functionally by intercepting clicks.
   tabs.forEach(b=>b.addEventListener('click',e=>{e.preventDefault();go(b.dataset.tab)}));
   function updateHome(){
@@ -2966,14 +3033,50 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
       if(status)status.textContent='';
     }catch(e){if(status)status.textContent='⚠️ '+friendlyGeminiError(e.message||'Errore Gemini');}
   }
+  async function guidedQuestion(){
+    renderMemory();
+    const card=document.getElementById('tutorReadingCard');
+    const qEl=document.getElementById('tutorQuestion'), aEl=document.getElementById('tutorAnswer'), res=document.getElementById('tutorReadResult');
+    if(card)card.style.display='block'; if(qEl)qEl.textContent='…'; if(aEl)aEl.textContent='…'; if(res)res.textContent='🤖 Preparo domanda e risposta…';
+    try{
+      const l=String(level()).replace('Base','A1');
+      const prompt=`Crea un esercizio di inglese parlato per livello ${l}. Fammi UNA domanda semplice e prepara UNA risposta modello breve (1-2 frasi) che lo studente deve LEGGERE ad alta voce. La risposta deve essere naturale e facile da pronunciare. Rispondi SOLO JSON: {"question":"domanda in inglese","answerToRead":"risposta in inglese","tip":"breve suggerimento in italiano"}`;
+      const r=await callGemini('Sei un tutor di inglese. Genera una domanda e una risposta modello per esercitare la lettura ad alta voce.',prompt);
+      if(qEl)qEl.textContent=String(r.question||'How are you today?');
+      if(aEl)aEl.textContent=String(r.answerToRead||'I am fine today.');
+      if(res)res.textContent=r.tip?'💡 '+String(r.tip):'Leggi la risposta ad alta voce.';
+      state.sessions=(state.sessions||0)+1; state.lastFocus='Lettura guidata'; save();
+      lastReply=String(r.answerToRead||''); document.getElementById('tutorListen')?.removeAttribute('disabled');
+    }catch(e){
+      if(res)res.textContent='⚠️ '+friendlyGeminiError(e.message||'Errore Gemini');
+    }
+  }
+  function listenGuidedAnswer(){
+    const text=document.getElementById('tutorAnswer')?.textContent||''; if(!text)return; speak(text);
+  }
+  function readGuidedAnswer(){
+    const text=document.getElementById('tutorAnswer')?.textContent||''; const result=document.getElementById('tutorReadResult');
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){if(result)result.textContent='⚠️ Il riconoscimento vocale non è disponibile. Puoi leggere comunque la risposta.';return;}
+    if(result)result.textContent='🎤 Leggi ad alta voce la risposta mostrata sopra…';
+    const r=new SR(); r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1;
+    r.onresult=e=>{const heard=e.results?.[0]?.[0]?.transcript||''; if(result)result.textContent=heard?'✓ Ho sentito: '+heard:'Riprova lentamente.';};
+    r.onerror=()=>{if(result)result.textContent='⚠️ Non ho sentito bene. Tocca di nuovo e riprova.';};
+    r.start();
+  }
   function start(){
     renderMemory();
+    guidedQuestion();
+
     const l=String(level()).replace('Base','A1');
     const es=errors();
     const prompt=es.length?`Inizia una sessione di 5 minuti. Prima dammi un breve esercizio sugli errori recenti e poi fammi rispondere in inglese.`:`Inizia una sessione di 5 minuti per livello ${l}. Fammi una domanda semplice in inglese e guidami passo passo.`;
     ask(prompt);
   }
   document.getElementById('tutorStart')?.addEventListener('click',start);
+  document.getElementById('tutorReadListen')?.addEventListener('click',listenGuidedAnswer);
+  document.getElementById('tutorReadMic')?.addEventListener('click',readGuidedAnswer);
+  document.getElementById('tutorNextQuestion')?.addEventListener('click',guidedQuestion);
   document.getElementById('tutorSend')?.addEventListener('click',()=>ask(document.getElementById('tutorInput')?.value.trim()));
   document.getElementById('tutorInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('tutorSend')?.click();}});
   document.querySelectorAll('[data-tutor-prompt]').forEach(b=>b.addEventListener('click',()=>ask(b.dataset.tutorPrompt)));

@@ -58,3 +58,9 @@ Tema chiaro/scuro completamente sovrascritto con una palette coerente ad alto co
 - Traduzioni ed esempi generati da Gemini e salvati in localStorage; il dataset Oxford contiene parola/POS/CEFR, non traduzioni.
 - Layout mobile-first rafforzato per Home, Impara, Oxford, Corso, Parla, Conversazione, Pronuncia, AI Tutor, Progressi e Impostazioni.
 - Service Worker aggiornato per forzare il nuovo pacchetto.
+
+
+## V15.3 FIX
+- Gemini reads the key from localStorage or directly from the Settings field, with legacy-key migration.
+- Oxford card layout fixed for mobile/light/dark readability.
+- Vocabulary/review cards are restored when entering Ripasso; they are hidden only in Oxford focus.
