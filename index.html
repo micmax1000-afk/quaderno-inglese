@@ -1334,7 +1334,7 @@ body.oxford-focus #oxfordPanel{margin-top:4px}
     <section class="settings-card" id="updateSettingsCard">
       <div class="settings-section-head"><div><span class="settings-kicker">AGGIORNAMENTI</span><h3>Versione dell'app</h3></div><span class="settings-badge">🚀</span></div>
       <div class="update-settings-row">
-        <div class="update-settings-version" id="updateSettingsInfo"><strong>V15.7</strong>Controllo automatico all'avvio.</div>
+        <div class="update-settings-version" id="updateSettingsInfo"><strong>V16.0</strong>Controllo automatico all'avvio.</div>
         <button type="button" class="update-check-btn" id="checkUpdateBtn">↻ Controlla</button>
       </div>
       <div class="settings-small" id="updateSettingsStatus" aria-live="polite"></div>
@@ -1755,8 +1755,12 @@ document.getElementById('installBtn')?.addEventListener('click',async()=>{
   deferredInstallPrompt=null;
   document.getElementById('installBtn').style.display='none';
 });
+/* V16 — pulizia del parametro usato per forzare il reload dopo un aggiornamento */
+if(new URLSearchParams(location.search).has('appupdate')){
+  try{history.replaceState(null,'',location.pathname+location.hash)}catch(_){ }
+}
 /* V15.7 — registrazione SW e aggiornamenti automatici */
-const APP_VERSION='15.7';
+const APP_VERSION='16.0';
 const UPDATE_VERSION_URL='./version.json';
 const UPDATE_DEFER_KEY='quaderno_update_deferred_version';
 const UPDATE_DEFER_UNTIL_KEY='quaderno_update_deferred_until';
@@ -1800,15 +1804,35 @@ async function activateUpdate(){
   const btn=document.getElementById('updateNowBtn');if(btn)btn.disabled=true;
   setUpdateStatus('Scarico e attivo il nuovo aggiornamento…');
   try{
-    if(!appSWRegistration && 'serviceWorker' in navigator)appSWRegistration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
-    const reg=appSWRegistration||await navigator.serviceWorker.ready;
+    if(!('serviceWorker' in navigator)) throw new Error('Service Worker non supportato');
+    if(!appSWRegistration) appSWRegistration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
+    const reg=appSWRegistration;
     await reg.update();
-    if(reg.waiting){reg.waiting.postMessage({type:'SKIP_WAITING'});}
+    // Lo SW della V16 usa skipWaiting(), ma controlliamo comunque sia waiting
+    // prima di continuare: su Android l'installazione può essere asincrona.
+    for(let i=0;i<20 && !reg.waiting;i++){
+      await new Promise(r=>setTimeout(r,250));
+      await reg.update().catch(()=>{});
+    }
+    if(reg.waiting){
+      reg.waiting.postMessage({type:'SKIP_WAITING'});
+    }
     let reloaded=false;
-    const reload=()=>{if(reloaded)return;reloaded=true;location.reload()};
+    const reload=()=>{
+      if(reloaded)return;
+      reloaded=true;
+      const u=new URL(location.href);
+      u.searchParams.set('appupdate',Date.now().toString());
+      location.replace(u.toString());
+    };
     navigator.serviceWorker.addEventListener('controllerchange',reload,{once:true});
-    setTimeout(reload,8000);
-  }catch(err){setUpdateStatus('⚠ Aggiornamento non riuscito. Riprova tra poco.');if(btn)btn.disabled=false}
+    // Se il nuovo SW è già diventato active prima del listener, ricarichiamo comunque.
+    setTimeout(reload,2500);
+  }catch(err){
+    console.error('Aggiornamento PWA:',err);
+    setUpdateStatus('⚠ Aggiornamento non riuscito. Controlla la connessione e riprova.');
+    if(btn)btn.disabled=false;
+  }
 }
 document.getElementById('updateLaterBtn')?.addEventListener('click',()=>deferUpdate(latestUpdateInfo?.version||''));
 document.getElementById('updateNowBtn')?.addEventListener('click',activateUpdate);
