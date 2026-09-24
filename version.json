@@ -1,0 +1,12 @@
+{
+  "version": "15.7",
+  "date": "2026-09-24",
+  "title": "È disponibile Quaderno d'Inglese V15.7",
+  "changes": [
+    "Nuovo sistema di aggiornamento automatico della PWA",
+    "Popup con i nuovi aggiornamenti e pulsanti Aggiorna / Più tardi",
+    "Controllo manuale della versione nelle Impostazioni",
+    "Service Worker aggiornato e attivazione automatica della nuova versione",
+    "Impostazioni e progressi locali mantenuti durante l'aggiornamento"
+  ]
+}

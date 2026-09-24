@@ -899,6 +899,12 @@ body.oxford-focus #oxfordPanel{margin-top:4px}
 .oxford-translation.loading{opacity:.65}
 @media(max-width:600px){.tutor-question{font-size:17px}.tutor-answer{font-size:17px;padding:12px}.tutor-reading-card{padding:14px}.oxford-head{flex-direction:column}.oxford-count{align-items:flex-start}.oxford-dashboard{gap:6px}}
 </style>
+
+<style>
+.oxford-listen-btn{width:100%;margin:10px 0 8px;justify-content:center;font-size:.9rem;min-height:42px}
+.oxford-listen-btn:active{transform:translateY(1px)}
+@media(max-width:600px){.oxford-listen-btn{min-height:46px;font-size:.95rem}.oxford-actions{grid-template-columns:1fr}.oxford-actions button{width:100%;min-height:44px}}
+</style>
 </head>
 <body>
 <button class="install-btn" id="installBtn">＋ Installa app</button>
@@ -1328,6 +1334,14 @@ body.oxford-focus #oxfordPanel{margin-top:4px}
       <div class="settings-field"><label for="topic">Argomento conversazione <span class="optional">facoltativo</span></label><input type="text" id="topic" placeholder="es. la spesa, il lavoro, un viaggio..."></div>
       <div class="gemini-check-row"><button type="button" class="settings-action primary-action" id="verifyGeminiBtn">✓ Verifica Gemini</button><span id="geminiVerifyStatus" aria-live="polite">Non verificato</span></div>
     </section>
+    <section class="settings-card" id="updateSettingsCard">
+      <div class="settings-section-head"><div><span class="settings-kicker">AGGIORNAMENTI</span><h3>Versione dell'app</h3></div><span class="settings-badge">🚀</span></div>
+      <div class="update-settings-row">
+        <div class="update-settings-version" id="updateSettingsInfo"><strong>V15.7</strong>Controllo automatico all'avvio.</div>
+        <button type="button" class="update-check-btn" id="checkUpdateBtn">↻ Controlla</button>
+      </div>
+      <div class="settings-small" id="updateSettingsStatus" aria-live="polite"></div>
+    </section>
     <section class="settings-card">
       <div class="settings-section-head"><div><span class="settings-kicker">AUDIO</span><h3>Ascolto e lettura</h3></div><span class="settings-badge">🔊</span></div>
       <label class="settings-toggle"><span><strong>Lettura automatica</strong><small>Legge automaticamente le risposte dell'insegnante.</small></span><input type="checkbox" id="autoSpeak" checked><span class="switch-ui"></span></label>
@@ -1744,8 +1758,72 @@ document.getElementById('installBtn')?.addEventListener('click',async()=>{
   deferredInstallPrompt=null;
   document.getElementById('installBtn').style.display='none';
 });
+/* V15.7 — registrazione SW e aggiornamenti automatici */
+const APP_VERSION='15.7';
+const UPDATE_VERSION_URL='./version.json';
+const UPDATE_DEFER_KEY='quaderno_update_deferred_version';
+const UPDATE_DEFER_UNTIL_KEY='quaderno_update_deferred_until';
+let appSWRegistration=null;
+let latestUpdateInfo=null;
+function versionParts(v){return String(v||'0').replace(/^v/i,'').split('.').map(n=>parseInt(n,10)||0)}
+function isNewerVersion(remote,local){const a=versionParts(remote),b=versionParts(local);for(let i=0;i<Math.max(a.length,b.length);i++){if((a[i]||0)>(b[i]||0))return true;if((a[i]||0)<(b[i]||0))return false}return false}
+function escapeUpdateText(v){return String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+function setUpdateStatus(msg){const a=document.getElementById('updateModalStatus');const b=document.getElementById('updateSettingsStatus');if(a)a.textContent=msg||'';if(b)b.textContent=msg||''}
+function renderUpdateInfo(info){
+  const version=info?.version||APP_VERSION;
+  const changes=Array.isArray(info?.changes)?info.changes:[];
+  const v=document.getElementById('updateSettingsInfo');
+  if(v)v.innerHTML='<strong>V'+escapeUpdateText(APP_VERSION)+'</strong>'+(isNewerVersion(version,APP_VERSION)?'Nuova versione disponibile: <b>V'+escapeUpdateText(version)+'</b>':'Sei sulla versione più recente.');
+  const mv=document.getElementById('updateModalVersion');if(mv)mv.textContent='V'+version;
+  const mm=document.getElementById('updateModalMessage');if(mm)mm.textContent=info?.title?String(info.title):'È disponibile una nuova versione di Quaderno d\'Inglese.';
+  const list=document.getElementById('updateModalChanges');
+  if(list){list.innerHTML='';changes.forEach(c=>{const li=document.createElement('li');li.textContent=String(c);list.appendChild(li)});if(!changes.length){const li=document.createElement('li');li.textContent='Miglioramenti e correzioni.';list.appendChild(li)}}
+}
+function deferredForVersion(version){try{return localStorage.getItem(UPDATE_DEFER_KEY)===String(version)&&Number(localStorage.getItem(UPDATE_DEFER_UNTIL_KEY)||0)>Date.now()}catch(_){return false}}
+function deferUpdate(version){try{localStorage.setItem(UPDATE_DEFER_KEY,String(version));localStorage.setItem(UPDATE_DEFER_UNTIL_KEY,String(Date.now()+24*60*60*1000))}catch(_){}hideUpdateModal()}
+function showUpdateModal(info){latestUpdateInfo=info;renderUpdateInfo(info);const m=document.getElementById('updateModal');if(m)m.classList.add('show');setUpdateStatus('')}
+function hideUpdateModal(){document.getElementById('updateModal')?.classList.remove('show')}
+async function fetchUpdateInfo({manual=false}={}){
+  const status=document.getElementById('updateSettingsStatus');
+  if(status&&manual)status.textContent='Controllo in corso…';
+  try{
+    const r=await fetch(UPDATE_VERSION_URL+'?t='+Date.now(),{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const info=await r.json();
+    if(!info?.version)return null;
+    renderUpdateInfo(info);
+    if(isNewerVersion(info.version,APP_VERSION)){
+      if(!deferredForVersion(info.version)||manual)showUpdateModal(info);
+      else if(status)status.textContent='Aggiornamento V'+info.version+' rimandato per 24 ore.';
+    }else if(status&&manual){status.textContent='✓ Nessun aggiornamento disponibile.'}
+    return info;
+  }catch(err){if(status&&manual)status.textContent='⚠ Controllo aggiornamenti non riuscito.';return null}
+}
+async function activateUpdate(){
+  const btn=document.getElementById('updateNowBtn');if(btn)btn.disabled=true;
+  setUpdateStatus('Scarico e attivo il nuovo aggiornamento…');
+  try{
+    if(!appSWRegistration && 'serviceWorker' in navigator)appSWRegistration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
+    const reg=appSWRegistration||await navigator.serviceWorker.ready;
+    await reg.update();
+    if(reg.waiting){reg.waiting.postMessage({type:'SKIP_WAITING'});}
+    let reloaded=false;
+    const reload=()=>{if(reloaded)return;reloaded=true;location.reload()};
+    navigator.serviceWorker.addEventListener('controllerchange',reload,{once:true});
+    setTimeout(reload,8000);
+  }catch(err){setUpdateStatus('⚠ Aggiornamento non riuscito. Riprova tra poco.');if(btn)btn.disabled=false}
+}
+document.getElementById('updateLaterBtn')?.addEventListener('click',()=>deferUpdate(latestUpdateInfo?.version||''));
+document.getElementById('updateNowBtn')?.addEventListener('click',activateUpdate);
+document.getElementById('checkUpdateBtn')?.addEventListener('click',async()=>{const b=document.getElementById('checkUpdateBtn');if(b)b.disabled=true;await fetchUpdateInfo({manual:true});if(b)b.disabled=false});
 if('serviceWorker' in navigator && location.protocol!=='file:'){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+  window.addEventListener('load',async()=>{
+    try{
+      appSWRegistration=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
+      await appSWRegistration.update();
+    }catch(_){}
+    setTimeout(()=>fetchUpdateInfo(),700);
+  });
 }
 
 function updateStreakDisplay(){
@@ -2569,10 +2647,13 @@ function oxfordShow(id,{autoEnrich=true}={}){
   const exampleIt=saved.exampleIt||c.exampleIt||'';
   const dueText=saved.status==='learned' ? (saved.dueDate&&saved.dueDate<=todayISO()?'🔄 Da ripassare':'✓ Consolidata') : '🆕 Nuova';
   const needsAI=!translation||!example;
-  card.innerHTML=`<div class="oxford-word">${oxfordEsc(c.word)}</div><div class="oxford-meta"><span class="oxford-pill">${oxfordEsc(c.cefr)}</span><span class="oxford-pill">${oxfordEsc(c.pos)}</span><span class="oxford-pill">${dueText}</span></div><div class="oxford-translation" id="oxfordTranslation">${translation?oxfordEsc(translation):'⏳ Carico la traduzione…'}</div>${example?`<div class="oxford-example"><strong>Esempio:</strong> ${oxfordEsc(example)}</div>`:''}${exampleIt?`<div class="oxford-example-it">${oxfordEsc(exampleIt)}</div>`:''}${needsAI?`<button type="button" class="ghost-btn oxford-prepare-btn" id="oxfordPrepareBtn">🤖 Prepara traduzione ed esempio</button>`:''}`;
+  card.innerHTML=`<div class="oxford-word">${oxfordEsc(c.word)}</div><div class="oxford-meta"><span class="oxford-pill">${oxfordEsc(c.cefr)}</span><span class="oxford-pill">${oxfordEsc(c.pos)}</span><span class="oxford-pill">${dueText}</span></div><button type="button" class="ghost-btn oxford-listen-btn" id="oxfordListenBtn" aria-label="Ascolta la pronuncia di ${oxfordEsc(c.word)}">🔊 Ascolta la parola</button><div class="oxford-translation" id="oxfordTranslation">${translation?oxfordEsc(translation):'⏳ Carico la traduzione…'}</div>${example?`<div class="oxford-example"><strong>Esempio:</strong> ${oxfordEsc(example)}</div>`:''}${exampleIt?`<div class="oxford-example-it">${oxfordEsc(exampleIt)}</div>`:''}${needsAI?`<button type="button" class="ghost-btn oxford-prepare-btn" id="oxfordPrepareBtn">🤖 Prepara traduzione ed esempio</button>`:''}`;
   const add=document.getElementById('oxfordAddBtn'); if(add)add.textContent=saved.status==='learned'?'✓ Nel ripasso':'➕ Aggiungi al ripasso';
   const known=document.getElementById('oxfordKnownBtn'); if(known)known.textContent=saved.status==='learned'?'✓ Già conosciuta':'✓ La conosco';
   document.getElementById('oxfordPrepareBtn')?.addEventListener('click',()=>oxfordEnrich(c.id));
+  document.getElementById('oxfordListenBtn')?.addEventListener('click',()=>{
+    try{ speak(c.word,{lang:'en-US',cancel:true}); }catch(_){}
+  });
   // Ogni nuova parola viene pronunciata automaticamente una sola volta quando appare.
   if(window.__lastOxfordSpokenId!==c.id){
     window.__lastOxfordSpokenId=c.id;
@@ -2631,11 +2712,22 @@ async function oxfordAddCurrent(){
   oxfordSet(oxfordCurrent.id,next); if(firstLearn)oxfordTodayInc(); oxfordShow(oxfordCurrent.id); renderOxfordDashboard();
   const status=document.getElementById('oxfordStatus');if(status)status.textContent='✓ Parola aggiunta al ripasso del vocabolario.';
 }
+let oxfordNextIndex=0;
 function oxfordNext(){
-  const list=oxfordFilteredList(); if(!list.length){oxfordRenderResults();return;}
-  const due=list.filter(c=>{const p=oxfordGet(c.id);return p.status==='learned'&&p.dueDate&&p.dueDate<=todayISO();});
-  const fresh=list.filter(c=>oxfordGet(c.id).status!=='learned');
-  const pool=due.length?due:(fresh.length?fresh:list); const c=pool[Math.floor(Math.random()*pool.length)]; oxfordShow(c.id); const box=document.getElementById('oxfordResults');if(box)box.style.display='none';
+  const list=oxfordFilteredList();
+  if(!list.length){
+    oxfordRenderResults();
+    const status=document.getElementById('oxfordStatus');
+    if(status) status.textContent='Nessuna parola disponibile con questi filtri.';
+    return;
+  }
+  // Avanzamento deterministico: evita che “Parola successiva” riproponga casualmente la stessa parola.
+  let idx=list.findIndex(c=>c.id===oxfordCurrent?.id);
+  if(idx<0) idx=oxfordNextIndex-1;
+  idx=(idx+1)%list.length;
+  oxfordNextIndex=idx+1;
+  oxfordShow(list[idx].id);
+  const box=document.getElementById('oxfordResults');if(box)box.style.display='none';
 }
 function initOxfordV11(){
   if(!window.OXFORD_3000)return;
@@ -3372,6 +3464,18 @@ window.addEventListener('gemini:model-used',function(ev){
 </script>
 <script src="./js/v14-ui.js"></script>
 
+
+<style id="v15-7-update-system">
+/* ===== V15.7 — sistema aggiornamenti PWA ===== */
+.update-modal-backdrop{position:fixed;inset:0;background:rgba(4,18,35,.58);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;z-index:9999;padding:16px}
+.update-modal-backdrop.show{display:flex}
+.update-modal{width:min(520px,100%);background:#fff;color:#102a4d;border:1px solid #cbdced;border-radius:24px;padding:20px;box-shadow:0 24px 70px rgba(0,0,0,.28);animation:updateIn .18s ease}
+.update-modal h3{margin:0 0 7px;font-size:21px}.update-modal p{margin:0;color:#526b88;line-height:1.5;font-size:13px}.update-version{display:inline-flex;margin:0 0 12px;padding:5px 9px;border-radius:999px;background:#e7f3ff;color:#0876ee;font-weight:800;font-size:12px}.update-changes{margin:14px 0 18px;padding-left:20px;color:#294766;font-size:13px;line-height:1.65}.update-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.update-actions button{min-height:48px;border-radius:14px;border:1px solid #cbdced;font-weight:800;cursor:pointer}.update-primary{background:#0876ee;color:#fff;border-color:#0876ee!important}.update-secondary{background:#f4f8fc;color:#294766}.update-status{margin-top:10px;min-height:18px;font-size:11px;color:#647d98}.update-settings-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.update-settings-version{font-size:13px;color:var(--muted);line-height:1.45}.update-settings-version strong{display:block;color:var(--text);font-size:16px}.update-check-btn{min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:13px;background:var(--surface-2);color:var(--text);font-weight:800;cursor:pointer}.update-check-btn:disabled{opacity:.65}
+body.theme-dark .update-modal{background:#09264c;color:#f7fbff;border-color:rgba(255,255,255,.14)}body.theme-dark .update-modal p,body.theme-dark .update-changes{color:#b9cbe0}body.theme-dark .update-secondary{background:#0b3568;color:#f7fbff;border-color:rgba(255,255,255,.14)}body.theme-dark .update-version{background:#103f74;color:#72c9ff}
+@keyframes updateIn{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-width:600px){.update-modal-backdrop{padding:10px}.update-modal{border-radius:22px;padding:18px}.update-actions{grid-template-columns:1fr}.update-actions button{min-height:50px}.update-settings-row{grid-template-columns:1fr}.update-check-btn{width:100%}}
+</style>
+
 <style id="v15-final-theme-fix">
 /* ===== V15.5 — tema coerente Home / Impara / Impostazioni ===== */
 body:not(.theme-dark) .home-hero,
@@ -3421,5 +3525,20 @@ body.theme-dark .settings-card p,body.theme-dark .settings-help,body.theme-dark 
   },true);
 })();
 </script>
+
+<div class="update-modal-backdrop" id="updateModal" role="dialog" aria-modal="true" aria-labelledby="updateModalTitle">
+  <div class="update-modal">
+    <div class="update-version" id="updateModalVersion">V15.7</div>
+    <h3 id="updateModalTitle">🚀 Nuovo aggiornamento</h3>
+    <p id="updateModalMessage">È disponibile una nuova versione di Quaderno d'Inglese.</p>
+    <ul class="update-changes" id="updateModalChanges"></ul>
+    <div class="update-actions">
+      <button type="button" class="update-secondary" id="updateLaterBtn">Più tardi</button>
+      <button type="button" class="update-primary" id="updateNowBtn">Aggiorna</button>
+    </div>
+    <div class="update-status" id="updateModalStatus" aria-live="polite"></div>
+  </div>
+</div>
+
 </body>
 </html>
