@@ -888,6 +888,7 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 .tutor-turn-badge{display:inline-flex;padding:5px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:10px;font-weight:800;margin-bottom:8px}
 .tutor-dialogue-line{padding:11px 12px;border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 13px 13px 0;margin-bottom:10px}
 .tutor-question{font-size:18px;font-weight:800;line-height:1.4;overflow-wrap:anywhere}
+.tutor-translation{margin-top:5px;font-size:14px;line-height:1.45;color:var(--muted);font-style:italic;overflow-wrap:anywhere}.tutor-translation::before{content:"🇮🇹 ";font-style:normal}
 .tutor-answer{font-size:18px;line-height:1.5;padding:13px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);margin-bottom:12px;overflow-wrap:anywhere}
 .tutor-reading-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tutor-reading-actions button{min-height:46px;width:100%}.tutor-reading-actions #tutorNextQuestion{grid-column:1/-1}
 .tutor-read-result{min-height:20px;margin-top:9px;font-size:12px;color:var(--muted);line-height:1.4;overflow-wrap:anywhere}
@@ -1051,9 +1052,11 @@ body.oxford-focus #oxfordPanel{margin-top:4px}
       <div class="tutor-dialogue-line">
         <div class="tutor-question-label" id="tutorLineLabel">Tutor</div>
         <div class="tutor-question" id="tutorQuestion"></div>
+        <div class="tutor-translation" id="tutorQuestionIt"></div>
       </div>
       <div class="tutor-answer-label" id="tutorAnswerLabel">La tua risposta</div>
       <div class="tutor-answer" id="tutorAnswer"></div>
+      <div class="tutor-translation" id="tutorAnswerIt"></div>
       <div class="tutor-reading-actions tutor-dialogue-actions">
         <button type="button" class="send-btn" id="tutorReadListen">🔊 Ascolta</button>
         <button type="button" class="ghost-btn" id="tutorReadMic">🎤 Pronuncio</button>
@@ -3167,12 +3170,14 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
     return el?.options[el.selectedIndex]?.textContent||'Vita quotidiana';
   }
   function tutorRole(){return document.getElementById('tutorRole')?.value||'tutor-asks';}
-  function renderTutorTurn(question,answer,lineLabel,answerLabel){
+  function renderTutorTurn(question,answer,lineLabel,answerLabel,questionIt='',answerIt=''){
     const card=document.getElementById('tutorReadingCard');
     const q=document.getElementById('tutorQuestion'), a=document.getElementById('tutorAnswer');
+    const qi=document.getElementById('tutorQuestionIt'), ai=document.getElementById('tutorAnswerIt');
     const ll=document.getElementById('tutorLineLabel'), al=document.getElementById('tutorAnswerLabel'), badge=document.getElementById('tutorTurnBadge');
     if(card)card.style.display='block';
     if(q)q.textContent=question||''; if(a)a.textContent=answer||'';
+    if(qi)qi.textContent=questionIt||''; if(ai)ai.textContent=answerIt||'';
     if(ll)ll.textContent=lineLabel||'Tutor'; if(al)al.textContent=answerLabel||'La tua risposta';
     if(badge)badge.textContent='TURNO '+tutorTurn;
     tutorExpected=String(answer||''); tutorCurrentLine=String(question||'');
@@ -3187,15 +3192,15 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
       const prior=tutorConversation.slice(-6).map(x=>x.role+': '+x.text).join(' | ');
       let prompt;
       if(role==='user-asks'){
-        prompt=`Crea il prossimo turno di una conversazione in inglese per uno studente italiano di livello ${l}, scenario ${sc}. Questa volta LO STUDENTE deve fare una domanda e poi pronunciarla. Genera una domanda breve e naturale che lo studente può leggere/pronunciare e una risposta breve del tutor che mostri come continua la conversazione. Conversazione precedente: ${prior||'nessuna'}. Rispondi SOLO JSON: {"lineToRead":"domanda che deve pronunciare lo studente","tutorReply":"risposta breve del tutor","tip":"spiegazione breve in italiano"}`;
+        prompt=`Crea il prossimo turno di una conversazione in inglese per uno studente italiano di livello ${l}, scenario ${sc}. Questa volta LO STUDENTE deve fare una domanda e poi pronunciarla. Genera una domanda breve e naturale che lo studente può leggere/pronunciare e una risposta breve del tutor che mostri come continua la conversazione. Conversazione precedente: ${prior||'nessuna'}. Rispondi SOLO JSON: {"lineToRead":"domanda che deve pronunciare lo studente","lineToReadIt":"traduzione italiana della domanda","tutorReply":"risposta breve del tutor","tutorReplyIt":"traduzione italiana della risposta","tip":"spiegazione breve in italiano"}`;
         const r=await callGemini('Sei un tutor di inglese. Costruisci dialoghi pratici e correggibili, adatti al livello dello studente.',prompt);
-        renderTutorTurn(String(r.lineToRead||'Can I ask you a question?'),String(r.tutorReply||'Of course. What would you like to know?'),'La tua domanda','Risposta del tutor');
+        renderTutorTurn(String(r.lineToRead||'Can I ask you a question?'),String(r.tutorReply||'Of course. What would you like to know?'),'La tua domanda','Risposta del tutor',String(r.lineToReadIt||'Posso farti una domanda?'),String(r.tutorReplyIt||'Certo. Cosa vuoi sapere?'));
         tutorConversation.push({role:'student',text:String(r.lineToRead||'')},{role:'tutor',text:String(r.tutorReply||'')});
         if(res)res.textContent=r.tip?'💡 '+String(r.tip):'Pronuncia la domanda mostrata sopra.';
       } else {
-        prompt=`Crea il prossimo turno di una conversazione in inglese per uno studente italiano di livello ${l}, scenario ${sc}. Il tutor deve fare una domanda breve e naturale; poi prepara UNA risposta modello breve (1-2 frasi) che lo studente deve pronunciare ad alta voce. La risposta deve essere facile da pronunciare. Conversazione precedente: ${prior||'nessuna'}. Rispondi SOLO JSON: {"tutorQuestion":"domanda del tutor","studentAnswer":"risposta che deve pronunciare lo studente","tip":"spiegazione breve in italiano"}`;
+        prompt=`Crea il prossimo turno di una conversazione in inglese per uno studente italiano di livello ${l}, scenario ${sc}. Il tutor deve fare una domanda breve e naturale; poi prepara UNA risposta modello breve (1-2 frasi) che lo studente deve pronunciare ad alta voce. La risposta deve essere facile da pronunciare. Conversazione precedente: ${prior||'nessuna'}. Rispondi SOLO JSON: {"tutorQuestion":"domanda del tutor","tutorQuestionIt":"traduzione italiana della domanda","studentAnswer":"risposta che deve pronunciare lo studente","studentAnswerIt":"traduzione italiana della risposta","tip":"spiegazione breve in italiano"}`;
         const r=await callGemini('Sei un tutor di inglese. Costruisci dialoghi pratici e correggibili, adatti al livello dello studente.',prompt);
-        renderTutorTurn(String(r.tutorQuestion||'How are you today?'),String(r.studentAnswer||'I am fine, thank you.'),'Tutor','La tua risposta');
+        renderTutorTurn(String(r.tutorQuestion||'How are you today?'),String(r.studentAnswer||'I am fine, thank you.'),'Tutor','La tua risposta',String(r.tutorQuestionIt||'Come stai oggi?'),String(r.studentAnswerIt||'Sto bene, grazie.'));
         tutorConversation.push({role:'tutor',text:String(r.tutorQuestion||'')},{role:'student',text:String(r.studentAnswer||'')});
         if(res)res.textContent=r.tip?'💡 '+String(r.tip):'Pronuncia la risposta mostrata sopra.';
       }
