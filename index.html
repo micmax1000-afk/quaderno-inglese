@@ -882,12 +882,17 @@ body.theme-dark .rt-score-ring::after{background:var(--surface)}
 
 <style>
 /* V15.2 Tutor guided reading */
-.tutor-reading-card{margin:12px 0;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow-card)}
+.tutor-reading-card{margin:12px 0;padding:15px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow-card);overflow:hidden}
 .tutor-reading-kicker,.tutor-question-label,.tutor-answer-label{font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
-.tutor-question{font-size:18px;font-weight:800;line-height:1.35;margin-bottom:14px}
-.tutor-answer{font-size:18px;line-height:1.5;padding:13px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);margin-bottom:12px}
-.tutor-reading-actions{display:grid;grid-template-columns:1fr;gap:8px}.tutor-reading-actions button{min-height:46px;width:100%}
-.tutor-read-result{min-height:20px;margin-top:9px;font-size:12px;color:var(--muted);line-height:1.4}
+.tutor-dialogue-tools{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0 10px}.tutor-dialogue-tools select{width:100%;min-width:0;min-height:42px;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);color:var(--ink);font-size:13px}
+.tutor-turn-badge{display:inline-flex;padding:5px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:10px;font-weight:800;margin-bottom:8px}
+.tutor-dialogue-line{padding:11px 12px;border-left:3px solid var(--accent);background:var(--surface-2);border-radius:0 13px 13px 0;margin-bottom:10px}
+.tutor-question{font-size:18px;font-weight:800;line-height:1.4;overflow-wrap:anywhere}
+.tutor-answer{font-size:18px;line-height:1.5;padding:13px;border-radius:14px;background:var(--surface-2);border:1px solid var(--line);margin-bottom:12px;overflow-wrap:anywhere}
+.tutor-reading-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.tutor-reading-actions button{min-height:46px;width:100%}.tutor-reading-actions #tutorNextQuestion{grid-column:1/-1}
+.tutor-read-result{min-height:20px;margin-top:9px;font-size:12px;color:var(--muted);line-height:1.4;overflow-wrap:anywhere}
+.tutor-correction-box{margin-top:10px;padding:11px 12px;border:1px solid var(--line);border-radius:13px;background:var(--surface-2);font-size:13px;line-height:1.45;overflow-wrap:anywhere}.tutor-correction-box .ok{font-weight:800}.tutor-correction-box .bad{font-weight:800}.tutor-correction-box .explain{margin-top:5px;color:var(--muted)}
+@media(max-width:600px){.tutor-dialogue-tools{grid-template-columns:1fr}.tutor-question{font-size:17px}.tutor-answer{font-size:17px;padding:12px}.tutor-reading-card{padding:12px}.tutor-reading-actions{grid-template-columns:1fr 1fr}.tutor-reading-actions #tutorNextQuestion{grid-column:1/-1}.oxford-head{flex-direction:column}.oxford-count{align-items:flex-start}.oxford-dashboard{gap:6px}}
 body.oxford-focus #vocabNotebook,body.oxford-focus .vocab-stats,body.oxford-focus .vocab-progress,body.oxford-focus .vocab-quick,body.oxford-focus .vocab-mode-tabs,body.oxford-focus #vocabModeHint,body.oxford-focus .manual-add,body.oxford-focus #vocabSearch,body.oxford-focus .vocab-list{display:none!important}
 body.oxford-focus #oxfordPanel{margin-top:4px}
 .oxford-card{min-height:0}
@@ -1021,18 +1026,35 @@ body.oxford-focus #oxfordPanel{margin-top:4px}
       <button type="button" data-tutor-prompt="Fammi una domanda alla volta e prepara una risposta breve da leggere ad alta voce.">📖 Leggo e ripeto</button>
       <button type="button" data-tutor-prompt="Fammi una domanda A1 e prepara una risposta modello di 1 o 2 frasi da leggere.">🗣️ Inglese A1</button>
     </div>
-    <section class="tutor-reading-card" id="tutorReadingCard" style="display:none;">
-      <div class="tutor-reading-kicker">ESERCIZIO GUIDATO</div>
-      <div class="tutor-question-label">Domanda</div>
-      <div class="tutor-question" id="tutorQuestion"></div>
-      <div class="tutor-answer-label">Risposta da leggere</div>
+    <section class="tutor-reading-card tutor-dialogue-card" id="tutorReadingCard" style="display:none;">
+      <div class="tutor-reading-kicker">CONVERSAZIONE GUIDATA</div>
+      <div class="tutor-dialogue-tools">
+        <select id="tutorScenario" aria-label="Scenario conversazione">
+          <option value="daily">Vita quotidiana</option>
+          <option value="restaurant">Al ristorante</option>
+          <option value="travel">Viaggio</option>
+          <option value="work">Lavoro</option>
+          <option value="shopping">Shopping</option>
+        </select>
+        <select id="tutorRole" aria-label="Ruolo della conversazione">
+          <option value="tutor-asks">Il tutor fa la domanda</option>
+          <option value="user-asks">Io faccio la domanda</option>
+        </select>
+      </div>
+      <div class="tutor-turn-badge" id="tutorTurnBadge">TURNO 1</div>
+      <div class="tutor-dialogue-line">
+        <div class="tutor-question-label" id="tutorLineLabel">Tutor</div>
+        <div class="tutor-question" id="tutorQuestion"></div>
+      </div>
+      <div class="tutor-answer-label" id="tutorAnswerLabel">La tua risposta</div>
       <div class="tutor-answer" id="tutorAnswer"></div>
-      <div class="tutor-reading-actions">
+      <div class="tutor-reading-actions tutor-dialogue-actions">
         <button type="button" class="send-btn" id="tutorReadListen">🔊 Ascolta</button>
-        <button type="button" class="ghost-btn" id="tutorReadMic">🎤 Leggo la risposta</button>
-        <button type="button" class="ghost-btn" id="tutorNextQuestion">➡️ Domanda successiva</button>
+        <button type="button" class="ghost-btn" id="tutorReadMic">🎤 Pronuncio</button>
+        <button type="button" class="ghost-btn" id="tutorNextQuestion">➡️ Continua</button>
       </div>
       <div class="tutor-read-result" id="tutorReadResult"></div>
+      <div class="tutor-correction-box" id="tutorCorrectionBox" style="display:none;"></div>
     </section>
 
     <div class="tutor-composer">
@@ -3033,45 +3055,80 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
       if(status)status.textContent='';
     }catch(e){if(status)status.textContent='⚠️ '+friendlyGeminiError(e.message||'Errore Gemini');}
   }
+  let tutorTurn=1;
+  let tutorExpected='';
+  let tutorCurrentLine='';
+  let tutorConversation=[];
+  function scenarioLabel(){
+    const el=document.getElementById('tutorScenario');
+    return el?.options[el.selectedIndex]?.textContent||'Vita quotidiana';
+  }
+  function tutorRole(){return document.getElementById('tutorRole')?.value||'tutor-asks';}
+  function renderTutorTurn(question,answer,lineLabel,answerLabel){
+    const card=document.getElementById('tutorReadingCard');
+    const q=document.getElementById('tutorQuestion'), a=document.getElementById('tutorAnswer');
+    const ll=document.getElementById('tutorLineLabel'), al=document.getElementById('tutorAnswerLabel'), badge=document.getElementById('tutorTurnBadge');
+    if(card)card.style.display='block';
+    if(q)q.textContent=question||''; if(a)a.textContent=answer||'';
+    if(ll)ll.textContent=lineLabel||'Tutor'; if(al)al.textContent=answerLabel||'La tua risposta';
+    if(badge)badge.textContent='TURNO '+tutorTurn;
+    tutorExpected=String(answer||''); tutorCurrentLine=String(question||'');
+    const box=document.getElementById('tutorCorrectionBox'); if(box){box.style.display='none';box.innerHTML='';}
+  }
   async function guidedQuestion(){
     renderMemory();
-    const card=document.getElementById('tutorReadingCard');
-    const qEl=document.getElementById('tutorQuestion'), aEl=document.getElementById('tutorAnswer'), res=document.getElementById('tutorReadResult');
-    if(card)card.style.display='block'; if(qEl)qEl.textContent='…'; if(aEl)aEl.textContent='…'; if(res)res.textContent='🤖 Preparo domanda e risposta…';
+    const res=document.getElementById('tutorReadResult'); if(res)res.textContent='🤖 Preparo il prossimo scambio…';
+    const card=document.getElementById('tutorReadingCard'); if(card)card.style.display='block';
     try{
-      const l=String(level()).replace('Base','A1');
-      const prompt=`Crea un esercizio di inglese parlato per livello ${l}. Fammi UNA domanda semplice e prepara UNA risposta modello breve (1-2 frasi) che lo studente deve LEGGERE ad alta voce. La risposta deve essere naturale e facile da pronunciare. Rispondi SOLO JSON: {"question":"domanda in inglese","answerToRead":"risposta in inglese","tip":"breve suggerimento in italiano"}`;
-      const r=await callGemini('Sei un tutor di inglese. Genera una domanda e una risposta modello per esercitare la lettura ad alta voce.',prompt);
-      if(qEl)qEl.textContent=String(r.question||'How are you today?');
-      if(aEl)aEl.textContent=String(r.answerToRead||'I am fine today.');
-      if(res)res.textContent=r.tip?'💡 '+String(r.tip):'Leggi la risposta ad alta voce.';
-      state.sessions=(state.sessions||0)+1; state.lastFocus='Lettura guidata'; save();
-      lastReply=String(r.answerToRead||''); document.getElementById('tutorListen')?.removeAttribute('disabled');
-    }catch(e){
-      if(res)res.textContent='⚠️ '+friendlyGeminiError(e.message||'Errore Gemini');
-    }
+      const l=String(level()).replace('Base','A1'), sc=scenarioLabel(), role=tutorRole();
+      const prior=tutorConversation.slice(-6).map(x=>x.role+': '+x.text).join(' | ');
+      let prompt;
+      if(role==='user-asks'){
+        prompt=`Crea il prossimo turno di una conversazione in inglese per uno studente italiano di livello ${l}, scenario ${sc}. Questa volta LO STUDENTE deve fare una domanda e poi pronunciarla. Genera una domanda breve e naturale che lo studente può leggere/pronunciare e una risposta breve del tutor che mostri come continua la conversazione. Conversazione precedente: ${prior||'nessuna'}. Rispondi SOLO JSON: {"lineToRead":"domanda che deve pronunciare lo studente","tutorReply":"risposta breve del tutor","tip":"spiegazione breve in italiano"}`;
+        const r=await callGemini('Sei un tutor di inglese. Costruisci dialoghi pratici e correggibili, adatti al livello dello studente.',prompt);
+        renderTutorTurn(String(r.lineToRead||'Can I ask you a question?'),String(r.tutorReply||'Of course. What would you like to know?'),'La tua domanda','Risposta del tutor');
+        tutorConversation.push({role:'student',text:String(r.lineToRead||'')},{role:'tutor',text:String(r.tutorReply||'')});
+        if(res)res.textContent=r.tip?'💡 '+String(r.tip):'Pronuncia la domanda mostrata sopra.';
+      } else {
+        prompt=`Crea il prossimo turno di una conversazione in inglese per uno studente italiano di livello ${l}, scenario ${sc}. Il tutor deve fare una domanda breve e naturale; poi prepara UNA risposta modello breve (1-2 frasi) che lo studente deve pronunciare ad alta voce. La risposta deve essere facile da pronunciare. Conversazione precedente: ${prior||'nessuna'}. Rispondi SOLO JSON: {"tutorQuestion":"domanda del tutor","studentAnswer":"risposta che deve pronunciare lo studente","tip":"spiegazione breve in italiano"}`;
+        const r=await callGemini('Sei un tutor di inglese. Costruisci dialoghi pratici e correggibili, adatti al livello dello studente.',prompt);
+        renderTutorTurn(String(r.tutorQuestion||'How are you today?'),String(r.studentAnswer||'I am fine, thank you.'),'Tutor','La tua risposta');
+        tutorConversation.push({role:'tutor',text:String(r.tutorQuestion||'')},{role:'student',text:String(r.studentAnswer||'')});
+        if(res)res.textContent=r.tip?'💡 '+String(r.tip):'Pronuncia la risposta mostrata sopra.';
+      }
+      tutorTurn++;
+      state.lastFocus='Conversazione guidata · '+scenarioLabel(); save();
+    }catch(e){if(res)res.textContent='⚠️ '+friendlyGeminiError(e.message||'Errore Gemini');}
   }
   function listenGuidedAnswer(){
     const text=document.getElementById('tutorAnswer')?.textContent||''; if(!text)return; speak(text);
   }
+  async function evaluateTutorSpeech(heard){
+    const result=document.getElementById('tutorReadResult'), box=document.getElementById('tutorCorrectionBox');
+    if(result)result.textContent='🧑‍🏫 Controllo quello che hai pronunciato…';
+    try{
+      const prompt=`Confronta la frase che lo studente doveva pronunciare con quella riconosciuta dal microfono. Frase attesa: "${tutorExpected}". Frase pronunciata/trascritta: "${heard}". Valuta soprattutto parole mancanti/sbagliate, grammatica e naturalezza. Non penalizzare punteggiatura, maiuscole o piccole differenze di riconoscimento vocale. Rispondi SOLO JSON: {"correct":true,"score":95,"heard":"...","correction":"...","explanation":"spiegazione breve in italiano"}. Se è sostanzialmente corretta, correction deve essere vuota.`;
+      const r=await callGemini('Sei un insegnante di inglese. Correggi in modo chiaro, incoraggiante e concreto. La spiegazione deve essere in italiano.',prompt);
+      if(box){box.style.display='block';box.innerHTML='';const ok=!!r.correct;const title=document.createElement('div');title.className=ok?'ok':'bad';title.textContent=ok?'✅ Molto bene!':'✏️ Da correggere';box.appendChild(title);if(r.score!=null){const sc=document.createElement('div');sc.textContent='Pronuncia/risposta: '+Math.max(0,Math.min(100,Number(r.score)||0))+'/100';box.appendChild(sc);}if(r.correction){const c=document.createElement('div');c.innerHTML='<b>Correzione:</b> '+escapeHtml(String(r.correction));box.appendChild(c);}const ex=document.createElement('div');ex.className='explain';ex.textContent='💡 '+String(r.explanation||'Continua così.');box.appendChild(ex);}
+      if(result)result.textContent='✓ Ho sentito: '+heard;
+      if(!r.correct && r.correction) state.recentErrors=(state.recentErrors||[]).concat([{right:String(r.correction),why:String(r.explanation||''),source:'AI Tutor'}]).slice(-20);
+      save();
+    }catch(e){if(result)result.textContent='⚠️ '+friendlyGeminiError(e.message||'Errore Gemini');}
+  }
   function readGuidedAnswer(){
-    const text=document.getElementById('tutorAnswer')?.textContent||''; const result=document.getElementById('tutorReadResult');
+    const text=tutorExpected||document.getElementById('tutorAnswer')?.textContent||'', result=document.getElementById('tutorReadResult');
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!SR){if(result)result.textContent='⚠️ Il riconoscimento vocale non è disponibile. Puoi leggere comunque la risposta.';return;}
-    if(result)result.textContent='🎤 Leggi ad alta voce la risposta mostrata sopra…';
+    if(!SR){if(result)result.textContent='⚠️ Il riconoscimento vocale non è disponibile su questo browser.';return;}
+    if(result)result.textContent='🎤 Parla in inglese adesso…';
     const r=new SR(); r.lang='en-US'; r.interimResults=false; r.maxAlternatives=1;
-    r.onresult=e=>{const heard=e.results?.[0]?.[0]?.transcript||''; if(result)result.textContent=heard?'✓ Ho sentito: '+heard:'Riprova lentamente.';};
+    r.onresult=e=>{const heard=e.results?.[0]?.[0]?.transcript||''; if(heard)evaluateTutorSpeech(heard); else if(result)result.textContent='Riprova lentamente.';};
     r.onerror=()=>{if(result)result.textContent='⚠️ Non ho sentito bene. Tocca di nuovo e riprova.';};
-    r.start();
+    try{r.start();}catch(e){if(result)result.textContent='⚠️ Microfono non disponibile. Riprova.';}
   }
   function start(){
     renderMemory();
+    tutorTurn=1; tutorConversation=[];
     guidedQuestion();
-
-    const l=String(level()).replace('Base','A1');
-    const es=errors();
-    const prompt=es.length?`Inizia una sessione di 5 minuti. Prima dammi un breve esercizio sugli errori recenti e poi fammi rispondere in inglese.`:`Inizia una sessione di 5 minuti per livello ${l}. Fammi una domanda semplice in inglese e guidami passo passo.`;
-    ask(prompt);
   }
   document.getElementById('tutorStart')?.addEventListener('click',start);
   document.getElementById('tutorReadListen')?.addEventListener('click',listenGuidedAnswer);
@@ -3079,8 +3136,8 @@ Obiettivo: insegnare inglese in modo pratico e incoraggiante. Rispondi in JSON v
   document.getElementById('tutorNextQuestion')?.addEventListener('click',guidedQuestion);
   document.getElementById('tutorSend')?.addEventListener('click',()=>ask(document.getElementById('tutorInput')?.value.trim()));
   document.getElementById('tutorInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();document.getElementById('tutorSend')?.click();}});
-  document.querySelectorAll('[data-tutor-prompt]').forEach(b=>b.addEventListener('click',()=>ask(b.dataset.tutorPrompt)));
-  document.getElementById('tutorReset')?.addEventListener('click',()=>{state.messages=[];state.lastFocus='';save();const box=document.getElementById('tutorChat');if(box)box.innerHTML='<div class="tutor-empty" id="tutorEmpty">Premi <b>Inizia sessione</b> e il tutor analizzerà il tuo percorso.</div>';const s=document.getElementById('tutorStatus');if(s)s.textContent='';renderMemory();});
+  document.querySelectorAll('[data-tutor-prompt]').forEach(b=>b.addEventListener('click',()=>{ const p=b.dataset.tutorPrompt||''; if(/domanda|risposta|leggo|A1/i.test(p)) guidedQuestion(); else ask(p); }));
+  document.getElementById('tutorReset')?.addEventListener('click',()=>{state.messages=[];state.lastFocus='';tutorTurn=1;tutorConversation=[];tutorExpected='';save();const box=document.getElementById('tutorChat');if(box)box.innerHTML='<div class="tutor-empty" id="tutorEmpty">Premi <b>Inizia sessione</b> e il tutor analizzerà il tuo percorso.</div>';const s=document.getElementById('tutorStatus');if(s)s.textContent='';renderMemory();});
   function speak(text,autoListen=false){
     if(!text||!('speechSynthesis' in window))return;
     speechSynthesis.cancel(); speaking=true;
