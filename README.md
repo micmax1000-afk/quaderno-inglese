@@ -64,3 +64,11 @@ Tema chiaro/scuro completamente sovrascritto con una palette coerente ad alto co
 - Gemini reads the key from localStorage or directly from the Settings field, with legacy-key migration.
 - Oxford card layout fixed for mobile/light/dark readability.
 - Vocabulary/review cards are restored when entering Ripasso; they are hidden only in Oxford focus.
+
+
+## V17
+Interfaccia semplificata a 4 sezioni. Oxford usa prima i contenuti locali disponibili e solo come fallback richiede servizi esterni/AI. Le traduzioni e frasi presenti nel seed locale sono contenuti didattici originali dell’app.
+
+
+## V17
+Interfaccia semplificata a 4 sezioni. Oxford usa prima i contenuti locali disponibili e solo come fallback richiede servizi esterni/AI. Le traduzioni e frasi presenti nel seed locale sono contenuti didattici originali dell’app.

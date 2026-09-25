@@ -1,4 +1,4 @@
-const CACHE='quaderno-inglese-v16-tutor';
+const CACHE='quaderno-inglese-v17-tutor';
 const CORE=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./data/oxford3000.js'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{
   const cache=await caches.open(CACHE);
